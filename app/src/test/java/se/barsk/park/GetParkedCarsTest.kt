@@ -57,25 +57,23 @@ class GetParkedCarsTest {
     @Test
     fun noParkedCars() {
         val json = JSONObject(noParked)
-        val (free, parkedCars) = NetworkManager.parseData(json)
+        val parkedCars = NetworkManager.getParkedCarsFromResponse(json)
         assertEquals(listOf<ParkedCar>(), parkedCars)
-        assertEquals(6, free)
     }
 
     @Test
     fun oneParkedCar() {
         val json = JSONObject(oneParked)
-        val (free, parkedCars) = NetworkManager.parseData(json)
+        val parkedCars = NetworkManager.getParkedCarsFromResponse(json)
         val expected = mutableListOf<ParkedCar>()
         expected.add(ParkedCar("AAA111", "user1", "2017-06-18 15:44:09"))
         assertEquals(expected, parkedCars)
-        assertEquals(5, free)
     }
 
     @Test
     fun allParked() {
         val json = JSONObject(allParked)
-        val (free, parkedCars) = NetworkManager.parseData(json)
+        val parkedCars = NetworkManager.getParkedCarsFromResponse(json)
         val expected = mutableListOf<ParkedCar>()
         expected.add(ParkedCar("AAA111", "user1", "2017-06-18 15:44:00"))
         expected.add(ParkedCar("BBB222", "user2", "2017-06-18 15:44:10"))
@@ -84,6 +82,5 @@ class GetParkedCarsTest {
         expected.add(ParkedCar("EEE555", "user5", "2017-06-18 15:44:40"))
         expected.add(ParkedCar("FFF666", "user6", "2017-06-18 15:44:50"))
         assertEquals(expected, parkedCars)
-        assertEquals(free, 0)
     }
 }

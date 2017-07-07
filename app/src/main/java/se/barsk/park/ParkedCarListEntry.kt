@@ -9,21 +9,16 @@ import android.widget.TextView
  * One entry in the list of parked cars
  */
 class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
-    private var parkTimeView: TextView? = null
-    private var regNoView: TextView? = null
-    private var ownerView: TextView? = null
+    private val parkTimeView: TextView by lazy { findViewById(R.id.park_start_time) as TextView }
+    private val regNoView: TextView by lazy { findViewById(R.id.action) as TextView }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.parked_car_entry, this, true)
-        parkTimeView = findViewById(R.id.park_start_time) as TextView?
-        regNoView = findViewById(R.id.action_label) as TextView?
-        ownerView = findViewById(R.id.owner) as TextView?
     }
 
     override fun showItem(car: Car) {
         car as ParkedCar
-        parkTimeView?.text = car.startTime
-        regNoView?.text = car.regNo
-        ownerView?.text = car.owner
+        parkTimeView.text = car.startTime.substring(11, 19) // Skip the date part
+        regNoView.text = "${car.regNo} (${car.owner})"
     }
 }

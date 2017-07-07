@@ -2,5 +2,9 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
+    <color name="colorUnparkedCar">#ffff00</color>
+    <color name="colorParkedCar">#90ee90</color>
+    <color name="colorEvenRow">#FFEDEDED</color>
+    <color name="colorOddRow">#FFD5D5D5</color>
 </resources>

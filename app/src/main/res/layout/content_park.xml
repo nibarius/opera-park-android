@@ -9,61 +9,75 @@
     tools:context="se.barsk.park.ParkActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp"
-    tools:showIn="@layout/activity_park">
+    tools:showIn="@layout/activity_park"
+    android:id="@+id/container_view">
+
+    <TextView
+        android:id="@+id/status_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="1 free spot"
+        android:textSize="36sp"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/parked_cars_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@color/colorAccent"
+        android:text="Parked cars"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/status_label"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/parked_cars_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/parked_cars_label"
+        app:layout_constraintBottom_toTopOf="@+id/my_cars_label"
+        android:scrollbars="vertical" />
 
     <TextView
         android:id="@+id/my_cars_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:background="@color/colorAccent"
         android:text="My cars"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintBottom_toTopOf="@+id/own_cars_recycler_view"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/own_cars_recycler_view"
         android:layout_width="0dp"
-        android:layout_height="107dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_cars_label"/>
-
-    <TextView
-        android:id="@+id/my_text_view"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
-        android:text="Parked cars"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/own_cars_recycler_view"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/parked_cars_recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_text_view"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:scrollbars="horizontal"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

@@ -3,7 +3,6 @@ package se.barsk.park
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.android.extension.responseJson
-import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
@@ -12,30 +11,34 @@ import org.json.JSONObject
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    fun checkStatus(): Pair<Int, List<ParkedCar>> {
-        var parkedCars: Pair<Int, List<ParkedCar>>
-        parkedCars = Pair(6, listOf())
-        Fuel.get("http://park.opera.software/status").responseJson { request, response, result ->
+    private const val BASE_URL = "http://park.opera.software/"
+    private const val STATUS = "status"
+    private const val PARK = "park"
+    private const val UNPARK = "unpark"
+
+    private enum class Action {PARK, UNPARK }
+
+    /**
+     * Makes a http request to the park server to check the current status.
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    fun checkStatus(resultReadyListener: (Result) -> Unit) {
+        Fuel.get(BASE_URL + STATUS).responseJson { _, _, result ->
             when (result) {
-                is Result.Failure -> {
-                    print("Error")
-                    //Todo: make a real error message
+                is com.github.kittinunf.result.Result.Failure -> {
                     val (_, error) = result
-                    print(error)
+                    resultReadyListener(Result.Fail(null, "Failed to get parking status: $error"))
                 }
-                is Result.Success -> {
-                    val data: JSONObject? = result.getAs<Json>()?.obj()
-                    if (data != null) {
-                        parkedCars = parseData(data)
-                    }
+                is com.github.kittinunf.result.Result.Success -> {
+                    val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                    val parkedCars = getParkedCarsFromResponse(data)
+                    resultReadyListener(Result.Success(parkedCars))
                 }
             }
         }
-        return parkedCars
     }
 
-    internal fun parseData(data: JSONObject): Pair<Int, List<ParkedCar>> {
-        val freeSpots = data.getInt("free")
+    internal fun getParkedCarsFromResponse(data: JSONObject): List<ParkedCar> {
         val usedSpots: JSONArray = data.getJSONArray("used")
         val parkedCars: MutableList<ParkedCar> = mutableListOf()
         for (index in 0..usedSpots.length() - 1) {
@@ -44,6 +47,62 @@ object NetworkManager {
             val startTime: String = usedSpots.getJSONObject(index).getString("start")
             parkedCars.add(ParkedCar(regNo, owner, startTime))
         }
-        return Pair(freeSpots, parkedCars)
+        return parkedCars
+    }
+
+    private fun doAction(ownCar: OwnCar, action: Action, resultReadyListener: (Result) -> Unit) {
+        val errorMessage: String
+        val url: String
+        val parameters: MutableList<Pair<String, Any?>> = mutableListOf()
+        parameters.add(Pair("regno", ownCar.regNo))
+        when (action) {
+            NetworkManager.Action.PARK -> {
+                errorMessage = "Failed to park " + ownCar.regNo
+                url = BASE_URL + PARK
+                parameters.add(Pair("user", ownCar.owner))
+            }
+            NetworkManager.Action.UNPARK -> {
+                errorMessage = "Failed to unpark " + ownCar.regNo
+                url = BASE_URL + UNPARK
+            }
+        }
+        Fuel.post(url, parameters)
+                .responseJson { request, response, result ->
+                    when (result) {
+                        is com.github.kittinunf.result.Result.Success -> {
+                            val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                            val success = data.getString("result") == "ok"
+                            val parkedCars = getParkedCarsFromResponse(data)
+                            if (success) {
+                                resultReadyListener(Result.Success(parkedCars))
+                            } else {
+                                resultReadyListener(Result.Fail(parkedCars, errorMessage))
+                            }
+                        }
+                        is com.github.kittinunf.result.Result.Failure -> {
+                            val msg = "$errorMessage\n" +
+                                    "${response.httpStatusCode}: ${response.httpResponseMessage}"
+                            resultReadyListener(Result.Fail(null, msg))
+                        }
+                    }
+                }
+    }
+
+    /**
+     * Makes an http post request to the park server to park a car.
+     * @param ownCar The car to park.
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    fun parkCar(ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
+        doAction(ownCar, Action.PARK, resultReadyListener)
+    }
+
+    /**
+     * Makes an http post request to the park server to unpark a car.
+     * @param car The car to unpark.
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    fun unparkCar(car: OwnCar, resultReadyListener: (Result) -> Unit) {
+        doAction(car, Action.UNPARK, resultReadyListener)
     }
 }
