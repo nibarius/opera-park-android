@@ -3,11 +3,18 @@ package se.barsk.park
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.util.SparseBooleanArray
+
+
+
+
 
 /**
  * Adapter for the own/parked cars recycler views.
  */
-class CarsAdapter(val cars: List<Car>, val listener: (Car) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class CarsAdapter(val type: Type, val cars: List<Car>, val listener: (Car) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    enum class Type {PARKED_CARS, OWN_CARS, MANAGE_CARS }
 
     init {
         setHasStableIds(true)
@@ -15,15 +22,15 @@ class CarsAdapter(val cars: List<Car>, val listener: (Car) -> Unit) : RecyclerVi
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val vh: ViewHolder
-        when (cars[0]) {
-            is OwnCar -> {
+        when (type) {
+            Type.OWN_CARS -> {
                 vh = ViewHolder(OwnCarListEntry(parent.context))
             }
-            is ParkedCar -> {
+            Type.PARKED_CARS -> {
                 vh = ViewHolder(ParkedCarListEntry(parent.context))
             }
-            else -> {
-                throw RuntimeException("Unknown car type found")
+            Type.MANAGE_CARS -> {
+                vh = ViewHolder(ManageCarsListEntry(parent.context))
             }
         }
         vh.onClick(listener)

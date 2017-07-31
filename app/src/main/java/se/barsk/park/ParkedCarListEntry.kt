@@ -10,7 +10,7 @@ import android.widget.TextView
  */
 class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
     private val parkTimeView: TextView by lazy { findViewById(R.id.park_start_time) as TextView }
-    private val regNoView: TextView by lazy { findViewById(R.id.action) as TextView }
+    private val regNoView: TextView by lazy { findViewById(R.id.regno) as TextView }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.parked_car_entry, this, true)

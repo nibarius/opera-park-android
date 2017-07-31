@@ -1,12 +1,16 @@
 package se.barsk.park
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import java.nio.channels.NonReadableChannelException
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
@@ -70,7 +74,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         carCollection.ownCars.add(OwnCar("BBB 226", "car6"))
         ownCarsRecyclerView.layoutManager = layoutManager2
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        ownCarsRecyclerView.adapter = CarsAdapter(carCollection.ownCars.toList(), this::onOwnCarClicked)
+        ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
+                carCollection.ownCars.toList(), this::onOwnCarClicked)
         ownCarsRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
 
         operaGarage.addListener(this)
@@ -80,6 +85,33 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         super.onResume()
         operaGarage.updateStatus()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.menu_manage_cars -> consume { navigateToManageCars() }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    /**
+     * Consume function for the menu that consumes the item selected event by
+     * running the given function and returning true
+     */
+    inline fun consume(f: () -> Unit): Boolean {
+        f()
+        return true
+    }
+
+    private fun navigateToManageCars() {
+        intent = Intent(this, ManageCarsActivity::class.java)
+        startActivity(intent)
+    }
+
+
 
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
@@ -105,12 +137,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     private fun updateListOfParkedCars() {
         parkedCarsLabel.text = "Parked cars"
         parkedCarsRecyclerView.swapAdapter(
-                CarsAdapter(operaGarage.parkedCars, { /*listener that does nothing */ }), false)
+                CarsAdapter(CarsAdapter.Type.PARKED_CARS, operaGarage.parkedCars, { /*listener that does nothing */ }), false)
     }
 
     private fun updateListOfOwnCars() {
         ownCarsRecyclerView.swapAdapter(
-                CarsAdapter(carCollection.ownCars, this::onOwnCarClicked), false)
+                CarsAdapter(CarsAdapter.Type.OWN_CARS,carCollection.ownCars, this::onOwnCarClicked), false)
     }
 
 }
