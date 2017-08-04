@@ -11,7 +11,7 @@ import android.widget.TextView
  */
 class OwnCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
     private val regNoView: TextView by lazy { findViewById(R.id.regno) as TextView }
-    private val actionLabelView: TextView by lazy { findViewById(R.id.regno) as TextView }
+    private val actionLabelView: TextView by lazy { findViewById(R.id.own_car_label) as TextView }
     private val ownerLabelView: TextView by lazy { findViewById(R.id.owner) as TextView }
 
     init {
