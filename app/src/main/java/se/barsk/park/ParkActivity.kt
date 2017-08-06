@@ -66,7 +66,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         val decorator = AlternatingColorItemDecoration(R.color.colorOddRow, R.color.colorEvenRow)
         parkedCarsRecyclerView.addItemDecoration(decorator)
 
-        carCollection.ownCars.add(OwnCar("AAA 111", "car1", "volvo"))
+        carCollection.ownCars.add(OwnCar("AAA111", "user", "volvo"))
         carCollection.ownCars.add(OwnCar("BBB 222", "car2", "tesla"))
         carCollection.ownCars.add(OwnCar("BBB 223", "car3"))
         carCollection.ownCars.add(OwnCar("BBB 224", "car4"))

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Park</string>
     <string name="title_activity_park">Park</string>
+    <string name="regno">Licence plate (e.g. ABC 123)</string>
+    <string name="owner">Owner (e.g. username)</string>
+    <string name="edit_car_dialog_title">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>

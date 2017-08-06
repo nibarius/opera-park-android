@@ -13,7 +13,7 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         CarsAdapter(Type.MANAGE_CARS, cars, listener) {
 
     val selectionDecorator: RecyclerView.ItemDecoration = SelectionItemDecoration(R.color.colorEvenRow, R.color.colorOddRow)
-    private var selectedItemsIds = SparseBooleanArray()
+    var selectedItemsIds = SparseBooleanArray()
 
     fun toggleSelection(position: Int) {
         if (selectedItemsIds[position, false]) {

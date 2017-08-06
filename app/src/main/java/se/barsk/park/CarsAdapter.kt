@@ -12,7 +12,7 @@ import android.util.SparseBooleanArray
 /**
  * Adapter for the own/parked cars recycler views.
  */
-open class CarsAdapter(val type: Type, val cars: List<Car>, val listener: (Car) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class CarsAdapter(val type: Type, var cars: List<Car>, val listener: (Car) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     enum class Type {PARKED_CARS, OWN_CARS, MANAGE_CARS }
 
