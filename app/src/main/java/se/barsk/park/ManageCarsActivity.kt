@@ -17,10 +17,17 @@ import android.widget.LinearLayout
 class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListener {
 
     override fun onDialogPositiveClick(newCar: OwnCar) {
-        carCollection.ownCars[adapter.selectedItemsIds.keyAt(0)] = newCar
-        actionMode?.finish() //todo: make a finish action mode method
-        actionMode = null
-        adapter.clearSelection() //todo: move the updating of te adapter into the adapter (updateData() or something similar)
+        if (adapter.hasSelectedItems()) {
+            // User edits a car
+            carCollection.ownCars[adapter.selectedItemsIds.keyAt(0)] = newCar
+            actionMode?.finish() //todo: make a finish action mode method
+            actionMode = null
+            adapter.clearSelection() //todo: move the updating of te adapter into the adapter (updateData() or something similar)
+        }
+        else {
+            // User adds a new car
+            carCollection.ownCars.add(newCar)
+        }
         adapter.cars = carCollection.ownCars.toList()
         adapter.notifyDataSetChanged()
     }
@@ -73,30 +80,27 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.manage_cars_menu_add -> consume { showEditDialog(OwnCar("", "")) }
+        else -> super.onOptionsItemSelected(item)
+    }
+
     //List item select method
     private fun onListItemSelect(position: Int) {
         adapter.toggleSelection(position)
         if (adapter.hasSelectedItems() && actionMode == null) {
             // there are some selected items but no action mode, start the actionMode
             actionMode = (this as AppCompatActivity).startSupportActionMode(object: ActionMode.Callback {
-                override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
-                    when (item.itemId) {
-                        R.id.item_delete -> {
-                            deleteSelectedItems()
-                        }
-                        R.id.item_edit -> {
-                            if (adapter.hasSelectedItems()) {
-                                showEditDialog(carCollection.ownCars[adapter.selectedItemsIds.keyAt(0)])
-                            }
-                        }
-                        R.id.item_share -> print(3)//share item
+                override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean = when (item.itemId) {
+                    R.id.item_delete -> consume { deleteSelectedItems() }
+                    R.id.item_edit -> consume {
+                        showEditDialog(carCollection.ownCars[adapter.selectedItemsIds.keyAt(0)])
                     }
-                    return true
+                    R.id.item_share -> consume { print(3) }//share item
+                    else -> true
                 }
 
-                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    return true
-                }
+                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean = true
 
                 override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                     menuInflater.inflate(R.menu.manage_cars_context_menu, menu)
@@ -115,7 +119,7 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
             actionMode = null
         }
 
-        actionMode?.title = "Selected: ${adapter.numSelectedItems()}"
+        actionMode?.title = "Selected: ${adapter.numSelectedItems()}" //todo: make a string
     }
 
     private fun deleteSelectedItems() {
@@ -134,5 +138,14 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     private fun showEditDialog(ownCar: OwnCar) {
         val dialogFragment = EditCarDialog(ownCar)
         dialogFragment.show(supportFragmentManager, "editCar")
+    }
+
+    /**
+     * Consume function for the menu that consumes the item selected event by
+     * running the given function and returning true
+     */
+    inline fun consume(f: () -> Unit): Boolean {
+        f()
+        return true
     }
 }
