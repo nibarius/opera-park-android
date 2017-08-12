@@ -19,5 +19,7 @@
         android:title="Share"
         android:icon="@android:drawable/ic_menu_share"
         app:showAsAction="ifRoom|withText"
+        android:visible="false"
+        android:enabled="false"
         />
 </menu>
