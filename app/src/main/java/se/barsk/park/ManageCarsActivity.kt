@@ -100,10 +100,17 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
                     else -> true
                 }
 
-                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean = true
+                override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                    menuInflater.inflate(R.menu.manage_cars_context_menu, menu)
+                    return true
+                }
 
                 override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    menuInflater.inflate(R.menu.manage_cars_context_menu, menu)
+                    val item = menu?.findItem(R.id.item_edit)
+                    if (item != null) {
+                        item.isEnabled = adapter.numSelectedItems() == 1
+                        item.isVisible = adapter.numSelectedItems() == 1
+                    }
                     return true
                 }
 
@@ -117,6 +124,10 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
             // there no selected items, finish the actionMode
             actionMode?.finish()
             actionMode = null
+        }
+        else {
+            // there are selected items and already in action mode, update the menu
+            actionMode?.invalidate()
         }
 
         actionMode?.title = "Selected: ${adapter.numSelectedItems()}" //todo: make a string
