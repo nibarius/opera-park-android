@@ -17,6 +17,6 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
 
     override fun showItem(car: Car) {
         car as OwnCar
-        regNoView.text = "${car.regNo} as ${car.owner}"
+        regNoView.text = "${car.regNo} (owner: ${car.owner})"
     }
 }

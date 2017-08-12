@@ -92,7 +92,7 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
             actionMode?.invalidate()
         }
 
-        actionMode?.title = getString(R.string.cab_selected_items) + adapter.numSelectedItems()
+        actionMode?.title = adapter.numSelectedItems().toString()
     }
 
     private fun deleteSelectedItems() {

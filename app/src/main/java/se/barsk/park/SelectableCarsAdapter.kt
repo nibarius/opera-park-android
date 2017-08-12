@@ -12,14 +12,15 @@ import android.view.View
 class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         CarsAdapter(Type.MANAGE_CARS, cars, listener) {
 
-    val selectionDecorator: RecyclerView.ItemDecoration = SelectionItemDecoration(R.color.colorEvenRow, R.color.colorOddRow)
+    //Todo: use an "image" (regno?) as icon in the list, icon change to checkmark when selected. Different colors depending on different regno
+    val selectionDecorator: RecyclerView.ItemDecoration = SelectionItemDecoration(
+            R.color.colorUnselectedBackground, R.color.colorSelectedBackground)
     var selectedItemsIds = SparseBooleanArray()
 
     fun toggleSelection(position: Int) {
         if (selectedItemsIds[position, false]) {
             selectedItemsIds.delete(position)
-        }
-        else {
+        } else {
             selectedItemsIds.put(position, true)
         }
         notifyDataSetChanged()
@@ -29,11 +30,10 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         selectedItemsIds.clear()
         notifyDataSetChanged()
     }
+
     fun hasSelectedItems(): Boolean = selectedItemsIds.size() > 0
     fun numSelectedItems(): Int = selectedItemsIds.size()
     fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
-
-
 
     /**
      * Decoration for using different backgrounds on selected items in a recycler view

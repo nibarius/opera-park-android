@@ -7,4 +7,7 @@
     <color name="colorParkedCar">#90ee90</color>
     <color name="colorEvenRow">#FFEDEDED</color>
     <color name="colorOddRow">#FFD5D5D5</color>
+
+    <color name="colorUnselectedBackground">#FFFAFAFA</color>
+    <color name="colorSelectedBackground">#FFD5D5D5</color>
 </resources>
