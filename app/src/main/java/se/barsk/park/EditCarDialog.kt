@@ -9,10 +9,12 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 
-class EditCarDialog(val ownCar: OwnCar? = null) : DialogFragment() {
+open class EditCarDialog(val ownCar: OwnCar? = null) : DialogFragment() {
     interface EditCarDialogListener {
         fun onDialogPositiveClick(newCar: OwnCar)
     }
+
+    open val dialogTitle = R.string.edit_car_dialog_title
 
     var listener: EditCarDialogListener? = null
     val dialogView: View by lazy {
@@ -40,10 +42,10 @@ class EditCarDialog(val ownCar: OwnCar? = null) : DialogFragment() {
             ownerView.setText(ownCar.owner)
         }
         builder.setView(dialogView)
-                .setTitle(R.string.edit_car_dialog_title)
+                .setTitle(dialogTitle)
                 .setNegativeButton(R.string.cancel, { _, _ -> })
                 .setPositiveButton(R.string.save, { _, _ ->
-                    val newCar = OwnCar(regNoView.text.toString(), ownerView.text.toString(), ownCar!!.nickName) //todo: improve
+                    val newCar = OwnCar(regNoView.text.toString(), ownerView.text.toString()) //todo: improve
                     listener?.onDialogPositiveClick(newCar)})
         val dialog = builder.create()
         dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)

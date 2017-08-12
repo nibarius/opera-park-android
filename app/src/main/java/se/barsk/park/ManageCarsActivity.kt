@@ -81,7 +81,7 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.manage_cars_menu_add -> consume { showEditDialog(OwnCar("", "")) }
+        R.id.manage_cars_menu_add -> consume { showAddDialog() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -135,10 +135,8 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         adapter.notifyDataSetChanged()
     }
 
-    private fun showEditDialog(ownCar: OwnCar) {
-        val dialogFragment = EditCarDialog(ownCar)
-        dialogFragment.show(supportFragmentManager, "editCar")
-    }
+    private fun showEditDialog(ownCar: OwnCar) = EditCarDialog(ownCar).show(supportFragmentManager, "editCar")
+    private fun showAddDialog() = AddCarDialog().show(supportFragmentManager, "addCar")
 
     /**
      * Consume function for the menu that consumes the item selected event by
