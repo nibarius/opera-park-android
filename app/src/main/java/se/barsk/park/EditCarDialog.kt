@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 
 class EditCarDialog(val ownCar: OwnCar? = null) : DialogFragment() {
@@ -44,6 +45,9 @@ class EditCarDialog(val ownCar: OwnCar? = null) : DialogFragment() {
                 .setPositiveButton(R.string.save, { _, _ ->
                     val newCar = OwnCar(regNoView.text.toString(), ownerView.text.toString(), ownCar!!.nickName) //todo: improve
                     listener?.onDialogPositiveClick(newCar)})
-        return builder.create()
+        val dialog = builder.create()
+        dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        return dialog
     }
 }
