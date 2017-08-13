@@ -16,7 +16,7 @@ class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEn
         LayoutInflater.from(context).inflate(R.layout.parked_car_entry, this, true)
     }
 
-    override fun showItem(car: Car) {
+    override fun showItem(car: Car, selected: Boolean) {
         car as ParkedCar
         parkTimeView.text = car.startTime.substring(11, 19) // Skip the date part
         regNoView.text = "${car.regNo} (${car.owner})"

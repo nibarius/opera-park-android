@@ -52,8 +52,6 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         manageCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         manageCarsRecyclerView.adapter = adapter
-        manageCarsRecyclerView.addItemDecoration(adapter.selectionDecorator)
-        manageCarsRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 if (actionMode != null) {

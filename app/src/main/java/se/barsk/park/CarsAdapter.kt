@@ -41,8 +41,10 @@ open class CarsAdapter(val type: Type, var cars: List<Car>, val listener: (Car) 
     override fun getItemId(position: Int): Long = cars[position].hashCode().toLong()
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder.itemView as CarListEntry).showItem(cars[position])
+        (holder.itemView as CarListEntry).showItem(cars[position], isSelected(position))
     }
+
+    open fun isSelected(position: Int): Boolean = false
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun onClick(listener: (car: Car) -> Unit) {

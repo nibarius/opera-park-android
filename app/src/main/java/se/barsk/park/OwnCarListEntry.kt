@@ -18,7 +18,7 @@ class OwnCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry
         LayoutInflater.from(context).inflate(R.layout.own_car_entry, this, true)
     }
 
-    override fun showItem(car: Car) {
+    override fun showItem(car: Car, selected: Boolean) {
         car as OwnCar
         regNoView.text = car.regNo
         if (car.parked) {

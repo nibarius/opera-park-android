@@ -12,9 +12,6 @@ import android.view.View
 class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         CarsAdapter(Type.MANAGE_CARS, cars, listener) {
 
-    //Todo: use an "image" (regno?) as icon in the list, icon change to checkmark when selected. Different colors depending on different regno
-    val selectionDecorator: RecyclerView.ItemDecoration = SelectionItemDecoration(
-            R.color.colorUnselectedBackground, R.color.colorSelectedBackground)
     var selectedItemsIds = SparseBooleanArray()
 
     fun toggleSelection(position: Int) {
@@ -23,7 +20,8 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         } else {
             selectedItemsIds.put(position, true)
         }
-        notifyDataSetChanged()
+
+        notifyItemChanged(position)
     }
 
     fun clearSelection() {
@@ -33,18 +31,5 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
 
     fun hasSelectedItems(): Boolean = selectedItemsIds.size() > 0
     fun numSelectedItems(): Int = selectedItemsIds.size()
-    fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
-
-    /**
-     * Decoration for using different backgrounds on selected items in a recycler view
-     */
-    inner class SelectionItemDecoration(@DrawableRes val unselectedBackground: Int, @DrawableRes val selectedBackground: Int) : RecyclerView.ItemDecoration() {
-
-        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-            super.getItemOffsets(outRect, view, parent, state)
-            val position = parent.getChildAdapterPosition(view)
-            val selected = this@SelectableCarsAdapter.isSelected(position)
-            view.setBackgroundResource(if (selected) selectedBackground else unselectedBackground)
-        }
-    }
+    override fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
 }

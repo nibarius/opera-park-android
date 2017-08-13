@@ -10,4 +10,22 @@
 
     <color name="colorUnselectedBackground">#FFFAFAFA</color>
     <color name="colorSelectedBackground">#FFD5D5D5</color>
+    <color name="colorAvatarTextColor">#ffffffff</color>
+
+
+    <array name="avatar_background_color">
+        <item>#e53935</item>
+        <item>#E91E63</item>
+        <item>#9C27B0</item>
+        <item>#673AB7</item>
+        <item>#3F51B5</item>
+        <item>#039BE5</item>
+        <item>#0097A7</item>
+        <item>#009688</item>
+        <item>#689F38</item>
+        <item>#EF6C00</item>
+        <item>#FF5722</item>
+        <item>#757575</item>
+    </array>
+
 </resources>
