@@ -1,6 +1,7 @@
 package se.barsk.park
 
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
 import android.support.v7.widget.DefaultItemAnimator
@@ -55,14 +56,20 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
                 if (actionMode != null) {
-                    // Only react to normal clicks in action mode
+                    // Select item in action mode
                     onListItemSelect(position)
+                } else {
+                    // Edit item when not in action mode
+                    showEditDialog(carCollection.ownCars[position])
                 }
             }
 
             override fun onLongClick(view: View, position: Int) = onListItemSelect(position)
         })
         manageCarsRecyclerView.addOnItemTouchListener(touchListener)
+
+        val fab = findViewById(R.id.manage_cards_fab) as FloatingActionButton
+        fab.setOnClickListener { _ -> showAddDialog() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,7 +79,8 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.manage_cars_menu_add -> consume { showAddDialog() }
+        R.id.manage_cars_menu_manage_mode -> consume { startActionModeWithoutSelection() }
+        R.id.manage_cars_menu_select_all -> consume { selectAllItems() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -81,7 +89,7 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         adapter.toggleSelection(position)
         if (adapter.hasSelectedItems() && actionMode == null) {
             // there are some selected items but no action mode, start the actionMode
-            actionMode = (this as AppCompatActivity).startSupportActionMode(ActionModeCallback())
+            startActionMode()
         } else if (!adapter.hasSelectedItems()) {
             // there no selected items, finish the actionMode
             finishActionMode()
@@ -93,6 +101,18 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         actionMode?.title = adapter.numSelectedItems().toString()
     }
 
+    private fun selectAllItems() {
+        adapter.selectAll()
+        startActionMode()
+        adapter.notifyDataSetChanged()
+        actionMode?.title = adapter.numSelectedItems().toString()
+    }
+
+    private fun startActionModeWithoutSelection() {
+        startActionMode()
+        actionMode?.title = getString(R.string.select_cars)
+    }
+
     private fun deleteSelectedItems() {
         val selected = adapter.selectedItemsIds
         for (i in selected.size() - 1 downTo 0) {
@@ -102,6 +122,10 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         finishActionMode()
         adapter.cars = carCollection.ownCars.toList()
         adapter.notifyDataSetChanged()
+    }
+
+    private fun startActionMode() {
+        actionMode = (this as AppCompatActivity).startSupportActionMode(ActionModeCallback())
     }
 
     private fun finishActionMode() {
@@ -128,9 +152,6 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     inner class ActionModeCallback : ActionMode.Callback {
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean = when (item.itemId) {
             R.id.item_delete -> consume { deleteSelectedItems() }
-            R.id.item_edit -> consume {
-                showEditDialog(carCollection.ownCars[adapter.selectedItemsIds.keyAt(0)])
-            }
             R.id.item_share -> consume { print(3) }//share item
             else -> true
         }
@@ -141,10 +162,10 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         }
 
         override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            val item = menu?.findItem(R.id.item_edit)
-            if (item != null) {
-                item.isEnabled = adapter.numSelectedItems() == 1
-                item.isVisible = adapter.numSelectedItems() == 1
+            val delete = menu?.findItem(R.id.item_delete)
+            if (delete != null) {
+                delete.isEnabled = adapter.numSelectedItems() > 0
+                delete.isVisible = adapter.numSelectedItems() > 0
             }
             return true
         }
@@ -153,5 +174,6 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
             adapter.clearSelection()
             actionMode = null
         }
+
     }
 }

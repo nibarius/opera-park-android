@@ -31,7 +31,7 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
         if (selected) {
             avatarTextView.visibility = GONE
             avatarCheckView.visibility = VISIBLE
-            color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
+            color = ContextCompat.getColor(context, R.color.colorPrimary)
         } else {
             avatarTextView.visibility = VISIBLE
             avatarTextView.text = car.regNo.substring(0,1)
@@ -45,12 +45,8 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
     private fun setAvatarColor(color: Int) {
         val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-        val pl = avatarFrame.paddingLeft
-        val pt = avatarFrame.paddingTop
-        val pr = avatarFrame.paddingRight
-        val pb = avatarFrame.paddingBottom
         avatarFrame.background = drawable
-        avatarFrame.setPadding(pl, pt, pr, pb) // setting background resets padding, restore it
+        avatarFrame.setPadding(0, 0, 0, 0) // setting background resets padding, remove it again
     }
 
 }

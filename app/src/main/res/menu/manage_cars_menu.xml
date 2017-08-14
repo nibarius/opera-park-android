@@ -3,9 +3,13 @@
       xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/manage_cars_menu_add"
-        android:title="@string/add_car"
+        android:id="@+id/manage_cars_menu_manage_mode"
         android:icon="@android:drawable/ic_menu_add"
-        app:showAsAction="ifRoom|withText"
-        />
+        android:title="@string/manage_mode"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/manage_cars_menu_select_all"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/select_all"
+        app:showAsAction="never" />
 </menu>

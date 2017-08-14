@@ -24,6 +24,12 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         notifyItemChanged(position)
     }
 
+    fun selectAll() {
+        for (i in 0 .. itemCount) {
+            selectedItemsIds.put(i, true)
+        }
+    }
+
     fun clearSelection() {
         selectedItemsIds.clear()
         notifyDataSetChanged()
