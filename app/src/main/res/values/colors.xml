@@ -10,7 +10,7 @@
 
     <color name="colorUnselectedBackground">#FFFAFAFA</color>
     <color name="colorSelectedBackground">#FFD5D5D5</color>
-    <color name="colorAvatarTextColor">#ffffffff</color>
+    <color name="colorAvatarTextColor">#b3ffffff</color>
 
 
     <array name="avatar_background_color">

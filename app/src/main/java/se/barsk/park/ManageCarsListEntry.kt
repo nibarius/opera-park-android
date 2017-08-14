@@ -45,7 +45,12 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
     private fun setAvatarColor(color: Int) {
         val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+        val pl = avatarFrame.paddingLeft
+        val pt = avatarFrame.paddingTop
+        val pr = avatarFrame.paddingRight
+        val pb = avatarFrame.paddingBottom
         avatarFrame.background = drawable
+        avatarFrame.setPadding(pl, pt, pr, pb) // setting background resets padding, restore it
     }
 
 }
