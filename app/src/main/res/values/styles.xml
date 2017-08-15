@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_close_24dp</item>
+        <item name="actionModeStyle">@style/MyActionMode</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -16,5 +18,19 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/colorCabBackground</item>
+        <item name="titleTextStyle">@style/MyActionModeTitleStyle</item>
+        <item name="subtitleTextStyle">@style/MyActionModeSubtitleStyle</item>
+    </style>
+
+    <style name="MyActionModeTitleStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@color/colorPrimaryDarkText</item>
+    </style>
+
+    <style name="MyActionModeSubtitleStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
+        <item name="android:textColor">@color/colorPrimaryDarkText</item>
+    </style>
 
 </resources>
