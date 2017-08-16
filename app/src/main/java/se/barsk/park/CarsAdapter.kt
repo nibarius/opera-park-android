@@ -3,10 +3,6 @@ package se.barsk.park
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.util.SparseBooleanArray
-
-
-
 
 
 /**
@@ -16,8 +12,15 @@ open class CarsAdapter(val type: Type, var cars: List<Car>, val listener: (Car) 
 
     enum class Type {PARKED_CARS, OWN_CARS, MANAGE_CARS }
 
+    var recyclerView: RecyclerView? = null
+
     init {
         setHasStableIds(true)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

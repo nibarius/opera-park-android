@@ -1,10 +1,6 @@
 package se.barsk.park
 
-import android.graphics.Rect
-import android.support.annotation.DrawableRes
-import android.support.v7.widget.RecyclerView
 import android.util.SparseBooleanArray
-import android.view.View
 
 /**
  * Adapter for a selectable list of cars
@@ -15,24 +11,42 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
     var selectedItemsIds = SparseBooleanArray()
 
     fun toggleSelection(position: Int) {
-        if (selectedItemsIds[position, false]) {
+        if (isSelected(position)) {
             selectedItemsIds.delete(position)
         } else {
             selectedItemsIds.put(position, true)
         }
 
-        notifyItemChanged(position)
+        updateViewLayout(position)
     }
 
     fun selectAll() {
-        for (i in 0 .. itemCount) {
+        for (i in 0..itemCount - 1) {
             selectedItemsIds.put(i, true)
+            updateViewLayout(i)
         }
     }
 
     fun clearSelection() {
         selectedItemsIds.clear()
-        notifyDataSetChanged()
+        for (i in 0..itemCount - 1) {
+            updateViewLayout(i)
+        }
+    }
+
+    /**
+     * Updates the layout of the item located at the given position based on the selection state
+     */
+    private fun updateViewLayout(position: Int) {
+        val entry = recyclerView?.findViewHolderForAdapterPosition(position)?.itemView
+        if (entry != null) {
+            entry as ManageCarsListEntry
+            if (isSelected(position)) {
+                entry.select()
+            } else {
+                entry.deselect()
+            }
+        }
     }
 
     fun hasSelectedItems(): Boolean = selectedItemsIds.size() > 0

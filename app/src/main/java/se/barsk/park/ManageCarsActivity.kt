@@ -103,7 +103,6 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     private fun selectAllItems() {
         adapter.selectAll()
         startActionMode()
-        adapter.notifyDataSetChanged()
         actionMode?.title = adapter.numSelectedItems().toString()
     }
 
