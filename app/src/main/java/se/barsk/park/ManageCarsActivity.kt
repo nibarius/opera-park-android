@@ -44,6 +44,9 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById(R.id.manage_cars_recyclerview) as RecyclerView
     }
+    private val fab: FloatingActionButton by lazy {
+        findViewById(R.id.manage_cards_fab) as FloatingActionButton
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +70,6 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         })
         manageCarsRecyclerView.addOnItemTouchListener(touchListener)
 
-        val fab = findViewById(R.id.manage_cards_fab) as FloatingActionButton
         fab.setOnClickListener { _ -> showAddDialog() }
     }
 
@@ -129,7 +131,6 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     private fun finishActionMode() {
         actionMode?.finish()
         actionMode = null
-        adapter.clearSelection()
     }
 
     private fun showEditDialog(ownCar: OwnCar) = EditCarDialog(ownCar).show(supportFragmentManager, "editCar")
@@ -156,6 +157,7 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
 
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             menuInflater.inflate(R.menu.manage_cars_context_menu, menu)
+            fab.hide()
             return true
         }
 
@@ -171,6 +173,7 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
         override fun onDestroyActionMode(mode: ActionMode?) {
             adapter.clearSelection()
             actionMode = null
+            fab.show()
         }
 
     }
