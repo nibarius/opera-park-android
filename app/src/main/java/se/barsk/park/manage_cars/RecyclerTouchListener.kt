@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.manage_cars
 
 import android.view.MotionEvent
 import android.support.v7.widget.RecyclerView

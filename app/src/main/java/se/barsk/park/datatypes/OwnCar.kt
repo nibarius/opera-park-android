@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.datatypes
 
 /**
  * A representation of the users own car

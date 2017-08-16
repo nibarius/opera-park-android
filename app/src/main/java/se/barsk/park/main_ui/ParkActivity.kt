@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.main_ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import java.nio.channels.NonReadableChannelException
+import se.barsk.park.R
+import se.barsk.park.consume
+import se.barsk.park.datatypes.*
+import se.barsk.park.manage_cars.ManageCarsActivity
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
@@ -133,7 +136,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
 
     private fun updateListOfOwnCars() {
         ownCarsRecyclerView.swapAdapter(
-                CarsAdapter(CarsAdapter.Type.OWN_CARS,carCollection.ownCars, this::onOwnCarClicked), false)
+                CarsAdapter(CarsAdapter.Type.OWN_CARS, carCollection.ownCars, this::onOwnCarClicked), false)
     }
 
 }

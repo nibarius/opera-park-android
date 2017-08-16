@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.main_ui
 
 import android.graphics.Rect
 import android.support.annotation.DrawableRes

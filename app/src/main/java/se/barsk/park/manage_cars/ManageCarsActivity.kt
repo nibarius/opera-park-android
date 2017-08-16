@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.manage_cars
 
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -11,6 +11,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import se.barsk.park.*
+import se.barsk.park.datatypes.CarCollection
+import se.barsk.park.datatypes.OwnCar
 
 
 class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListener {

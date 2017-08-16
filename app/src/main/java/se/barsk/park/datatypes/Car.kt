@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.datatypes
 
 /**
  * Representation of a car with a registration number and an owner.

@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.network
 
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.core.Json
@@ -6,6 +6,8 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
+import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.datatypes.ParkedCar
 
 /**
  * The network manager is used to make requests to the parking server.
@@ -56,12 +58,12 @@ object NetworkManager {
         val parameters: MutableList<Pair<String, Any?>> = mutableListOf()
         parameters.add(Pair("regno", ownCar.regNo))
         when (action) {
-            NetworkManager.Action.PARK -> {
+            Action.PARK -> {
                 errorMessage = "Failed to park " + ownCar.regNo
                 url = BASE_URL + PARK
                 parameters.add(Pair("user", ownCar.owner))
             }
-            NetworkManager.Action.UNPARK -> {
+            Action.UNPARK -> {
                 errorMessage = "Failed to unpark " + ownCar.regNo
                 url = BASE_URL + UNPARK
             }

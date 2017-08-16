@@ -1,10 +1,13 @@
-package se.barsk.park
+package se.barsk.park.main_ui
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import android.widget.TextView
+import se.barsk.park.R
+import se.barsk.park.datatypes.Car
+import se.barsk.park.datatypes.OwnCar
 
 /**
  * One entry in the list of own parked cars

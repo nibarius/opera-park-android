@@ -1,4 +1,6 @@
-package se.barsk.park
+package se.barsk.park.manage_cars
+
+import se.barsk.park.R
 
 class AddCarDialog : EditCarDialog() {
     override val dialogTitle: Int

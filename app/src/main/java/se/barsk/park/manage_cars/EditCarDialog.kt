@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.manage_cars
 
 import android.app.Dialog
 import android.content.Context
@@ -11,6 +11,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
+import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.R
 
 open class EditCarDialog(val ownCar: OwnCar? = null) : DialogFragment() {
     interface EditCarDialogListener {

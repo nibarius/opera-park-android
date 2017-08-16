@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.manage_cars
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -8,6 +8,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import se.barsk.park.datatypes.Car
+import se.barsk.park.main_ui.CarListEntry
+import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.R
 
 
 /**

@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.datatypes
 
 /**
  * Listener interface for changes to the garage status.

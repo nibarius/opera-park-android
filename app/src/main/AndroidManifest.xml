@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ParkActivity"
+            android:name=".main_ui.ParkActivity"
             android:label="@string/title_activity_park"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,8 +21,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ManageCarsActivity"
-            android:parentActivityName=".ParkActivity"
+            android:name=".manage_cars.ManageCarsActivity"
+            android:parentActivityName=".main_ui.ParkActivity"
             android:label="Manage cars"/>
     </application>
 

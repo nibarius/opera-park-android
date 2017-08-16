@@ -1,4 +1,4 @@
-package se.barsk.park
+package se.barsk.park.datatypes
 
 /**
  * A collection of all the cars the user owns.

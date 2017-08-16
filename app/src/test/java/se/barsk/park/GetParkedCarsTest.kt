@@ -3,6 +3,8 @@ package se.barsk.park
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.network.NetworkManager
 
 /**
  * Tests for getting parked cars

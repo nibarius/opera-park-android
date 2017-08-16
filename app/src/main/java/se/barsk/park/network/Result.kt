@@ -1,4 +1,6 @@
-package se.barsk.park
+package se.barsk.park.network
+
+import se.barsk.park.datatypes.ParkedCar
 
 /**
  * The result of an attempt to communicate with the park server

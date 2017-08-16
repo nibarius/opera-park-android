@@ -2,6 +2,9 @@ package se.barsk.park
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import se.barsk.park.datatypes.Garage
+import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.datatypes.ParkedCar
 
 /**
  * Tests for the garage

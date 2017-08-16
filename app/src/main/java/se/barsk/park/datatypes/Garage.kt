@@ -1,5 +1,7 @@
-package se.barsk.park
+package se.barsk.park.datatypes
 
+import se.barsk.park.network.NetworkManager
+import se.barsk.park.network.Result
 import kotlin.properties.Delegates
 
 /**
