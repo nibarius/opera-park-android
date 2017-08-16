@@ -137,21 +137,12 @@ class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListe
     private fun showAddDialog() = AddCarDialog().show(supportFragmentManager, "addCar")
 
     /**
-     * Consume function for the menu that consumes the item selected event by
-     * running the given function and returning true
-     */
-    inline fun consume(f: () -> Unit): Boolean {
-        f()
-        return true
-    }
-
-    /**
      * Listener for events related to the CAB.
      */
     inner class ActionModeCallback : ActionMode.Callback {
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean = when (item.itemId) {
             R.id.item_delete -> consume { deleteSelectedItems() }
-            R.id.item_share -> consume { print(3) }//share item
+            R.id.item_share -> consume { TODO("Implement share feature") }//share item
             else -> true
         }
 

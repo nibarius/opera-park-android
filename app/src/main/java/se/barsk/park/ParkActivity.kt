@@ -97,15 +97,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         else -> super.onOptionsItemSelected(item)
     }
 
-    /**
-     * Consume function for the menu that consumes the item selected event by
-     * running the given function and returning true
-     */
-    inline fun consume(f: () -> Unit): Boolean {
-        f()
-        return true
-    }
-
     private fun navigateToManageCars() {
         intent = Intent(this, ManageCarsActivity::class.java)
         startActivity(intent)
