@@ -11,9 +11,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
-import se.barsk.park.*
-import se.barsk.park.datatypes.CarCollection
+import se.barsk.park.R
+import se.barsk.park.consume
 import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.storage.StorageManager
 
 
 class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener {
@@ -22,28 +23,20 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
         when (dialogType) {
             ManageCarDialog.DialogType.EDIT -> {
+                carCollection.updateCar(newCar)
                 finishActionMode()
             }
             ManageCarDialog.DialogType.ADD -> {
-                carCollection.ownCars.add(newCar)
+                carCollection.addCar(newCar)
             }
         }
         adapter.cars = carCollection.ownCars.toList()
         adapter.notifyDataSetChanged()
     }
 
-    private val carCollection = CarCollection(mutableListOf(
-            OwnCar("AAA 111", "car1", "volvo"),
-            OwnCar("BBB 222", "car2", "tesla"),
-            OwnCar("BBB 223", "car3"),
-            OwnCar("BBB 224", "car4"),
-            OwnCar("BBB 225", "car5"),
-            OwnCar("BBB 226", "car6")
-    ))
-
+    private val carCollection = StorageManager.fetchCarCollection()
     private var actionMode: ActionMode? = null
     private val adapter = SelectableCarsAdapter(carCollection.ownCars.toList(), {})
-
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById(R.id.manage_cars_recyclerview) as RecyclerView
     }
@@ -120,11 +113,11 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         val selected = adapter.selectedItemsIds
         for (i in selected.size() - 1 downTo 0) {
             val itemToDelete = selected.keyAt(i)
-            carCollection.ownCars.removeAt(itemToDelete)
+            carCollection.removeCarAt(itemToDelete)
         }
-        finishActionMode()
         adapter.cars = carCollection.ownCars.toList()
         adapter.notifyDataSetChanged()
+        finishActionMode()
     }
 
     private fun startActionMode() {

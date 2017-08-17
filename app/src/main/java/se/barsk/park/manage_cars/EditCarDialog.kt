@@ -3,7 +3,7 @@ package se.barsk.park.manage_cars
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
-class EditCarDialog(ownCar: OwnCar? = null) : ManageCarDialog(ownCar!!) {
+class EditCarDialog(ownCar: OwnCar? = null) : ManageCarDialog(ownCar!!) { //Todo: don't pass arguments in the constructor (read from persistent storage?)
     override val dialogTitle: Int
         get() = R.string.edit_car_dialog_title
 

@@ -59,9 +59,13 @@ abstract class ManageCarDialog(val ownCar: OwnCar) : DialogFragment() {
                 .setTitle(dialogTitle)
                 .setNegativeButton(R.string.cancel, { _, _ -> })
                 .setPositiveButton(R.string.save, { _, _ ->
-                    ownCar.regNo = regNoView.text.toString().trim()
-                    ownCar.owner = ownerView.text.toString().trim()
-                    listener?.onDialogPositiveClick(ownCar, dialogType)
+                    val newCar = OwnCar(
+                            regNoView.text.toString().trim(),
+                            ownerView.text.toString().trim(),
+                            ownCar.nickName,
+                            ownCar.id
+                    )
+                    listener?.onDialogPositiveClick(newCar, dialogType)
                 })
         val dialog = builder.create()
         dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)

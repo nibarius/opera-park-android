@@ -14,6 +14,7 @@ import se.barsk.park.R
 import se.barsk.park.consume
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
+import se.barsk.park.storage.StorageManager
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
@@ -60,6 +61,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        StorageManager.init(applicationContext)
         setContentView(R.layout.activity_park)
         val toolbar = findViewById(R.id.toolbar) as Toolbar?
         setSupportActionBar(toolbar)
@@ -104,7 +106,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         intent = Intent(this, ManageCarsActivity::class.java)
         startActivity(intent)
     }
-
 
 
     private fun onOwnCarClicked(car: Car) {
