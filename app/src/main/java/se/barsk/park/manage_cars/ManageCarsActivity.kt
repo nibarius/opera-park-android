@@ -16,17 +16,17 @@ import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.OwnCar
 
 
-class ManageCarsActivity : AppCompatActivity(), EditCarDialog.EditCarDialogListener {
+class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener {
 
     // Called when the user clicks Save in the add/edit car dialog
-    override fun onDialogPositiveClick(newCar: OwnCar) {
-        if (adapter.hasSelectedItems()) {
-            // User edits a car
-            carCollection.ownCars[adapter.selectedItemsIds.keyAt(0)] = newCar
-            finishActionMode()
-        } else {
-            // User adds a new car
-            carCollection.ownCars.add(newCar)
+    override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
+        when (dialogType) {
+            ManageCarDialog.DialogType.EDIT -> {
+                finishActionMode()
+            }
+            ManageCarDialog.DialogType.ADD -> {
+                carCollection.ownCars.add(newCar)
+            }
         }
         adapter.cars = carCollection.ownCars.toList()
         adapter.notifyDataSetChanged()
