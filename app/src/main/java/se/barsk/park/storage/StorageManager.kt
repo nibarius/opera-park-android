@@ -3,13 +3,12 @@ package se.barsk.park.storage
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.isTesting
 
 
 object StorageManager {
-    private var dbHelper: ParkDbHelper? = null
+    private lateinit var dbHelper: ParkDbHelper
 
     fun init(context: Context) {
         dbHelper = ParkDbHelper(context)
@@ -28,7 +27,7 @@ object StorageManager {
         )
         val sortOrder = ParkContract.CarCollectionTable.COLUMN_NAME_POSITION + " ASC"
 
-        val db = dbHelper!!.readableDatabase
+        val db = dbHelper.readableDatabase
         val cursor = db.query(
                 ParkContract.CarCollectionTable.TABLE_NAME,
                 projection,
@@ -54,7 +53,7 @@ object StorageManager {
     }
 
     fun insertOrReplace(ownCar: OwnCar, position: Int) {
-        val db = dbHelper!!.writableDatabase
+        val db = dbHelper.writableDatabase
         val values = ContentValues()
         values.put(ParkContract.CarCollectionTable.COLUMN_NAME_POSITION, position)
         values.put(ParkContract.CarCollectionTable.COLUMN_NAME_REGNO, ownCar.regNo)
@@ -70,7 +69,7 @@ object StorageManager {
     }
 
     fun remove(ownCar: OwnCar) {
-        val db = dbHelper!!.writableDatabase
+        val db = dbHelper.writableDatabase
         db.delete(
                 ParkContract.CarCollectionTable.TABLE_NAME,
                 "${ParkContract.CarCollectionTable.COLUMN_NAME_UUID} = ?",
