@@ -8,7 +8,6 @@ import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 
 class CarCollectionTest {
-
     val fullGarage = Garage(listOf(
             ParkedCar("zzz999", "owner", "1 hour ago"),
             ParkedCar("yyy888", "owner2", "1 hour ago"),
@@ -18,74 +17,77 @@ class CarCollectionTest {
             ParkedCar("uuu444", "owner6", "1 hour ago")))
 
     @Test
+    fun testTestDetection() {
+        assertEquals(true, isTesting())
+    }
+
+    @Test
     fun testEmptyCarCollection() {
-        val cars = CarCollection()
-        assertEquals(true, cars.ownCars.isEmpty())
+        CarCollection.replaceContent(mutableListOf())
+        assertEquals(true, CarCollection.getCars().isEmpty())
     }
 
     @Test
     fun testUpdateStatusEmptyCollection() {
-        val cars = CarCollection()
-        assertEquals(false, cars.updateParkStatus(fullGarage))
+        CarCollection.replaceContent(mutableListOf())
+        assertEquals(false, CarCollection.updateParkStatus(fullGarage))
     }
 
     @Test
     fun testUpdateStatusNoParkedCar() {
-        val cars = CarCollection(mutableListOf(OwnCar("abc123", "me")))
-        assertEquals(false, cars.updateParkStatus(fullGarage))
+        CarCollection.replaceContent(mutableListOf(OwnCar("abc123", "me")))
+        assertEquals(false, CarCollection.updateParkStatus(fullGarage))
     }
 
     @Test
     fun testUpdateStatusCarIsParked() {
-        val cars = CarCollection(mutableListOf(OwnCar("uuu444", "me")))
-        assertEquals(true, cars.updateParkStatus(fullGarage))
-        assertEquals(true, cars.ownCars[0].parked)
+        CarCollection.replaceContent(mutableListOf(OwnCar("uuu444", "me")))
+        assertEquals(true, CarCollection.updateParkStatus(fullGarage))
+        assertEquals(true, CarCollection.getCars()[0].parked)
     }
 
     @Test
     fun testUpdateStatusCarIsStillParked() {
-        val cars = CarCollection(mutableListOf(OwnCar("uuu444", "me")))
-        cars.updateParkStatus(fullGarage)
-        assertEquals(false, cars.updateParkStatus(fullGarage))
-        assertEquals(true, cars.ownCars[0].parked)
+        CarCollection.replaceContent(mutableListOf(OwnCar("uuu444", "me")))
+        CarCollection.updateParkStatus(fullGarage)
+        assertEquals(false, CarCollection.updateParkStatus(fullGarage))
+        assertEquals(true, CarCollection.getCars()[0].parked)
     }
 
     @Test
     fun testUpdateStatusCarIsNoLongerParked() {
-        val cars = CarCollection(mutableListOf(OwnCar("uuu444", "me")))
-        cars.updateParkStatus(fullGarage)
-        assertEquals(true, cars.updateParkStatus(Garage()))
-        assertEquals(false, cars.ownCars[0].parked)
+        CarCollection.replaceContent(mutableListOf(OwnCar("uuu444", "me")))
+        CarCollection.updateParkStatus(fullGarage)
+        assertEquals(true, CarCollection.updateParkStatus(Garage()))
+        assertEquals(false, CarCollection.getCars()[0].parked)
     }
 
     @Test
     fun testPositionOfOneCar() {
         val car = OwnCar("uuu444", "me", id = "my_uuid")
-        val cars = CarCollection(mutableListOf(car))
-        assertEquals(0, cars.positionOf(car))
+        CarCollection.replaceContent(mutableListOf(car))
+        assertEquals(0, CarCollection.positionOf(car))
     }
 
     @Test
     fun testPositionOfFirstCar() {
         val car1 = OwnCar("uuu444", "me", id = "my_uuid")
         val car2 = OwnCar("uuu444", "me")
-        val cars = CarCollection(mutableListOf(car1, car2))
-        assertEquals(0, cars.positionOf(car1))
+        CarCollection.replaceContent(mutableListOf(car1, car2))
+        assertEquals(0, CarCollection.positionOf(car1))
     }
 
     @Test
     fun testPositionOfLastCar() {
         val car1 = OwnCar("uuu444", "me")
         val car2 = OwnCar("uuu444", "me", id = "my_uuid")
-        val cars = CarCollection(mutableListOf(car1, car2))
-        assertEquals(1, cars.positionOf(car2))
+        CarCollection.replaceContent(mutableListOf(car1, car2))
+        assertEquals(1, CarCollection.positionOf(car2))
     }
 
     @Test(expected = RuntimeException::class)
     fun testPositionOfDoesNotExsit() {
-        val cars = CarCollection()
-        cars.positionOf(OwnCar("uuu444", "me"))
+        CarCollection.replaceContent(mutableListOf())
+        CarCollection.positionOf(OwnCar("uuu444", "me"))
     }
-
-
 }

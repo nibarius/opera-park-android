@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.isTesting
 
 
 object StorageManager {
@@ -15,6 +16,10 @@ object StorageManager {
     }
 
     fun fetchAllCars(): MutableList<OwnCar> {
+        if (isTesting()) {
+            return mutableListOf()
+        }
+
         val projection: Array<String> = arrayOf(
                 ParkContract.CarCollectionTable.COLUMN_NAME_REGNO,
                 ParkContract.CarCollectionTable.COLUMN_NAME_OWNER,

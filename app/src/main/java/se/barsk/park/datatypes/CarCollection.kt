@@ -1,5 +1,6 @@
 package se.barsk.park.datatypes
 
+import se.barsk.park.isTesting
 import se.barsk.park.storage.StorageManager
 
 /**
@@ -91,5 +92,17 @@ object CarCollection {
      */
     fun getCars(): List<OwnCar> {
         return ownCars.toList()
+    }
+
+    /**
+     * Method inteded to only be run by unit tests. Replaces the entire content
+     * of the car collection with the given list of cars. Used to bypass persistent
+     * storage
+     */
+    fun replaceContent(newCars: MutableList<OwnCar>) {
+        if (isTesting()) {
+            ownCars.clear()
+            ownCars.addAll(newCars)
+        }
     }
 }
