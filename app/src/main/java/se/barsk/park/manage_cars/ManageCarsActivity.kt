@@ -13,8 +13,8 @@ import android.view.View
 import android.widget.LinearLayout
 import se.barsk.park.R
 import se.barsk.park.consume
+import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.storage.StorageManager
 
 
 class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener {
@@ -23,20 +23,19 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
         when (dialogType) {
             ManageCarDialog.DialogType.EDIT -> {
-                carCollection.updateCar(newCar)
+                CarCollection.updateCar(newCar)
                 finishActionMode()
             }
             ManageCarDialog.DialogType.ADD -> {
-                carCollection.addCar(newCar)
+                CarCollection.addCar(newCar)
             }
         }
-        adapter.cars = carCollection.ownCars.toList()
+        adapter.cars = CarCollection.getCars()
         adapter.notifyDataSetChanged()
     }
 
-    private val carCollection = StorageManager.fetchCarCollection()
     private var actionMode: ActionMode? = null
-    private val adapter = SelectableCarsAdapter(carCollection.ownCars.toList(), {})
+    private val adapter = SelectableCarsAdapter(CarCollection.getCars(), {})
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById(R.id.manage_cars_recyclerview) as RecyclerView
     }
@@ -58,7 +57,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
                     onListItemSelect(position)
                 } else {
                     // Edit item when not in action mode
-                    showEditDialog(carCollection.ownCars[position])
+                    showEditDialog(CarCollection.getCarId(position))
                 }
             }
 
@@ -113,9 +112,9 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         val selected = adapter.selectedItemsIds
         for (i in selected.size() - 1 downTo 0) {
             val itemToDelete = selected.keyAt(i)
-            carCollection.removeCarAt(itemToDelete)
+            CarCollection.removeCarAt(itemToDelete)
         }
-        adapter.cars = carCollection.ownCars.toList()
+        adapter.cars = CarCollection.getCars()
         adapter.notifyDataSetChanged()
         finishActionMode()
     }
@@ -129,8 +128,12 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         actionMode = null
     }
 
-    private fun showEditDialog(ownCar: OwnCar) = EditCarDialog(ownCar).show(supportFragmentManager, "editCar")
-    private fun showAddDialog() = AddCarDialog().show(supportFragmentManager, "addCar")
+    private fun showEditDialog(carId: String) {
+        EditCarDialog.newInstance(carId).show(supportFragmentManager, "editCar")
+    }
+    private fun showAddDialog() {
+        AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
+    }
 
     /**
      * Listener for events related to the CAB.

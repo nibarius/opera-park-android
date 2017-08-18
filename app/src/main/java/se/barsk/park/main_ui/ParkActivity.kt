@@ -21,7 +21,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     override fun onGarageStatusChange() {
         updateStatusLabel(operaGarage.spotsFree)
         updateListOfParkedCars()
-        val parkStatusChanged = carCollection.updateParkStatus(operaGarage)
+        val parkStatusChanged = CarCollection.updateParkStatus(operaGarage)
         if (parkStatusChanged) {
             updateListOfOwnCars()
         }
@@ -31,7 +31,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null).show()
     }
 
-    val carCollection: CarCollection = CarCollection()
     val operaGarage: Garage = Garage()
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById(R.id.parked_cars_recycler_view) as RecyclerView
@@ -71,16 +70,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         val decorator = AlternatingColorItemDecoration(R.color.colorOddRow, R.color.colorEvenRow)
         parkedCarsRecyclerView.addItemDecoration(decorator)
 
-        carCollection.ownCars.add(OwnCar("JAA477", "barsk", "volvo"))
-        carCollection.ownCars.add(OwnCar("BBB 222", "car2", "tesla"))
-        carCollection.ownCars.add(OwnCar("BBB 223", "car3"))
-        carCollection.ownCars.add(OwnCar("BBB 224", "car4"))
-        carCollection.ownCars.add(OwnCar("BBB 225", "car5"))
-        carCollection.ownCars.add(OwnCar("BBB 226", "car6"))
         ownCarsRecyclerView.layoutManager = layoutManager2
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
-                carCollection.ownCars.toList(), this::onOwnCarClicked)
+                CarCollection.getCars(), this::onOwnCarClicked)
         ownCarsRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
 
         operaGarage.addListener(this)
@@ -137,7 +130,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
 
     private fun updateListOfOwnCars() {
         ownCarsRecyclerView.swapAdapter(
-                CarsAdapter(CarsAdapter.Type.OWN_CARS, carCollection.ownCars, this::onOwnCarClicked), false)
+                CarsAdapter(CarsAdapter.Type.OWN_CARS, CarCollection.getCars(), this::onOwnCarClicked), false)
     }
 
 }

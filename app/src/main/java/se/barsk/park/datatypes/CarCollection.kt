@@ -3,9 +3,13 @@ package se.barsk.park.datatypes
 import se.barsk.park.storage.StorageManager
 
 /**
- * A collection of all the cars the user owns.
+ * A collection of all the cars the user owns. On initialization it reads
+ * cars from local storage and any changes done are saved to local storage
+ * as they happen.
  */
-class CarCollection(val ownCars: MutableList<OwnCar> = mutableListOf()) {
+object CarCollection {
+    private val ownCars: MutableList<OwnCar> = StorageManager.fetchAllCars()
+
     /**
      * Update the parking status for all the cars in the car collection
      * @param garage The Garage to check the parking status against
@@ -56,11 +60,36 @@ class CarCollection(val ownCars: MutableList<OwnCar> = mutableListOf()) {
     }
 
     fun positionOf(car: OwnCar): Int {
+        return positionOf(car.id)
+    }
+
+    fun positionOf(carId: String): Int {
         for ((index, ownCar) in ownCars.withIndex()) {
-            if (car.id == ownCar.id) {
+            if (carId == ownCar.id) {
                 return index
             }
         }
-        throw RuntimeException("$car does not exist in the CarCollection")
+        throw RuntimeException("A car with id $carId does not exist in the CarCollection")
+    }
+
+    /**
+     * Returns the car with the given id
+     */
+    fun getCar(id: String): OwnCar {
+        return ownCars[positionOf(id)]
+    }
+
+    /**
+     * Returns the id for the car at the given position
+     */
+    fun getCarId(position: Int): String {
+        return ownCars[position].id
+    }
+
+    /**
+     * Returns a list of all the cars in the collection.
+     */
+    fun getCars(): List<OwnCar> {
+        return ownCars.toList()
     }
 }

@@ -14,7 +14,7 @@ object StorageManager {
         dbHelper = ParkDbHelper(context)
     }
 
-    fun fetchCarCollection(): CarCollection {
+    fun fetchAllCars(): MutableList<OwnCar> {
         val projection: Array<String> = arrayOf(
                 ParkContract.CarCollectionTable.COLUMN_NAME_REGNO,
                 ParkContract.CarCollectionTable.COLUMN_NAME_OWNER,
@@ -45,7 +45,7 @@ object StorageManager {
         }
         cursor.close()
 
-        return CarCollection(ownCars)
+        return ownCars
     }
 
     fun insertOrReplace(ownCar: OwnCar, position: Int) {

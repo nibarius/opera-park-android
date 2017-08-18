@@ -14,13 +14,14 @@ import android.widget.EditText
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
-abstract class ManageCarDialog(val ownCar: OwnCar) : DialogFragment() {
+abstract class ManageCarDialog() : DialogFragment() {
     interface ManageCarDialogListener {
         fun onDialogPositiveClick(newCar: OwnCar, dialogType: DialogType)
     }
 
     abstract val dialogTitle: Int
     abstract val dialogType: DialogType
+    abstract fun fetchOwnCar(): OwnCar
 
     var listener: ManageCarDialogListener? = null
     val dialogView: View by lazy {
@@ -28,7 +29,7 @@ abstract class ManageCarDialog(val ownCar: OwnCar) : DialogFragment() {
     }
     val regNoView: EditText by lazy { dialogView.findViewById(R.id.regno) as EditText }
     val ownerView: EditText by lazy { dialogView.findViewById(R.id.owner) as EditText }
-
+    val ownCar: OwnCar by lazy { fetchOwnCar() }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -51,7 +52,6 @@ abstract class ManageCarDialog(val ownCar: OwnCar) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
-
         regNoView.setText(ownCar.regNo)
         ownerView.setText(ownCar.owner)
 
