@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.R
 import se.barsk.park.consume
 import se.barsk.park.datatypes.CarCollection
@@ -66,6 +67,10 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         manageCarsRecyclerView.addOnItemTouchListener(touchListener)
 
         fab.setOnClickListener { _ -> showAddDialog() }
+
+        if (intent.getBooleanExtra(INTENT_EXTRA_ADD_CAR, false)) {
+            showAddDialog()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -131,6 +136,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private fun showEditDialog(carId: String) {
         EditCarDialog.newInstance(carId).show(supportFragmentManager, "editCar")
     }
+
     private fun showAddDialog() {
         AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
     }

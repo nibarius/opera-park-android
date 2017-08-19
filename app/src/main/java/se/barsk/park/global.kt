@@ -2,6 +2,7 @@ package se.barsk.park
 
 // Utility function on the global scope.
 
+const val INTENT_EXTRA_ADD_CAR = "addCar"
 
 /**
  * Consume function for the menu that consumes the item selected event by

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
+    android:id="@+id/container_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,18 +10,17 @@
     tools:context="se.barsk.park.main_ui.ParkActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp"
-    tools:showIn="@layout/activity_park"
-    android:id="@+id/container_view">
+    tools:showIn="@layout/activity_park">
 
     <TextView
         android:id="@+id/status_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
+        android:gravity="center"
         android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         android:text="1 free spot"
         android:textSize="36sp"
-        android:gravity="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -29,9 +29,9 @@
         android:id="@+id/parked_cars_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:background="@color/colorAccent"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         android:text="Parked cars"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -42,42 +42,72 @@
         android:id="@+id/parked_cars_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/my_cars_label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/parked_cars_label"
-        app:layout_constraintBottom_toTopOf="@+id/my_cars_label"
-        android:scrollbars="vertical" />
+        app:layout_constraintTop_toBottomOf="@+id/parked_cars_label"/>
 
     <TextView
         android:id="@+id/my_cars_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:background="@color/colorAccent"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         android:text="My cars"
+        app:layout_constraintBottom_toTopOf="@+id/own_cars_view_switcher"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/own_cars_recycler_view"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/own_cars_recycler_view"
+    <ViewSwitcher
+        android:id="@+id/own_cars_view_switcher"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="96dp"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:scrollbars="horizontal"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/own_cars_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            app:layout_constraintVertical_bias="1.0"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:padding="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/no_cars_placeholder_message"
+                android:textColor="@color/colorBlack87percent"
+                android:textSize="16sp"/>
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/no_own_cars_placeholder_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:paddingBottom="8dp"
+                android:text="@string/no_cars_add_car_button"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+    </ViewSwitcher>
 
 </android.support.constraint.ConstraintLayout>

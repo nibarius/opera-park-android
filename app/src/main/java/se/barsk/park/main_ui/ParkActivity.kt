@@ -8,8 +8,11 @@ import android.support.v7.widget.*
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.ViewSwitcher
+import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.R
 import se.barsk.park.consume
 import se.barsk.park.datatypes.*
@@ -76,12 +79,24 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
                 CarCollection.getCars(), this::onOwnCarClicked)
         ownCarsRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
 
+        val addCarButton = findViewById(R.id.no_own_cars_placeholder_button) as Button
+        addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
+
         operaGarage.addListener(this)
     }
 
     override fun onResume() {
         super.onResume()
         operaGarage.updateStatus()
+        showOwnCarsPlaceholderIfNeeded()
+    }
+
+    private fun showOwnCarsPlaceholderIfNeeded() {
+        val viewSwitcher = findViewById(R.id.own_cars_view_switcher) as ViewSwitcher
+        val ownCarsView = findViewById(R.id.own_cars_recycler_view)
+        if (CarCollection.getCars().isEmpty() && viewSwitcher.currentView == ownCarsView) {
+            viewSwitcher.showNext()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -96,7 +111,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     }
 
     private fun navigateToManageCars() {
-        intent = Intent(this, ManageCarsActivity::class.java)
+        val intent = Intent(this, ManageCarsActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+    }
+
+    private fun navigateToManageCarsAndAddCar() {
+        val intent = Intent(this, ManageCarsActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        intent.putExtra(INTENT_EXTRA_ADD_CAR, true)
         startActivity(intent)
     }
 
