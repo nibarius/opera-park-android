@@ -87,6 +87,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
 
         operaGarage.addListener(this)
         CarCollection.addListener(this)
+        showOwnCarsPlaceholderIfNeeded()
     }
 
     override fun onResume() {
