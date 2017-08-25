@@ -54,29 +54,18 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:scrollbars="vertical"/>
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
             android:layout_gravity="center"
-            android:orientation="vertical"
-            android:background="@color/colorParkedCarPlaceholderBackground">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/empty_parking"
-                tools:ignore="ContentDescription"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:padding="16dp"
-                android:paddingBottom="16dp"
-                android:text="No parked cars"
-                android:textColor="@color/colorBlack38percent"
-                android:textSize="20sp"/>
-        </LinearLayout>
+            android:padding="16dp"
+            android:drawableTop="@drawable/empty_parking"
+            android:drawablePadding="16dp"
+            android:text="@string/parked_cars_placeholder"
+            android:textColor="@color/colorPlaceholderText"
+            android:textSize="16sp"/>
     </ViewSwitcher>
     <TextView
         android:id="@+id/my_cars_label"
@@ -120,7 +109,7 @@
                 android:padding="8dp"
                 android:paddingBottom="8dp"
                 android:text="@string/no_cars_placeholder_message"
-                android:textColor="@color/colorBlack87percent"
+                android:textColor="@color/colorPlaceholderText"
                 android:textSize="16sp"/>
 
             <Button

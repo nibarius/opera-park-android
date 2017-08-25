@@ -29,11 +29,10 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:padding="16dp"
-            android:paddingBottom="16dp"
             android:drawableTop="@drawable/ic_directions_car_black_72dp"
             android:drawablePadding="16dp"
             android:text="@string/manage_cars_list_placeholder"
-            android:textColor="@color/colorBlack38percent"
+            android:textColor="@color/colorPlaceholderText"
             android:textSize="16sp"/>
     </ViewSwitcher>
     <android.support.design.widget.FloatingActionButton
