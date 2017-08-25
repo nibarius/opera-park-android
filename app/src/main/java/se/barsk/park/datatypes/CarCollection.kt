@@ -9,14 +9,24 @@ import se.barsk.park.storage.StorageManager
  * as they happen.
  */
 object CarCollection {
+
+    private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
     private val ownCars: MutableList<OwnCar> = StorageManager.fetchAllCars()
+
+    private fun notifyListeners() {
+        for (listener in listeners) {
+            listener.onCarCollectionStatusChange()
+        }
+    }
+
+    fun addListener(listener: CarCollectionStatusChangedListener) = listeners.add(listener)
 
     /**
      * Update the parking status for all the cars in the car collection
      * @param garage The Garage to check the parking status against
      * @return True if the parking status was changed for any of the cars in the collection
      */
-    fun updateParkStatus(garage: Garage): Boolean {
+    fun updateParkStatus(garage: Garage) {
         var anyChange = false
         for (car in ownCars) {
             val newValue = garage.isParked(car)
@@ -25,7 +35,9 @@ object CarCollection {
                 anyChange = true
             }
         }
-        return anyChange
+        if (anyChange) {
+            notifyListeners()
+        }
     }
 
     /**
@@ -34,6 +46,7 @@ object CarCollection {
     fun addCar(ownCar: OwnCar) {
         ownCars.add(ownCar)
         StorageManager.insertOrReplace(ownCar, ownCars.lastIndex)
+        notifyListeners()
     }
 
     /**
@@ -49,6 +62,7 @@ object CarCollection {
     fun removeCar(ownCar: OwnCar) {
         ownCars.remove(ownCar)
         StorageManager.remove(ownCar)
+        notifyListeners()
     }
 
     /**
@@ -58,6 +72,7 @@ object CarCollection {
         val position = positionOf(ownCar)
         ownCars[position] = ownCar
         StorageManager.insertOrReplace(ownCar, position)
+        notifyListeners()
     }
 
     fun positionOf(car: OwnCar): Int {

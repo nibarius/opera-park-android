@@ -13,6 +13,7 @@
         <activity
             android:name=".main_ui.ParkActivity"
             android:label="@string/title_activity_park"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +24,8 @@
         <activity
             android:name=".manage_cars.ManageCarsActivity"
             android:parentActivityName=".main_ui.ParkActivity"
-            android:label="Manage cars"/>
+            android:label="Manage cars"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>

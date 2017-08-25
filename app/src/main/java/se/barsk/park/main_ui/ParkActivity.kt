@@ -20,19 +20,21 @@ import se.barsk.park.manage_cars.ManageCarsActivity
 import se.barsk.park.storage.StorageManager
 
 
-class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
+class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollectionStatusChangedListener {
     override fun onGarageStatusChange() {
         updateStatusLabel(operaGarage.spotsFree)
         updateListOfParkedCars()
         showParkedCarsPlaceholderIfNeeded()
-        val parkStatusChanged = CarCollection.updateParkStatus(operaGarage)
-        if (parkStatusChanged) {
-            updateListOfOwnCars()
-        }
+        CarCollection.updateParkStatus(operaGarage)
     }
 
     override fun onGarageUpdateFail(errorMessage: String) {
         Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+    }
+
+    override fun onCarCollectionStatusChange() {
+        updateListOfOwnCars()
+        showOwnCarsPlaceholderIfNeeded()
     }
 
     val operaGarage: Garage = Garage()
@@ -84,18 +86,21 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
 
         operaGarage.addListener(this)
+        CarCollection.addListener(this)
     }
 
     override fun onResume() {
         super.onResume()
         operaGarage.updateStatus()
-        showOwnCarsPlaceholderIfNeeded()
     }
 
     private fun showOwnCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById(R.id.own_cars_view_switcher) as ViewSwitcher
         val ownCarsView = findViewById(R.id.own_cars_recycler_view)
-        if (CarCollection.getCars().isEmpty() && viewSwitcher.currentView == ownCarsView) {
+        val empty = CarCollection.getCars().isEmpty()
+        val listShown = viewSwitcher.currentView == ownCarsView
+        val placeholderShown = !listShown
+        if ((empty && listShown) || (!empty && placeholderShown)) {
             viewSwitcher.showNext()
         }
     }
@@ -103,8 +108,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     private fun showParkedCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById(R.id.parked_cars_view_switcher) as ViewSwitcher
         val parkedCarsView = findViewById(R.id.parked_cars_recycler_view)
-        if ((operaGarage.isEmpty() && viewSwitcher.currentView == parkedCarsView) ||
-                (!operaGarage.isEmpty() && viewSwitcher.currentView != parkedCarsView)) {
+        val empty = operaGarage.isEmpty()
+        val listShown = viewSwitcher.currentView == parkedCarsView
+        val placeholderShown = !listShown
+        if ((empty && listShown) || (!empty && placeholderShown)) {
             viewSwitcher.showNext()
         }
     }
@@ -122,13 +129,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
 
     private fun navigateToManageCars() {
         val intent = Intent(this, ManageCarsActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         startActivity(intent)
     }
 
     private fun navigateToManageCarsAndAddCar() {
         val intent = Intent(this, ManageCarsActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         intent.putExtra(INTENT_EXTRA_ADD_CAR, true)
         startActivity(intent)
     }
