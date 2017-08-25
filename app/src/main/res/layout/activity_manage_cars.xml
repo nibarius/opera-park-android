@@ -6,18 +6,36 @@
     android:layout_height="match_parent"
     tools:context="se.barsk.park.manage_cars.ManageCarsActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/manage_cars_recyclerview"
+    <ViewSwitcher
+        android:id="@+id/manage_cars_view_switcher"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:scrollbars="none"
+        android:padding="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
+        app:layout_constraintBottom_toBottomOf="parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/manage_cars_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:scrollbars="horizontal"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="16dp"
+            android:paddingBottom="16dp"
+            android:drawableTop="@drawable/ic_directions_car_black_72dp"
+            android:drawablePadding="16dp"
+            android:text="@string/manage_cars_list_placeholder"
+            android:textColor="@color/colorBlack38percent"
+            android:textSize="16sp"/>
+    </ViewSwitcher>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/manage_cards_fab"
         android:layout_width="wrap_content"

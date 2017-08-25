@@ -11,14 +11,20 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.ViewSwitcher
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.R
 import se.barsk.park.consume
 import se.barsk.park.datatypes.CarCollection
+import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.showPlaceholderIfNeeded
 
 
-class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener {
+class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener, CarCollectionStatusChangedListener {
+    override fun onCarCollectionStatusChange() {
+        showCarsPlaceholderIfNeeded()
+    }
 
     // Called when the user clicks Save in the add/edit car dialog
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
@@ -71,6 +77,14 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         if (intent.getBooleanExtra(INTENT_EXTRA_ADD_CAR, false)) {
             showAddDialog()
         }
+
+        CarCollection.addListener(this)
+        showCarsPlaceholderIfNeeded()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CarCollection.removeListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -139,6 +153,13 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
 
     private fun showAddDialog() {
         AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
+    }
+
+    private fun showCarsPlaceholderIfNeeded() {
+        val viewSwitcher = findViewById(R.id.manage_cars_view_switcher) as ViewSwitcher
+        val parkedCarsView = findViewById(R.id.manage_cars_recyclerview)
+        val empty = CarCollection.getCars().isEmpty()
+        showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
 
     /**

@@ -20,6 +20,7 @@ object CarCollection {
     }
 
     fun addListener(listener: CarCollectionStatusChangedListener) = listeners.add(listener)
+    fun removeListener(listener: CarCollectionStatusChangedListener) = listeners.remove(listener)
 
     /**
      * Update the parking status for all the cars in the car collection
