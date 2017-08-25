@@ -1,5 +1,8 @@
 package se.barsk.park
 
+import android.view.View
+import android.widget.ViewSwitcher
+
 // Utility function on the global scope.
 
 const val INTENT_EXTRA_ADD_CAR = "addCar"
@@ -22,5 +25,18 @@ fun isTesting(): Boolean {
         return true;
     } catch (e: ClassNotFoundException) {
         return false;
+    }
+}
+
+/**
+ * Takes a ViewSwitcher that contains a list and a placeholder view, the list it holds
+ * and a boolean saying if the list is empty. Given this it ensures that the placeholder
+ * is shown if the list is empty and that the list is shown otherwise.
+ */
+fun showPlaceholderIfNeeded(viewSwitcher: ViewSwitcher, listView: View?, empty: Boolean) {
+    val listShown = viewSwitcher.currentView == listView
+    val placeholderShown = !listShown
+    if ((empty && listShown) || (!empty && placeholderShown)) {
+        viewSwitcher.showNext()
     }
 }

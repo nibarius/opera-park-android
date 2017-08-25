@@ -17,6 +17,7 @@ import se.barsk.park.R
 import se.barsk.park.consume
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
+import se.barsk.park.showPlaceholderIfNeeded
 import se.barsk.park.storage.StorageManager
 
 
@@ -99,22 +100,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
         val viewSwitcher = findViewById(R.id.own_cars_view_switcher) as ViewSwitcher
         val ownCarsView = findViewById(R.id.own_cars_recycler_view)
         val empty = CarCollection.getCars().isEmpty()
-        val listShown = viewSwitcher.currentView == ownCarsView
-        val placeholderShown = !listShown
-        if ((empty && listShown) || (!empty && placeholderShown)) {
-            viewSwitcher.showNext()
-        }
+        showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
     }
 
     private fun showParkedCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById(R.id.parked_cars_view_switcher) as ViewSwitcher
         val parkedCarsView = findViewById(R.id.parked_cars_recycler_view)
         val empty = operaGarage.isEmpty()
-        val listShown = viewSwitcher.currentView == parkedCarsView
-        val placeholderShown = !listShown
-        if ((empty && listShown) || (!empty && placeholderShown)) {
-            viewSwitcher.showNext()
-        }
+        showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
