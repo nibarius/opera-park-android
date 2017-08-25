@@ -38,18 +38,46 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_label"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/parked_cars_recycler_view"
+    <ViewSwitcher
+        android:id="@+id/parked_cars_view_switcher"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:scrollbars="vertical"
+        android:padding="0dp"
         app:layout_constraintBottom_toTopOf="@+id/my_cars_label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/parked_cars_label"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/parked_cars_label">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/parked_cars_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:scrollbars="vertical"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:background="@color/colorParkedCarPlaceholderBackground">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/empty_parking"
+                tools:ignore="ContentDescription"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:padding="16dp"
+                android:paddingBottom="16dp"
+                android:text="No parked cars"
+                android:textColor="@color/colorBlack38percent"
+                android:textSize="20sp"/>
+        </LinearLayout>
+    </ViewSwitcher>
     <TextView
         android:id="@+id/my_cars_label"
         android:layout_width="0dp"

@@ -24,6 +24,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     override fun onGarageStatusChange() {
         updateStatusLabel(operaGarage.spotsFree)
         updateListOfParkedCars()
+        showParkedCarsPlaceholderIfNeeded()
         val parkStatusChanged = CarCollection.updateParkStatus(operaGarage)
         if (parkStatusChanged) {
             updateListOfOwnCars()
@@ -95,6 +96,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         val viewSwitcher = findViewById(R.id.own_cars_view_switcher) as ViewSwitcher
         val ownCarsView = findViewById(R.id.own_cars_recycler_view)
         if (CarCollection.getCars().isEmpty() && viewSwitcher.currentView == ownCarsView) {
+            viewSwitcher.showNext()
+        }
+    }
+
+    private fun showParkedCarsPlaceholderIfNeeded() {
+        val viewSwitcher = findViewById(R.id.parked_cars_view_switcher) as ViewSwitcher
+        val parkedCarsView = findViewById(R.id.parked_cars_recycler_view)
+        if ((operaGarage.isEmpty() && viewSwitcher.currentView == parkedCarsView) ||
+                (!operaGarage.isEmpty() && viewSwitcher.currentView != parkedCarsView)) {
             viewSwitcher.showNext()
         }
     }

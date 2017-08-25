@@ -8,9 +8,11 @@
     <color name="colorEvenRow">#FFEDEDED</color>
     <color name="colorOddRow">#FFD5D5D5</color>
 
+    <color name="colorGray50">#fffafafa</color>
     <color name="colorGray100">#fff5f5f5</color>
     <color name="colorGray300">#ffe0e0e0</color>
     <color name="colorBlack87percent">#de000000</color>
+    <color name="colorBlack38percent">#61000000</color>
 
     <color name="colorPrimaryDarkText">@color/colorBlack87percent</color>
     <color name="colorCabBackground">@color/colorGray100</color>
@@ -20,6 +22,7 @@
     <color name="colorSelectedBackground">#FFD5D5D5</color>
     <color name="colorAvatarTextColor">#b3ffffff</color>
     <color name="colorFabRippleColor">#b3ffffff</color>
+    <color name="colorParkedCarPlaceholderBackground">@color/colorGray50</color>
 
 
     <array name="avatar_background_color">

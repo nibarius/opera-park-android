@@ -28,6 +28,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
     fun addListener(listener: GarageStatusChangedListener) = listeners.add(listener)
     fun isParked(car: OwnCar): Boolean = parkedCars.any { it.regNo == car.regNo }
     fun isFull(): Boolean = parkedCars.size == CAPACITY
+    fun isEmpty(): Boolean = parkedCars.isEmpty()
     fun updateStatus() = NetworkManager.checkStatus(this::onResultReady)
     fun parkCar(car: OwnCar) = NetworkManager.parkCar(car, this::onResultReady)
     fun unparkCar(car: OwnCar) = NetworkManager.unparkCar(car, this::onResultReady)
