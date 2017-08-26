@@ -74,8 +74,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
 
         parkedCarsRecyclerView.layoutManager = layoutManager
         parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        val decorator = AlternatingColorItemDecoration(R.color.colorOddRow, R.color.colorEvenRow)
-        parkedCarsRecyclerView.addItemDecoration(decorator)
 
         ownCarsRecyclerView.layoutManager = layoutManager2
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()

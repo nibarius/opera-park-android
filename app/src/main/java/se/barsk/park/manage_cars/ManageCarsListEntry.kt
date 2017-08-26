@@ -1,17 +1,16 @@
 package se.barsk.park.manage_cars
 
 import android.content.Context
-import android.graphics.PorterDuff
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import se.barsk.park.datatypes.Car
-import se.barsk.park.main_ui.CarListEntry
-import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.R
+import se.barsk.park.datatypes.Car
+import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.main_ui.CarListEntry
 
 
 /**
@@ -33,8 +32,7 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
         car as OwnCar
         regNoView.text = "${car.regNo} (owner: ${car.owner})"
 
-        val colors = context.resources.getIntArray(R.array.avatar_background_color)
-        unselectedColor = colors[Math.abs(car.regNo.hashCode()) % colors.size]
+        unselectedColor = getColorForCar(car, context)
         avatarTextView.text = car.regNo.substring(0, 1)
 
         if (selected) {
@@ -56,11 +54,5 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
         setAvatarColor(unselectedColor)
     }
 
-    private fun setAvatarColor(color: Int) {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)
-        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-        avatarFrame.background = drawable
-        avatarFrame.setPadding(0, 0, 0, 0) // setting background resets padding, remove it again
-    }
-
+    private fun setAvatarColor(color: Int) = setAvatarColor(color, context, avatarFrame)
 }

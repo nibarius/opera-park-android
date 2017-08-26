@@ -14,6 +14,8 @@ import se.barsk.park.datatypes.ParkedCar
 class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
     private val parkTimeView: TextView by lazy { findViewById(R.id.park_start_time) as TextView }
     private val regNoView: TextView by lazy { findViewById(R.id.regno) as TextView }
+    private val avatarTextView: TextView by lazy { findViewById(R.id.avatar_text_view) as TextView }
+
 
     init {
         LayoutInflater.from(context).inflate(R.layout.parked_car_entry, this, true)
@@ -22,6 +24,8 @@ class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEn
     override fun showItem(car: Car, selected: Boolean) {
         car as ParkedCar
         parkTimeView.text = car.startTime.substring(11, 19) // Skip the date part
-        regNoView.text = "${car.regNo} (${car.owner})"
+        regNoView.text = "${car.regNo.toUpperCase()} - ${car.owner}"
+        setAvatarColor(car, context, avatarTextView)
+        avatarTextView.text = car.regNo.substring(0, 1)
     }
 }
