@@ -6,6 +6,7 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
+import se.barsk.park.BuildConfig
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 
@@ -13,7 +14,7 @@ import se.barsk.park.datatypes.ParkedCar
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    private const val BASE_URL = "http://park.opera.software/"
+    private val BASE_URL = BuildConfig.parkServer
     private const val STATUS = "status"
     private const val PARK = "park"
     private const val UNPARK = "unpark"
