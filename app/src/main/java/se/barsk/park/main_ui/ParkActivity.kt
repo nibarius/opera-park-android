@@ -1,13 +1,17 @@
 package se.barsk.park.main_ui
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,7 +27,7 @@ import se.barsk.park.storage.StorageManager
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollectionStatusChangedListener {
     override fun onGarageStatusChange() {
-        updateStatusLabel(operaGarage.spotsFree)
+        updateToolbar(operaGarage.spotsFree)
         updateListOfParkedCars()
         showParkedCarsPlaceholderIfNeeded()
         CarCollection.updateParkStatus(operaGarage)
@@ -142,16 +146,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
         }
     }
 
-    private fun updateStatusLabel(freeSpots: Int) {
-        if (freeSpots <= 0) {
-            freeSpotsLabel.text = "Full"
-        } else if (freeSpots == 1) {
-            freeSpotsLabel.text = "Last spot"
-        } else {
-            freeSpotsLabel.text = "$freeSpots free spots"
-        }
-    }
-
     private fun updateListOfParkedCars() {
         parkedCarsLabel.text = "Parked cars"
         parkedCarsRecyclerView.swapAdapter(
@@ -163,4 +157,32 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
                 CarsAdapter(CarsAdapter.Type.OWN_CARS, CarCollection.getCars(), this::onOwnCarClicked), false)
     }
 
+    private fun updateToolbar(freeSpots: Int) {
+        val toolbarColor: Int
+        val statusBarColor: Int
+        val title: String
+        when {
+            freeSpots <= 0 -> {
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
+                title = "Full"
+            }
+            freeSpots == 1 -> {
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
+                title = "Last spot"
+            }
+            else -> {
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
+                title = "$freeSpots free spots"
+            }
+        }
+        supportActionBar?.setBackgroundDrawable(ColorDrawable(toolbarColor))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = statusBarColor
+        }
+        supportActionBar?.title = title
+    }
 }

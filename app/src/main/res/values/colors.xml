@@ -5,8 +5,20 @@
     <color name="colorAccent">#ff4081</color>
     <color name="colorUnparkedCar">#ffff00</color>
     <color name="colorParkedCar">#90ee90</color>
-    <color name="colorEvenRow">#FFEDEDED</color>
-    <color name="colorOddRow">#FFD5D5D5</color>
+
+    <color name="colorToolbarFull">@color/colorRed500</color>
+    <color name="colorStatusBarFull">@color/colorRed700</color>
+    <color name="colorToolbarAlmostFull">@color/colorDeepOrange500</color>
+    <color name="colorStatusBarAlmostFull">@color/colorDeepOrange700</color>
+    <color name="colorToolbarFree">@color/colorTeal500</color>
+    <color name="colorStatusBarFree">@color/colorTeal700</color>
+
+    <color name="colorRed500">#fff44336</color>
+    <color name="colorRed700">#ffd32f2f</color>
+    <color name="colorDeepOrange500">#ffff5722</color>
+    <color name="colorDeepOrange700">#ffe64a19</color>
+    <color name="colorTeal500">#ff009688</color>
+    <color name="colorTeal700">#ff00796b</color>
 
     <color name="colorGray50">#fffafafa</color>
     <color name="colorGray100">#fff5f5f5</color>
