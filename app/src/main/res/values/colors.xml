@@ -6,23 +6,33 @@
     <color name="colorUnparkedCar">#ffff00</color>
     <color name="colorParkedCar">#90ee90</color>
 
-    <color name="colorToolbarFull">@color/colorRed500</color>
-    <color name="colorStatusBarFull">@color/colorRed700</color>
-    <color name="colorToolbarAlmostFull">@color/colorDeepOrange500</color>
-    <color name="colorStatusBarAlmostFull">@color/colorDeepOrange700</color>
-    <color name="colorToolbarFree">@color/colorTeal500</color>
-    <color name="colorStatusBarFree">@color/colorTeal700</color>
+    <color name="colorToolbarFull">@color/colorRed600</color>
+    <color name="colorStatusBarFull">@color/colorRed800</color>
+    <color name="colorToolbarAlmostFull">@color/colorOrange600</color>
+    <color name="colorStatusBarAlmostFull">@color/colorOrange800</color>
+    <color name="colorToolbarFree">@color/colorGreen600</color>
+    <color name="colorStatusBarFree">@color/colorGreen800</color>
 
-    <color name="colorRed500">#fff44336</color>
-    <color name="colorRed700">#ffd32f2f</color>
-    <color name="colorDeepOrange500">#ffff5722</color>
-    <color name="colorDeepOrange700">#ffe64a19</color>
+    <color name="colorRed600">#ffe53935</color>
+    <color name="colorRed800">#ffc62828</color>
+    <color name="colorOrange600">#ffFB8C00</color>
+    <color name="colorOrange800">#ffEF6C00</color>
+    <color name="colorGreen600">#ff43a047</color>
+    <color name="colorGreen800">#ff2e7d32</color>
+
+    <color name="colorPurple500">#ff9c27b0</color>
+    <color name="colorDeepPurple500">#ff673ab7</color>
+    <color name="colorIndigo500">#ff3f51b5</color>
+    <color name="colorLightBlue600">#ff039be5</color>
+    <color name="colorLightGreen600">#ff689f38</color>
     <color name="colorTeal500">#ff009688</color>
-    <color name="colorTeal700">#ff00796b</color>
+    <color name="colorCyan700">#ff0097a7</color>
+
 
     <color name="colorGray50">#fffafafa</color>
     <color name="colorGray100">#fff5f5f5</color>
     <color name="colorGray300">#ffe0e0e0</color>
+    <color name="colorGray600">#ff757575</color>
     <color name="colorBlack87percent">#de000000</color>
     <color name="colorBlack38percent">#61000000</color>
 
@@ -38,18 +48,14 @@
 
 
     <array name="avatar_background_color">
-        <item>#e53935</item>
-        <item>#E91E63</item>
-        <item>#9C27B0</item>
-        <item>#673AB7</item>
-        <item>#3F51B5</item>
-        <item>#039BE5</item>
-        <item>#0097A7</item>
-        <item>#009688</item>
-        <item>#689F38</item>
-        <item>#EF6C00</item>
-        <item>#FF5722</item>
-        <item>#757575</item>
+        <item>@color/colorPurple500</item>
+        <item>@color/colorDeepPurple500</item>
+        <item>@color/colorIndigo500</item>
+        <item>@color/colorLightBlue600</item>
+        <item>@color/colorCyan700</item>
+        <item>@color/colorTeal500</item>
+        <item>@color/colorLightGreen600</item>
+        <item>@color/colorGray600</item>
     </array>
 
 </resources>
