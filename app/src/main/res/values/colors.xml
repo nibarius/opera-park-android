@@ -20,13 +20,16 @@
     <color name="colorGreen600">#ff43a047</color>
     <color name="colorGreen800">#ff2e7d32</color>
 
+    <color name="colorPink200">#fff48fb1</color>
     <color name="colorPurple500">#ff9c27b0</color>
     <color name="colorDeepPurple500">#ff673ab7</color>
     <color name="colorIndigo500">#ff3f51b5</color>
     <color name="colorLightBlue600">#ff039be5</color>
     <color name="colorLightGreen600">#ff689f38</color>
+    <color name="colorLime500">#ffcddc39</color>
     <color name="colorTeal500">#ff009688</color>
     <color name="colorCyan700">#ff0097a7</color>
+    <color name="colorBrown500">#ff795548</color>
 
 
     <color name="colorGray50">#fffafafa</color>
@@ -48,6 +51,7 @@
 
 
     <array name="avatar_background_color">
+        <item>@color/colorPink200</item>
         <item>@color/colorPurple500</item>
         <item>@color/colorDeepPurple500</item>
         <item>@color/colorIndigo500</item>
@@ -55,7 +59,9 @@
         <item>@color/colorCyan700</item>
         <item>@color/colorTeal500</item>
         <item>@color/colorLightGreen600</item>
+        <item>@color/colorLime500</item>
         <item>@color/colorGray600</item>
+        <item>@color/colorBrown500</item>
     </array>
 
 </resources>
