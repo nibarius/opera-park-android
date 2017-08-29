@@ -33,9 +33,17 @@ object NetworkManager {
                     resultReadyListener(Result.Fail(null, "Failed to get parking status: $error"))
                 }
                 is com.github.kittinunf.result.Result.Success -> {
-                    val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
-                    val parkedCars = getParkedCarsFromResponse(data)
-                    resultReadyListener(Result.Success(parkedCars))
+                    try {
+                        val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                        val parkedCars = getParkedCarsFromResponse(data)
+                        resultReadyListener(Result.Success(parkedCars))
+                    }
+                    catch (e: org.json.JSONException) {
+                        resultReadyListener(Result.Fail(null, "Failed to get parking status\nUnknown data returned by server"))
+                    }
+                    catch (e: Exception) {
+                        resultReadyListener(Result.Fail(null, "Failed to get parking status\nUnknown error"))
+                    }
                 }
             }
         }
@@ -73,13 +81,23 @@ object NetworkManager {
                 .responseJson { request, response, result ->
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
-                            val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
-                            val success = data.getString("result") == "ok"
-                            val parkedCars = getParkedCarsFromResponse(data)
-                            if (success) {
-                                resultReadyListener(Result.Success(parkedCars))
-                            } else {
-                                resultReadyListener(Result.Fail(parkedCars, errorMessage))
+                            try {
+                                val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                                val success = data.getString("result") == "ok"
+                                val parkedCars = getParkedCarsFromResponse(data)
+                                if (success) {
+                                    resultReadyListener(Result.Success(parkedCars))
+                                } else {
+                                    resultReadyListener(Result.Fail(parkedCars, errorMessage))
+                                }
+                            }
+                            catch (e: org.json.JSONException) {
+                                val msg = "$errorMessage\n" + "Unknown data returned by server"
+                                resultReadyListener(Result.Fail(null, msg))
+                            }
+                            catch (e: Exception) {
+                                val msg = "$errorMessage\n" + "Unknown error"
+                                resultReadyListener(Result.Fail(null, msg))
                             }
                         }
                         is com.github.kittinunf.result.Result.Failure -> {
