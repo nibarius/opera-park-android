@@ -13,6 +13,8 @@
     <color name="colorToolbarFree">@color/colorGreen600</color>
     <color name="colorStatusBarFree">@color/colorGreen800</color>
 
+    <color name="ownCarsBottomSheet">#ffffffff</color>
+
     <color name="colorRed600">#ffe53935</color>
     <color name="colorRed800">#ffc62828</color>
     <color name="colorOrange600">#ffFB8C00</color>
@@ -37,6 +39,7 @@
     <color name="colorGray300">#ffe0e0e0</color>
     <color name="colorGray600">#ff757575</color>
     <color name="colorBlack87percent">#de000000</color>
+    <color name="colorBlack54percent">#8a000000</color>
     <color name="colorBlack38percent">#61000000</color>
 
     <color name="colorPlaceholderText">@color/colorBlack38percent</color>

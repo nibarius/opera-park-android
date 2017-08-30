@@ -2,46 +2,35 @@
 <!-- TODO: merge node instead of relative layout -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="128dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-    >
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="16dp">
 
     <TextView
-        android:id="@+id/own_car_label"
-        android:layout_width="128dp"
-        android:layout_height="24dp"
+        android:id="@+id/action_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:gravity="center"
         android:fontFamily="sans-serif"
-        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/colorBlack87percent"
+        android:textSize="16sp"
         tools:text="Unpark"/>
 
     <TextView
         android:id="@+id/regno"
-        android:layout_width="128dp"
-        android:layout_height="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/own_car_label"
+        android:layout_below="@+id/action_label"
         android:fontFamily="sans-serif"
         android:gravity="center"
+        android:textColor="@color/colorBlack87percent"
         android:textSize="24sp"
-        tools:text="AAA111" />
-
-    <TextView
-        android:id="@+id/owner"
-        android:layout_width="128dp"
-        android:layout_height="24dp"
-        android:gravity="center"
-        android:fontFamily="sans-serif"
-        android:textSize="14sp"
-        tools:text="(owner)"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
-
+        tools:text="AAA111"/>
 
 </RelativeLayout>

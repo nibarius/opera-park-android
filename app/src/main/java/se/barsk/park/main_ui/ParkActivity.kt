@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.*
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -83,7 +86,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
                 CarCollection.getCars(), this::onOwnCarClicked)
-        ownCarsRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL))
 
         val addCarButton = findViewById(R.id.no_own_cars_placeholder_button) as Button
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
