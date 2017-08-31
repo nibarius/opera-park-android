@@ -19,6 +19,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.ViewSwitcher
+import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.R
 import se.barsk.park.consume
@@ -122,6 +123,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
+        R.id.menu_third_parties -> consume { showThirdPartyList() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -186,5 +188,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
             window.statusBarColor = statusBarColor
         }
         supportActionBar?.title = title
+    }
+
+    private fun showThirdPartyList() {
+        val fragment = LicensesDialogFragment.Builder(this)
+                .setNotices(R.raw.notices)
+                .setShowFullLicenseText(false)
+                .setIncludeOwnLicense(true)
+                .build()
+
+        fragment.show(supportFragmentManager, null)
     }
 }

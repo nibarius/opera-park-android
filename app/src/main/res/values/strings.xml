@@ -16,4 +16,5 @@
     <string name="no_cars_placeholder_message">You haven\'t added any cars yet</string>
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="parked_cars_placeholder">No parked cars</string>
+    <string name="notices_title">Third party licences</string>
 </resources>
