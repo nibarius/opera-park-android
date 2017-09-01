@@ -1,31 +1,25 @@
 package se.barsk.park.main_ui
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.ViewSwitcher
+import android.view.*
+import android.widget.*
 import de.psdev.licensesdialog.LicensesDialogFragment
-import se.barsk.park.INTENT_EXTRA_ADD_CAR
-import se.barsk.park.R
-import se.barsk.park.consume
+import se.barsk.park.*
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
-import se.barsk.park.showPlaceholderIfNeeded
+import se.barsk.park.network.NetworkManager
 import se.barsk.park.storage.StorageManager
 
 
@@ -98,7 +92,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
 
     override fun onResume() {
         super.onResume()
-        operaGarage.updateStatus()
+        val server_url = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
+        if (server_url.isEmpty()) {
+            showServerDialog()
+        } else {
+            operaGarage.updateStatus()
+        }
     }
 
     private fun showOwnCarsPlaceholderIfNeeded() {
@@ -124,6 +123,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_third_parties -> consume { showThirdPartyList() }
+        R.id.server_dialog -> consume { showServerDialog() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -198,5 +198,29 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
                 .build()
 
         fragment.show(supportFragmentManager, null)
+    }
+
+    private fun showServerDialog() {
+        val viewInflated = LayoutInflater.from(this).inflate(R.layout.specify_server_dialog, null);
+        val input = viewInflated.findViewById(R.id.server_url_input) as EditText
+        val dialog = AlertDialog.Builder(this)
+                .setTitle("Specify park server")
+                .setView(viewInflated)
+                .setNegativeButton(R.string.cancel, { _, _ -> })
+                .setPositiveButton("OK", { _, _: Int ->
+                    val server = Utils.fixUrl(input.text.toString())
+                    StorageManager.putSetting(StorageManager.SETTINGS_SERVER_URL_KEY, server)
+                    NetworkManager.setServer(server)
+                    operaGarage.updateStatus()
+                })
+                .create()
+        input.setOnEditorActionListener({ _, _, _ ->
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+            false
+        })
+        input.setText(StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY))
+        dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.show()
     }
 }

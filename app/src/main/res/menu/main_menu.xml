@@ -11,4 +11,10 @@
         app:showAsAction="collapseActionView"
         android:title="Third party licences">
     </item>
+
+    <item
+        android:id="@+id/server_dialog"
+        app:showAsAction="collapseActionView"
+        android:title="Change server">
+    </item>
 </menu>

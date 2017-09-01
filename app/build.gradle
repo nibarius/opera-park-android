@@ -11,7 +11,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "parkServer", "\""+getParkServer()+"\""
     }
     buildTypes {
         release {
@@ -27,12 +26,6 @@ android {
             storeFile file('debug.keystore')
         }
     }
-}
-
-static def getParkServer(){
-    def Properties props = new Properties()
-    props.load(new FileInputStream(new File('private.properties')))
-    return props['parkServer']
 }
 
 dependencies {

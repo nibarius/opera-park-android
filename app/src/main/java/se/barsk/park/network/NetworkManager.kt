@@ -9,17 +9,22 @@ import org.json.JSONObject
 import se.barsk.park.BuildConfig
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.storage.StorageManager
 
 /**
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    private val BASE_URL = BuildConfig.parkServer
+    private var BASE_URL: String = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
     private const val STATUS = "status"
     private const val PARK = "park"
     private const val UNPARK = "unpark"
 
     private enum class Action {PARK, UNPARK }
+
+    fun setServer(server: String) {
+        BASE_URL = server
+    }
 
     /**
      * Makes a http request to the park server to check the current status.
