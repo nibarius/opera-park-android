@@ -1,29 +1,46 @@
 package se.barsk.park.main_ui
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.view.*
-import android.widget.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.ViewSwitcher
 import de.psdev.licensesdialog.LicensesDialogFragment
-import se.barsk.park.*
+import se.barsk.park.INTENT_EXTRA_ADD_CAR
+import se.barsk.park.R
+import se.barsk.park.consume
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
+import se.barsk.park.showPlaceholderIfNeeded
 import se.barsk.park.storage.StorageManager
 
 
-class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollectionStatusChangedListener {
+class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
+        CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
+    override fun parkServerSpecified() {
+        operaGarage.updateStatus()
+    }
+
+    override fun parkServerDialogCancelled() {
+        showParkedCarsPlaceholderIfNeeded()
+    }
+
     override fun onGarageStatusChange() {
         updateToolbar(operaGarage.spotsFree)
         updateListOfParkedCars()
@@ -32,7 +49,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
     }
 
     override fun onGarageUpdateFail(errorMessage: String) {
-        Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
+        val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView
+        textView.maxLines = 5
+        snackbar.show()
+        showParkedCarsPlaceholderIfNeeded()
     }
 
     override fun onCarCollectionStatusChange() {
@@ -59,14 +80,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
         findViewById(R.id.container_view) as View
     }
 
-    private val parkedCarsLabel: TextView by lazy {
-        findViewById(R.id.parked_cars_label) as TextView
-    }
-
-    private val freeSpotsLabel: TextView by lazy {
-        findViewById(R.id.status_label) as TextView
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StorageManager.init(applicationContext)
@@ -88,18 +101,19 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
         operaGarage.addListener(this)
         CarCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
+        if (!StorageManager.hasServer()) {
+            showServerDialog()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        val server_url = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
-        if (server_url.isEmpty()) {
-            showServerDialog()
-        } else {
-            operaGarage.updateStatus()
-        }
+        operaGarage.updateStatus()
     }
 
+    /**
+     * Show list of own cars if there are any own cars, otherwise show the placeholder.
+     */
     private fun showOwnCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById(R.id.own_cars_view_switcher) as ViewSwitcher
         val ownCarsView = findViewById(R.id.own_cars_recycler_view)
@@ -107,11 +121,47 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
         showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
     }
 
+    /**
+     * Show the list of parked cars if there are any parked cars, otherwise show the appropriate
+     * placeholder.
+     */
     private fun showParkedCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById(R.id.parked_cars_view_switcher) as ViewSwitcher
         val parkedCarsView = findViewById(R.id.parked_cars_recycler_view)
         val empty = operaGarage.isEmpty()
+        setCorrectParkedCarsPlaceholder()
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
+    }
+
+    /**
+     * Sets the current placeholder view for the parked cars view depending on circumstances
+     */
+    private fun setCorrectParkedCarsPlaceholder() {
+        val textView = findViewById(R.id.parked_cars_placeholder_text_view) as TextView
+        val parkServerButton = findViewById(R.id.no_park_server_placeholder_button) as Button
+        parkServerButton.setOnClickListener { _ -> showServerDialog() }
+        val text: String
+        val top: Drawable
+        if (!StorageManager.hasServer()) {
+            // no server set up
+            text = getString(R.string.no_server_placeholder_text)
+            top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
+            parkServerButton.visibility = View.VISIBLE
+            parkServerButton.text = getString(R.string.no_server_placeholder_button)
+        } else if (NetworkManager.lastRequestFailed) {
+            // failed to communicate with server
+            text = getString(R.string.wrong_server_placeholder_text, NetworkManager.serverUrl)
+            top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
+            parkServerButton.visibility = View.VISIBLE
+            parkServerButton.text = getString(R.string.wrong_server_placeholder_button)
+        } else {
+            // No parked cars
+            text = getString(R.string.parked_cars_placeholder)
+            top = getDrawable(R.drawable.empty_parking)
+            parkServerButton.visibility = View.GONE
+        }
+        textView.text = text
+        textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, top, null, null)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -151,7 +201,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
     }
 
     private fun updateListOfParkedCars() {
-        parkedCarsLabel.text = "Parked cars"
         parkedCarsRecyclerView.swapAdapter(
                 CarsAdapter(CarsAdapter.Type.PARKED_CARS, operaGarage.parkedCars, { /*listener that does nothing */ }), false)
     }
@@ -201,26 +250,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener, CarCollec
     }
 
     private fun showServerDialog() {
-        val viewInflated = LayoutInflater.from(this).inflate(R.layout.specify_server_dialog, null);
-        val input = viewInflated.findViewById(R.id.server_url_input) as EditText
-        val dialog = AlertDialog.Builder(this)
-                .setTitle("Specify park server")
-                .setView(viewInflated)
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .setPositiveButton("OK", { _, _: Int ->
-                    val server = Utils.fixUrl(input.text.toString())
-                    StorageManager.putSetting(StorageManager.SETTINGS_SERVER_URL_KEY, server)
-                    NetworkManager.setServer(server)
-                    operaGarage.updateStatus()
-                })
-                .create()
-        input.setOnEditorActionListener({ _, _, _ ->
-            dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
-            false
-        })
-        input.setText(StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY))
-        dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        dialog.show()
+        SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
     }
 }

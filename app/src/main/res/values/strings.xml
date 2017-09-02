@@ -17,4 +17,9 @@
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="parked_cars_placeholder">No parked cars</string>
     <string name="notices_title">Third party licences</string>
+    <string name="no_server_placeholder_button">Set park server</string>
+    <string name="no_server_placeholder_text">No park server set</string>
+    <string name="wrong_server_placeholder_button">Edit park server</string>
+    <string name="wrong_server_placeholder_text">Unable to connect to\n%1$s</string>
+
 </resources>

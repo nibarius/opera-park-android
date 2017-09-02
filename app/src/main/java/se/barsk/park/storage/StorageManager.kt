@@ -27,6 +27,8 @@ object StorageManager {
         editor.apply()
     }
 
+    fun hasServer() = readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY).isNotEmpty()
+
 
     fun fetchAllCars(): MutableList<OwnCar> {
         if (isTesting()) {

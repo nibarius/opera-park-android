@@ -6,7 +6,6 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
-import se.barsk.park.BuildConfig
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 import se.barsk.park.storage.StorageManager
@@ -15,7 +14,8 @@ import se.barsk.park.storage.StorageManager
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    private var BASE_URL: String = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
+    var serverUrl: String = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
+    var lastRequestFailed: Boolean = false
     private const val STATUS = "status"
     private const val PARK = "park"
     private const val UNPARK = "unpark"
@@ -23,7 +23,7 @@ object NetworkManager {
     private enum class Action {PARK, UNPARK }
 
     fun setServer(server: String) {
-        BASE_URL = server
+        serverUrl = server
     }
 
     /**
@@ -31,23 +31,30 @@ object NetworkManager {
      * @param resultReadyListener callback function to be called when the result is ready
      */
     fun checkStatus(resultReadyListener: (Result) -> Unit) {
-        Fuel.get(BASE_URL + STATUS).responseJson { _, _, result ->
+        if (serverUrl.isEmpty()) {
+            return
+        }
+        Fuel.get(serverUrl + STATUS).responseJson { _, _, result ->
             when (result) {
                 is com.github.kittinunf.result.Result.Failure -> {
                     val (_, error) = result
-                    resultReadyListener(Result.Fail(null, "Failed to get parking status: $error"))
+                    resultReadyListener(Result.Fail(null, "Failed to update parking status: $error"))
+                    lastRequestFailed = true
                 }
                 is com.github.kittinunf.result.Result.Success -> {
                     try {
                         val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
                         val parkedCars = getParkedCarsFromResponse(data)
+                        lastRequestFailed = false
                         resultReadyListener(Result.Success(parkedCars))
                     }
                     catch (e: org.json.JSONException) {
-                        resultReadyListener(Result.Fail(null, "Failed to get parking status\nUnknown data returned by server"))
+                        lastRequestFailed = true
+                        resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown data returned by server"))
                     }
                     catch (e: Exception) {
-                        resultReadyListener(Result.Fail(null, "Failed to get parking status\nUnknown error"))
+                        lastRequestFailed = true
+                        resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown error"))
                     }
                 }
             }
@@ -57,7 +64,7 @@ object NetworkManager {
     internal fun getParkedCarsFromResponse(data: JSONObject): List<ParkedCar> {
         val usedSpots: JSONArray = data.getJSONArray("used")
         val parkedCars: MutableList<ParkedCar> = mutableListOf()
-        for (index in 0..usedSpots.length() - 1) {
+        for (index in 0 until usedSpots.length()) {
             val regNo: String = usedSpots.getJSONObject(index).getString("regno")
             val owner: String = usedSpots.getJSONObject(index).getString("user")
             val startTime: String = usedSpots.getJSONObject(index).getString("start")
@@ -67,6 +74,9 @@ object NetworkManager {
     }
 
     private fun doAction(ownCar: OwnCar, action: Action, resultReadyListener: (Result) -> Unit) {
+        if (serverUrl.isEmpty()) {
+            return
+        }
         val errorMessage: String
         val url: String
         val parameters: MutableList<Pair<String, Any?>> = mutableListOf()
@@ -74,12 +84,12 @@ object NetworkManager {
         when (action) {
             Action.PARK -> {
                 errorMessage = "Failed to park " + ownCar.regNo
-                url = BASE_URL + PARK
+                url = serverUrl + PARK
                 parameters.add(Pair("user", ownCar.owner))
             }
             Action.UNPARK -> {
                 errorMessage = "Failed to unpark " + ownCar.regNo
-                url = BASE_URL + UNPARK
+                url = serverUrl + UNPARK
             }
         }
         Fuel.post(url, parameters)
@@ -90,6 +100,7 @@ object NetworkManager {
                                 val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
                                 val success = data.getString("result") == "ok"
                                 val parkedCars = getParkedCarsFromResponse(data)
+                                lastRequestFailed = false
                                 if (success) {
                                     resultReadyListener(Result.Success(parkedCars))
                                 } else {
@@ -97,15 +108,18 @@ object NetworkManager {
                                 }
                             }
                             catch (e: org.json.JSONException) {
+                                lastRequestFailed = true
                                 val msg = "$errorMessage\n" + "Unknown data returned by server"
                                 resultReadyListener(Result.Fail(null, msg))
                             }
                             catch (e: Exception) {
+                                lastRequestFailed = true
                                 val msg = "$errorMessage\n" + "Unknown error"
                                 resultReadyListener(Result.Fail(null, msg))
                             }
                         }
                         is com.github.kittinunf.result.Result.Failure -> {
+                            lastRequestFailed = true
                             val msg = "$errorMessage\n" +
                                     "${response.httpStatusCode}: ${response.httpResponseMessage}"
                             resultReadyListener(Result.Fail(null, msg))

@@ -12,35 +12,6 @@
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/activity_park">
 
-    <!-- todo: Remove unused text views -->
-    <TextView
-        android:id="@+id/status_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="1 free spot"
-        android:textSize="36sp"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/parked_cars_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="Parked cars"
-        android:visibility="gone"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status_label"/>
-
     <ViewSwitcher
         android:id="@+id/parked_cars_view_switcher"
         android:layout_width="0dp"
@@ -49,7 +20,7 @@
         app:layout_constraintBottom_toTopOf="@+id/my_cars_label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/parked_cars_label">
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/parked_cars_recycler_view"
@@ -59,18 +30,39 @@
             android:layout_marginTop="8dp"
             android:scrollbars="vertical"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_gravity="center"
-            android:drawablePadding="16dp"
-            android:drawableTop="@drawable/empty_parking"
-            android:fontFamily="sans-serif"
-            android:gravity="center"
-            android:padding="16dp"
-            android:text="@string/parked_cars_placeholder"
-            android:textColor="@color/colorPlaceholderText"
-            android:textSize="16sp"/>
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:id="@+id/parked_cars_placeholder_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="16dp"
+                android:drawableTop="@drawable/empty_parking"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/parked_cars_placeholder"
+                android:textColor="@color/colorPlaceholderText"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/no_park_server_placeholder_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/no_server_placeholder_button"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"/>
+        </LinearLayout>
     </ViewSwitcher>
 
     <TextView
