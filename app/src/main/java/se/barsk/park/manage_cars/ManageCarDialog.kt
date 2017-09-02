@@ -2,6 +2,7 @@ package se.barsk.park.manage_cars
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
@@ -68,6 +69,10 @@ abstract class ManageCarDialog() : DialogFragment() {
                     listener?.onDialogPositiveClick(newCar, dialogType)
                 })
         val dialog = builder.create()
+        ownerView.setOnEditorActionListener({ _, _, _ ->
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+            false
+        })
         dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog
