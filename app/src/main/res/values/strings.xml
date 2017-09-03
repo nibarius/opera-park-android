@@ -19,7 +19,8 @@
     <string name="notices_title">Third party licences</string>
     <string name="no_server_placeholder_button">Set park server</string>
     <string name="no_server_placeholder_text">No park server set</string>
-    <string name="wrong_server_placeholder_button">Edit park server</string>
-    <string name="wrong_server_placeholder_text">Unable to connect to\n%1$s</string>
+    <string name="unable_to_connect_placeholder_button">Retry</string>
+    <string name="unable_to_connect_placeholder_text">Unable to connect to\n%1$s</string>
+    <string name="updating_status_placeholder">Updating status…</string>
 
 </resources>

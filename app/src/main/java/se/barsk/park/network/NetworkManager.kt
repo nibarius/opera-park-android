@@ -16,15 +16,15 @@ import se.barsk.park.storage.StorageManager
 object NetworkManager {
     var serverUrl: String = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
     var lastRequestFailed: Boolean = false
+    /**
+     * True if status check request have been made, but the response haven't been received yet.
+     */
+    var waitingOnNetwork: Boolean = false
     private const val STATUS = "status"
     private const val PARK = "park"
     private const val UNPARK = "unpark"
 
     private enum class Action {PARK, UNPARK }
-
-    fun setServer(server: String) {
-        serverUrl = server
-    }
 
     /**
      * Makes a http request to the park server to check the current status.
@@ -34,12 +34,14 @@ object NetworkManager {
         if (serverUrl.isEmpty()) {
             return
         }
+        waitingOnNetwork = true
         Fuel.get(serverUrl + STATUS).responseJson { _, _, result ->
+            waitingOnNetwork = false
             when (result) {
                 is com.github.kittinunf.result.Result.Failure -> {
                     val (_, error) = result
-                    resultReadyListener(Result.Fail(null, "Failed to update parking status: $error"))
                     lastRequestFailed = true
+                    resultReadyListener(Result.Fail(null, "Failed to update parking status: $error"))
                 }
                 is com.github.kittinunf.result.Result.Success -> {
                     try {
@@ -47,12 +49,10 @@ object NetworkManager {
                         val parkedCars = getParkedCarsFromResponse(data)
                         lastRequestFailed = false
                         resultReadyListener(Result.Success(parkedCars))
-                    }
-                    catch (e: org.json.JSONException) {
+                    } catch (e: org.json.JSONException) {
                         lastRequestFailed = true
                         resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown data returned by server"))
-                    }
-                    catch (e: Exception) {
+                    } catch (e: Exception) {
                         lastRequestFailed = true
                         resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown error"))
                     }
@@ -106,13 +106,11 @@ object NetworkManager {
                                 } else {
                                     resultReadyListener(Result.Fail(parkedCars, errorMessage))
                                 }
-                            }
-                            catch (e: org.json.JSONException) {
+                            } catch (e: org.json.JSONException) {
                                 lastRequestFailed = true
                                 val msg = "$errorMessage\n" + "Unknown data returned by server"
                                 resultReadyListener(Result.Fail(null, msg))
-                            }
-                            catch (e: Exception) {
+                            } catch (e: Exception) {
                                 lastRequestFailed = true
                                 val msg = "$errorMessage\n" + "Unknown error"
                                 resultReadyListener(Result.Fail(null, msg))

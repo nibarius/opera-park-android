@@ -3,8 +3,10 @@ package se.barsk.park.main_ui
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -12,14 +14,17 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.ViewSwitcher
+import android.widget.*
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.R
@@ -62,6 +67,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     val operaGarage: Garage = Garage()
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById(R.id.parked_cars_recycler_view) as RecyclerView
     }
@@ -101,8 +107,16 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         operaGarage.addListener(this)
         CarCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
-        if (!StorageManager.hasServer()) {
-            showServerDialog()
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        getDynamicLink()
+
+        if (StorageManager.hasServer()) {
+            // Wait a little bit with showing placeholders so the network request can
+            // kick off and, maybe even finish if it's quick.
+            Handler().postDelayed({ showParkedCarsPlaceholderIfNeeded() }, 500)
+        } else {
+            // Show missing server placeholder immediately
+            showParkedCarsPlaceholderIfNeeded()
         }
     }
 
@@ -139,23 +153,36 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun setCorrectParkedCarsPlaceholder() {
         val textView = findViewById(R.id.parked_cars_placeholder_text_view) as TextView
         val parkServerButton = findViewById(R.id.no_park_server_placeholder_button) as Button
-        parkServerButton.setOnClickListener { _ -> showServerDialog() }
+        val spinner = findViewById(R.id.loading_spinner) as ProgressBar
         val text: String
-        val top: Drawable
+        val top: Drawable?
         if (!StorageManager.hasServer()) {
             // no server set up
+            spinner.visibility = View.GONE
             text = getString(R.string.no_server_placeholder_text)
             top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
             parkServerButton.visibility = View.VISIBLE
             parkServerButton.text = getString(R.string.no_server_placeholder_button)
+            parkServerButton.setOnClickListener { _ -> showServerDialog() }
         } else if (NetworkManager.lastRequestFailed) {
             // failed to communicate with server
-            text = getString(R.string.wrong_server_placeholder_text, NetworkManager.serverUrl)
+            spinner.visibility = View.GONE
+            text = getString(R.string.unable_to_connect_placeholder_text, NetworkManager.serverUrl)
             top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
             parkServerButton.visibility = View.VISIBLE
-            parkServerButton.text = getString(R.string.wrong_server_placeholder_button)
+            parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
+            parkServerButton.setOnClickListener { _ ->
+                operaGarage.updateStatus()
+                setCorrectParkedCarsPlaceholder()
+            }
+        } else if (NetworkManager.waitingOnNetwork) {
+            spinner.visibility = View.VISIBLE
+            text = getString(R.string.updating_status_placeholder)
+            top = null
+            parkServerButton.visibility = View.GONE
         } else {
             // No parked cars
+            spinner.visibility = View.GONE
             text = getString(R.string.parked_cars_placeholder)
             top = getDrawable(R.drawable.empty_parking)
             parkServerButton.visibility = View.GONE
@@ -174,6 +201,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_third_parties -> consume { showThirdPartyList() }
         R.id.server_dialog -> consume { showServerDialog() }
+        R.id.remove_server -> consume { removeServer() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -251,5 +279,34 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private fun showServerDialog() {
         SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
+    }
+
+    private fun removeServer() {
+        StorageManager.setServer("")
+        showParkedCarsPlaceholderIfNeeded()
+    }
+
+    private fun getDynamicLink() {
+        val listener = DynamicLinkListener()
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(intent)
+                .addOnSuccessListener(this, listener)
+                .addOnFailureListener(this, listener);
+    }
+
+    inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
+        override fun onFailure(exception: java.lang.Exception) {
+            Log.w("barsk", "getDynamicLink:onFailure", exception);
+        }
+
+        override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
+            val deepLink: Uri? = pendingDynamicLinkData?.link
+            val serverUrl = deepLink?.getQueryParameter("park_server")
+            if (!StorageManager.hasServer() && serverUrl != null) {
+                StorageManager.setServer(serverUrl)
+                operaGarage.updateStatus()
+                showParkedCarsPlaceholderIfNeeded()
+            }
+        }
     }
 }

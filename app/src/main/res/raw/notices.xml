@@ -45,4 +45,10 @@
         <copyright/>
         <license>Apache Software License 2.0</license>
     </notice>
+    <notice>
+        <name>Firebase</name>
+        <url>https://firebase.google.com/docs/android/setup</url>
+        <copyright/>
+        <license>Apache Software License 2.0</license>
+    </notice>
 </notices>

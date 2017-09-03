@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.isTesting
+import se.barsk.park.network.NetworkManager
 
 
 object StorageManager {
@@ -20,7 +21,7 @@ object StorageManager {
         sharedPreferences = context.getSharedPreferences(SHARED_PREF_FILE_SETTINGS, Context.MODE_PRIVATE)
     }
 
-    fun readStringSetting(key: String) : String = sharedPreferences.getString(key, "")
+    fun readStringSetting(key: String): String = sharedPreferences.getString(key, "")
     fun putSetting(key: String, value: String) {
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
@@ -28,6 +29,10 @@ object StorageManager {
     }
 
     fun hasServer() = readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY).isNotEmpty()
+    fun setServer(server: String) {
+        putSetting(StorageManager.SETTINGS_SERVER_URL_KEY, server)
+        NetworkManager.serverUrl = server
+    }
 
 
     fun fetchAllCars(): MutableList<OwnCar> {
