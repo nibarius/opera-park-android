@@ -50,7 +50,8 @@ projectFilesBackup
 .externalNativeBuild
 
 # Google Services (e.g. APIs or Firebase)
-google-services.json
+# there is nothing secret in this file, don't ignore it to make things more convenient.
+#google-services.json
 
 # Freeline
 freeline.py
