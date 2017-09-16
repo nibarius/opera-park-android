@@ -44,9 +44,22 @@ object CarCollection {
     /**
      * Adds a new car to the car collection and persists it to persistent storage
      */
-    fun addCar(ownCar: OwnCar) {
+    fun addCar(ownCar: OwnCar, notify: Boolean = true) {
         ownCars.add(ownCar)
         StorageManager.insertOrReplace(ownCar, ownCars.lastIndex)
+        if (notify) {
+            notifyListeners()
+        }
+    }
+
+    /**
+     * Adds all cars in the given list that isn't already present in the car collection
+     * and persists it to persistent storage. If there are no cars, nothing is done.
+     */
+    fun addCarsThatDoesNotExist(carsToAdd: List<OwnCar>) {
+        carsToAdd
+                .filterNot { hasCar(it) }
+                .forEach { addCar(it, false) }
         notifyListeners()
     }
 
@@ -60,7 +73,7 @@ object CarCollection {
     /**
      * Removes the given car and persists the removal to persistent storage
      */
-    fun removeCar(ownCar: OwnCar) {
+    private fun removeCar(ownCar: OwnCar) {
         ownCars.remove(ownCar)
         StorageManager.remove(ownCar)
         notifyListeners()
@@ -76,11 +89,14 @@ object CarCollection {
         notifyListeners()
     }
 
-    fun positionOf(car: OwnCar): Int {
-        return positionOf(car.id)
-    }
+    /**
+     * Returns true if the car collection already has a car with the same license plate
+     */
+    private fun hasCar(otherCar: OwnCar): Boolean = ownCars.any { it.isSameCar(otherCar) }
 
-    fun positionOf(carId: String): Int {
+    fun positionOf(car: OwnCar): Int = positionOf(car.id)
+
+    private fun positionOf(carId: String): Int {
         for ((index, ownCar) in ownCars.withIndex()) {
             if (carId == ownCar.id) {
                 return index
@@ -92,23 +108,22 @@ object CarCollection {
     /**
      * Returns the car with the given id
      */
-    fun getCar(id: String): OwnCar {
-        return ownCars[positionOf(id)]
-    }
+    fun getCar(id: String): OwnCar = ownCars[positionOf(id)]
 
     /**
      * Returns the id for the car at the given position
      */
-    fun getCarId(position: Int): String {
-        return ownCars[position].id
-    }
+    fun getCarId(position: Int): String = ownCars[position].id
 
     /**
      * Returns a list of all the cars in the collection.
      */
-    fun getCars(): List<OwnCar> {
-        return ownCars.toList()
-    }
+    fun getCars(): List<OwnCar> = ownCars.toList()
+
+    /**
+     * Returns the car at the given position.
+     */
+    fun getCarAtPosition(position: Int): OwnCar = ownCars[position]
 
     /**
      * Method inteded to only be run by unit tests. Replaces the entire content

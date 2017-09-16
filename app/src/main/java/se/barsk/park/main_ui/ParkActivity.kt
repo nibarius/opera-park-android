@@ -3,7 +3,6 @@ package se.barsk.park.main_ui
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -26,13 +25,10 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import de.psdev.licensesdialog.LicensesDialogFragment
-import se.barsk.park.INTENT_EXTRA_ADD_CAR
-import se.barsk.park.R
-import se.barsk.park.consume
+import se.barsk.park.*
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
-import se.barsk.park.showPlaceholderIfNeeded
 import se.barsk.park.storage.StorageManager
 
 
@@ -108,7 +104,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         CarCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        getDynamicLink()
 
         if (StorageManager.hasServer()) {
             // Wait a little bit with showing placeholders so the network request can
@@ -123,6 +118,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onResume() {
         super.onResume()
         operaGarage.updateStatus()
+        getDynamicLink()
     }
 
     /**
@@ -296,17 +292,20 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
         override fun onFailure(exception: java.lang.Exception) {
-            Log.w("barsk", "getDynamicLink:onFailure", exception);
+            //Todo: report event to Firebase Analytics
         }
 
         override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
-            val deepLink: Uri? = pendingDynamicLinkData?.link
-            val serverUrl = deepLink?.getQueryParameter("park_server")
-            if (!StorageManager.hasServer() && serverUrl != null) {
-                StorageManager.setServer(serverUrl)
+            if (pendingDynamicLinkData == null) return
+            val deepLink = DeepLink(pendingDynamicLinkData.link)
+            if (!deepLink.isValid) return
+
+            if (!StorageManager.hasServer()) {
+                StorageManager.setServer(deepLink.server)
                 operaGarage.updateStatus()
                 showParkedCarsPlaceholderIfNeeded()
             }
+            CarCollection.addCarsThatDoesNotExist(deepLink.cars)
         }
     }
 }

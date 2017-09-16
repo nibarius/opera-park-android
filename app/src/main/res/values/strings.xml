@@ -22,5 +22,9 @@
     <string name="unable_to_connect_placeholder_button">Retry</string>
     <string name="unable_to_connect_placeholder_text">Unable to connect to\n%1$s</string>
     <string name="updating_status_placeholder">Updating status…</string>
+    <plurals name="share_car_title">
+        <item quantity="one">Share car with</item>
+        <item quantity="other">Share cars with</item>
+    </plurals >
 
 </resources>
