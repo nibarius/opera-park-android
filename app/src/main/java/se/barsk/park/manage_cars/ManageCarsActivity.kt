@@ -14,6 +14,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ViewSwitcher
 import se.barsk.park.*
+import se.barsk.park.analytics.Analytics
+import se.barsk.park.analytics.ShareCarEvent
 import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
@@ -169,6 +171,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         val linkToShare = DeepLink.getDynamicLinkFor(cars)
         val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
         startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle));
+        Analytics.logEvent(ShareCarEvent(selected.size()))
     }
 
     private fun createShareIntent(url: String): Intent {

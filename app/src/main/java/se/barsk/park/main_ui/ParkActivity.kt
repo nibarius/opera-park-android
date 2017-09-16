@@ -13,7 +13,6 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,11 +20,12 @@ import android.view.WindowManager
 import android.widget.*
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.*
+import se.barsk.park.analytics.Analytics
+import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
@@ -63,7 +63,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     val operaGarage: Garage = Garage()
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById(R.id.parked_cars_recycler_view) as RecyclerView
     }
@@ -84,6 +83,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Analytics.init(applicationContext)
         StorageManager.init(applicationContext)
         setContentView(R.layout.activity_park)
         val toolbar = findViewById(R.id.toolbar) as Toolbar?
@@ -103,7 +104,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         operaGarage.addListener(this)
         CarCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         if (StorageManager.hasServer()) {
             // Wait a little bit with showing placeholders so the network request can
@@ -292,7 +292,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
         override fun onFailure(exception: java.lang.Exception) {
-            //Todo: report event to Firebase Analytics
+            Analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
         }
 
         override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
