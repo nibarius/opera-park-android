@@ -12,8 +12,8 @@ import se.barsk.park.datatypes.OwnCar
  * One entry in the list of own parked cars
  */
 class OwnCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
-    private val regNoView: TextView by lazy { findViewById(R.id.regno) as TextView }
-    private val actionLabelView: TextView by lazy { findViewById(R.id.action_label) as TextView }
+    private val regNoView: TextView by lazy { findViewById<TextView>(R.id.regno) }
+    private val actionLabelView: TextView by lazy { findViewById<TextView>(R.id.action_label) }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.own_car_entry, this, true)

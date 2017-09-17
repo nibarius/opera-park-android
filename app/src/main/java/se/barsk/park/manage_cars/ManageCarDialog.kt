@@ -28,8 +28,8 @@ abstract class ManageCarDialog() : DialogFragment() {
     val dialogView: View by lazy {
         activity.layoutInflater.inflate(R.layout.manage_car_dialog, null) as View
     }
-    val regNoView: EditText by lazy { dialogView.findViewById(R.id.regno) as EditText }
-    val ownerView: EditText by lazy { dialogView.findViewById(R.id.owner) as EditText }
+    val regNoView: EditText by lazy { dialogView.findViewById<EditText>(R.id.regno) }
+    val ownerView: EditText by lazy { dialogView.findViewById<EditText>(R.id.owner) }
     val ownCar: OwnCar by lazy { fetchOwnCar() }
 
     override fun onAttach(context: Context?) {

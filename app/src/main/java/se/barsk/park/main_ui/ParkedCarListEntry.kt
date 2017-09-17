@@ -12,9 +12,9 @@ import se.barsk.park.datatypes.ParkedCar
  * One entry in the list of parked cars
  */
 class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
-    private val parkTimeView: TextView by lazy { findViewById(R.id.park_start_time) as TextView }
-    private val regNoView: TextView by lazy { findViewById(R.id.regno) as TextView }
-    private val avatarTextView: TextView by lazy { findViewById(R.id.avatar_text_view) as TextView }
+    private val parkTimeView: TextView by lazy { findViewById<TextView>(R.id.park_start_time) }
+    private val regNoView: TextView by lazy { findViewById<TextView>(R.id.regno) }
+    private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
 
 
     init {

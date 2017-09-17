@@ -17,10 +17,10 @@ import se.barsk.park.main_ui.CarListEntry
  * One entry in the manage cars list
  */
 class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
-    private val regNoView: TextView by lazy { findViewById(R.id.manage_cars_entry) as TextView }
-    private val avatarFrame: FrameLayout by lazy { findViewById(R.id.avatar_frame_layout) as FrameLayout }
-    private val avatarTextView: TextView by lazy { findViewById(R.id.avatar_text_view) as TextView }
-    private val avatarCheckView: ImageView by lazy { findViewById(R.id.avatar_check_view) as ImageView }
+    private val regNoView: TextView by  lazy { findViewById<TextView>(R.id.manage_cars_entry) }
+    private val avatarFrame: FrameLayout by lazy { findViewById<FrameLayout>(R.id.avatar_frame_layout) }
+    private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
+    private val avatarCheckView: ImageView by lazy { findViewById<ImageView>(R.id.avatar_check_view) }
     private val selectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
     private var unselectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
 

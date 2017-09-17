@@ -44,10 +44,10 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private var actionMode: ActionMode? = null
     private val adapter = SelectableCarsAdapter(CarCollection.getCars(), {})
     private val manageCarsRecyclerView: RecyclerView by lazy {
-        findViewById(R.id.manage_cars_recyclerview) as RecyclerView
+        findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
     }
     private val fab: FloatingActionButton by lazy {
-        findViewById(R.id.manage_cards_fab) as FloatingActionButton
+        findViewById<FloatingActionButton>(R.id.manage_cards_fab)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,8 +156,8 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun showCarsPlaceholderIfNeeded() {
-        val viewSwitcher = findViewById(R.id.manage_cars_view_switcher) as ViewSwitcher
-        val parkedCarsView = findViewById(R.id.manage_cars_recyclerview)
+        val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)
+        val parkedCarsView = findViewById<View>(R.id.manage_cars_recyclerview)
         val empty = CarCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
@@ -170,7 +170,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
                 .mapTo(cars) { CarCollection.getCarAtPosition(it) }
         val linkToShare = DeepLink.getDynamicLinkFor(cars)
         val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
-        startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle));
+        startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle))
         Analytics.logEvent(ShareCarEvent(selected.size()))
     }
 

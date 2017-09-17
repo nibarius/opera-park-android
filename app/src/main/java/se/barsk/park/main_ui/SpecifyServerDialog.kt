@@ -33,7 +33,7 @@ class SpecifyServerDialog : DialogFragment() {
     private val dialogView: View by lazy {
         activity.layoutInflater.inflate(R.layout.specify_server_dialog, null) as View
     }
-    private val editText: EditText by lazy { dialogView.findViewById(R.id.server_url_input) as EditText }
+    private val editText: EditText by lazy { dialogView.findViewById<EditText>(R.id.server_url_input) }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)

@@ -51,7 +51,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onGarageUpdateFail(errorMessage: String) {
         val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
-        val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView
+        val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
         textView.maxLines = 5
         snackbar.show()
         showParkedCarsPlaceholderIfNeeded()
@@ -64,7 +64,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     val operaGarage: Garage = Garage()
     private val parkedCarsRecyclerView: RecyclerView by lazy {
-        findViewById(R.id.parked_cars_recycler_view) as RecyclerView
+        findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
     }
     private val layoutManager: RecyclerView.LayoutManager by lazy {
         LinearLayoutManager(this, LinearLayout.VERTICAL, false)
@@ -74,11 +74,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private val ownCarsRecyclerView: RecyclerView by lazy {
-        findViewById(R.id.own_cars_recycler_view) as RecyclerView
+        findViewById<RecyclerView>(R.id.own_cars_recycler_view)
     }
 
     private val containerView: View by lazy {
-        findViewById(R.id.container_view) as View
+        findViewById<View>(R.id.container_view)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +87,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         Analytics.init(applicationContext)
         StorageManager.init(applicationContext)
         setContentView(R.layout.activity_park)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar?
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         parkedCarsRecyclerView.layoutManager = layoutManager
@@ -98,7 +98,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
                 CarCollection.getCars(), this::onOwnCarClicked)
 
-        val addCarButton = findViewById(R.id.no_own_cars_placeholder_button) as Button
+        val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
 
         operaGarage.addListener(this)
@@ -125,8 +125,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * Show list of own cars if there are any own cars, otherwise show the placeholder.
      */
     private fun showOwnCarsPlaceholderIfNeeded() {
-        val viewSwitcher = findViewById(R.id.own_cars_view_switcher) as ViewSwitcher
-        val ownCarsView = findViewById(R.id.own_cars_recycler_view)
+        val viewSwitcher = findViewById<ViewSwitcher>(R.id.own_cars_view_switcher)
+        val ownCarsView = findViewById<View>(R.id.own_cars_recycler_view)
         val empty = CarCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
     }
@@ -136,8 +136,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * placeholder.
      */
     private fun showParkedCarsPlaceholderIfNeeded() {
-        val viewSwitcher = findViewById(R.id.parked_cars_view_switcher) as ViewSwitcher
-        val parkedCarsView = findViewById(R.id.parked_cars_recycler_view)
+        val viewSwitcher = findViewById<ViewSwitcher>(R.id.parked_cars_view_switcher)
+        val parkedCarsView = findViewById<View>(R.id.parked_cars_recycler_view)
         val empty = operaGarage.isEmpty()
         setCorrectParkedCarsPlaceholder()
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
@@ -147,9 +147,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * Sets the current placeholder view for the parked cars view depending on circumstances
      */
     private fun setCorrectParkedCarsPlaceholder() {
-        val textView = findViewById(R.id.parked_cars_placeholder_text_view) as TextView
-        val parkServerButton = findViewById(R.id.no_park_server_placeholder_button) as Button
-        val spinner = findViewById(R.id.loading_spinner) as ProgressBar
+        val textView = findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
+        val parkServerButton = findViewById<Button>(R.id.no_park_server_placeholder_button)
+        val spinner = findViewById<ProgressBar>(R.id.loading_spinner)
         val text: String
         val top: Drawable?
         if (!StorageManager.hasServer()) {
