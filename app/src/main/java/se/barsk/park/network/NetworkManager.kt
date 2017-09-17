@@ -8,13 +8,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.isTesting
 import se.barsk.park.storage.StorageManager
 
 /**
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    var serverUrl: String = StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
+    var serverUrl: String = if (isTesting()) "" else StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
     var lastRequestFailed: Boolean = false
     /**
      * True if status check request have been made, but the response haven't been received yet.

@@ -27,7 +27,7 @@ object CarCollection {
      * @param garage The Garage to check the parking status against
      * @return True if the parking status was changed for any of the cars in the collection
      */
-    fun updateParkStatus(garage: Garage) {
+    fun updateParkStatus(garage: Garage): Boolean {
         var anyChange = false
         for (car in ownCars) {
             val newValue = garage.isParked(car)
@@ -39,6 +39,7 @@ object CarCollection {
         if (anyChange) {
             notifyListeners()
         }
+        return anyChange
     }
 
     /**
