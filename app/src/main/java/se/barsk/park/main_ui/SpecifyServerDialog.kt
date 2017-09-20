@@ -66,8 +66,7 @@ class SpecifyServerDialog : DialogFragment() {
                 })
                 .setPositiveButton("OK", { _, _: Int ->
                     val server = Utils.fixUrl(editText.text.toString())
-                    StorageManager.putSetting(StorageManager.SETTINGS_SERVER_URL_KEY, server)
-                    NetworkManager.serverUrl = server
+                    StorageManager.setServer(server)
                     listener.parkServerSpecified()
                 })
                 .create()
@@ -75,7 +74,7 @@ class SpecifyServerDialog : DialogFragment() {
             dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
             false
         })
-        editText.setText(StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY))
+        editText.setText(StorageManager.getServer())
         dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog

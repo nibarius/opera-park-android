@@ -11,7 +11,7 @@ import se.barsk.park.storage.StorageManager
 object CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
-    private val ownCars: MutableList<OwnCar> = StorageManager.fetchAllCars()
+    private val ownCars: MutableList<OwnCar> = if (isTesting()) mutableListOf() else StorageManager.fetchAllCars()
 
     private fun notifyListeners() {
         for (listener in listeners) {
@@ -127,7 +127,7 @@ object CarCollection {
     fun getCarAtPosition(position: Int): OwnCar = ownCars[position]
 
     /**
-     * Method inteded to only be run by unit tests. Replaces the entire content
+     * Method intended to only be run by unit tests. Replaces the entire content
      * of the car collection with the given list of cars. Used to bypass persistent
      * storage
      */

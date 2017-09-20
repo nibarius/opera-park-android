@@ -15,7 +15,7 @@ import se.barsk.park.storage.StorageManager
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    var serverUrl: String = if (isTesting()) "" else StorageManager.readStringSetting(StorageManager.SETTINGS_SERVER_URL_KEY)
+    var serverUrl: String = if (isTesting()) "" else StorageManager.getServer()
     var lastRequestFailed: Boolean = false
     /**
      * True if status check request have been made, but the response haven't been received yet.
