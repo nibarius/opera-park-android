@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Opera Park</string>
-    <string name="title_activity_park">Opera Park</string>
     <string name="regno">Licence plate (e.g. ABC 123)</string>
     <string name="owner">Owner (e.g. username)</string>
     <string name="edit_car_dialog_title">Edit car</string>
@@ -26,5 +25,9 @@
         <item quantity="one">Share car with</item>
         <item quantity="other">Share cars with</item>
     </plurals >
+    <string name="settings_usage_statistics">Usage statistics</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_about_group_title">About %s</string>
+    <string name="settings_version">Version: %s</string>
 
 </resources>

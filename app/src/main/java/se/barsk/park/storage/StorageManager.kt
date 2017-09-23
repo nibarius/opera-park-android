@@ -5,7 +5,7 @@ import se.barsk.park.datatypes.OwnCar
 
 
 object StorageManager {
-    private const val SHARED_PREF_FILE_SETTINGS = "settings"
+    const val SHARED_PREF_FILE_SETTINGS = "settings"
     private lateinit var sharedPrefs: SharedPrefs
     private lateinit var database: Database
 
@@ -16,11 +16,13 @@ object StorageManager {
 
     // Shared preferences interaction functions
     fun hasServer() = sharedPrefs.hasServer()
+
     fun getServer() = sharedPrefs.getServer()
     fun setServer(server: String) = sharedPrefs.setServer(server)
 
     // Database interaction functions
     fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
+
     fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
     fun remove(ownCar: OwnCar) = database.remove(ownCar)
 }

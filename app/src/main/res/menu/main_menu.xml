@@ -7,9 +7,9 @@
         android:title="Manage cars">
     </item>
     <item
-        android:id="@+id/menu_third_parties"
+        android:id="@+id/menu_settings"
         app:showAsAction="collapseActionView"
-        android:title="Third party licences">
+        android:title="Settings">
     </item>
 
     <item

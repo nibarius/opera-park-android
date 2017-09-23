@@ -2,13 +2,14 @@ package se.barsk.park.storage
 
 import android.content.SharedPreferences
 import se.barsk.park.BuildConfig
+import se.barsk.park.Utils
 import se.barsk.park.network.NetworkManager
 
 /**
  * Class for handing all interactions with the SharedPreferences
  */
-class SharedPrefs(val sharedPreferences: SharedPreferences) {
-    object keys {
+class SharedPrefs(private val sharedPreferences: SharedPreferences) {
+    object keys { //Todo: move these keys to a resource file?
         const val FIRST_VERSION_CODE = "fvc"
         const val FIRST_VERSION_NAME = "fvn"
         const val CURRENT_VERSION_CODE = "cvc"
@@ -16,27 +17,30 @@ class SharedPrefs(val sharedPreferences: SharedPreferences) {
         const val SERVER_URL = "park_server_url"
     }
 
+    private val internalServerChangeListener = InternalServerChangeListener()
+
     init {
         putSettingIfNotExist(keys.FIRST_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
         putSettingIfNotExist(keys.CURRENT_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
         putSettingIfNotExist(keys.FIRST_VERSION_NAME, BuildConfig.VERSION_NAME)
         upgradeIfNeeded()
+        sharedPreferences.registerOnSharedPreferenceChangeListener(internalServerChangeListener)
     }
 
-    fun readSetting(key: String): String = sharedPreferences.getString(key, "")
-    fun putSetting(key: String, value: String) {
+    private fun readSetting(key: String): String = sharedPreferences.getString(key, "")
+    private fun putSetting(key: String, value: String) {
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
         editor.apply()
     }
 
-    fun putSettingIfNotExist(key: String, value: String) {
+    private fun putSettingIfNotExist(key: String, value: String) {
         if (!sharedPreferences.contains(key)) {
             putSetting(key, value)
         }
     }
 
-    fun upgradeIfNeeded() {
+    private fun upgradeIfNeeded() {
         val storedVersionCode = readSetting(keys.CURRENT_VERSION_CODE)
         val currentVersionCode = BuildConfig.VERSION_CODE.toString()
         if (storedVersionCode != currentVersionCode) {
@@ -48,9 +52,17 @@ class SharedPrefs(val sharedPreferences: SharedPreferences) {
     }
 
     fun hasServer() = getServer().isNotEmpty()
-    fun getServer() = readSetting(keys.SERVER_URL)
-    fun setServer(server: String) {
-        putSetting(keys.SERVER_URL, server)
-        NetworkManager.serverUrl = server
+    // Need to fix url when reading from storage, rather than writing to storage
+    // since the settings view write to settings directly without a chance to modify the value before.
+    fun getServer() = Utils.fixUrl(readSetting(keys.SERVER_URL))
+    fun setServer(server: String) = putSetting(keys.SERVER_URL, server)
+
+
+    inner class InternalServerChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
+            if (key == SharedPrefs.keys.SERVER_URL) {
+                NetworkManager.serverUrl = getServer()
+            }
+        }
     }
 }

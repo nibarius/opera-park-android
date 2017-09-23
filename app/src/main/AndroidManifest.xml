@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".main_ui.ParkActivity"
-            android:label="@string/title_activity_park"
+            android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -30,6 +30,11 @@
             android:name=".manage_cars.ManageCarsActivity"
             android:parentActivityName=".main_ui.ParkActivity"
             android:label="Manage cars"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:parentActivityName=".main_ui.ParkActivity"
+            android:label="Settings"
             android:launchMode="singleTop"/>
     </application>
 

@@ -10,15 +10,14 @@ import se.barsk.park.datatypes.ParkedCar
  * Tests for the garage
  */
 class GarageTest {
-    val emptyGarage = Garage()
-    val almostEmptyGarage = Garage(listOf(ParkedCar("ijk567", "owner", "today")))
-    val almostFullGarage = Garage(listOf(
+    private val emptyGarage = Garage()
+    private val almostFullGarage = Garage(listOf(
             ParkedCar("zzz999", "owner", "1 hour ago"),
             ParkedCar("yyy888", "owner2", "1 hour ago"),
             ParkedCar("xxx777", "owner3", "1 hour ago"),
             ParkedCar("www666", "owner4", "1 hour ago"),
             ParkedCar("uuu444", "owner6", "1 hour ago")))
-    val fullGarage = Garage(listOf(
+    val fullGarage = Garage(initialParkedCars = listOf(
             ParkedCar("zzz999", "owner", "1 hour ago"),
             ParkedCar("yyy888", "owner2", "1 hour ago"),
             ParkedCar("xxx777", "owner3", "1 hour ago"),
@@ -72,5 +71,11 @@ class GarageTest {
     @Test
     fun noSpotsFree() {
         assertEquals(0, fullGarage.spotsFree)
+    }
+
+    @Test
+    fun clear() {
+        fullGarage.clear()
+        assertEquals(true, fullGarage.isEmpty())
     }
 }

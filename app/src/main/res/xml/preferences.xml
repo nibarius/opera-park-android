@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:title="@string/settings_server"
+        android:key="park_server_url"/>
+    <CheckBoxPreference
+        android:title="@string/settings_usage_statistics"
+        android:defaultValue="true"
+        android:key="usage_statistics" />
+    <PreferenceCategory
+        android:title="@string/settings_about_group_title"
+        android:key="about_group">
+        <Preference
+            android:title="@string/settings_version"
+            android:key="version"/>
+        <Preference
+            android:title="@string/notices_title"
+            android:key="third_party_licenses"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

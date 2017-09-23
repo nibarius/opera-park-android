@@ -29,12 +29,14 @@ import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
 import se.barsk.park.manage_cars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
+import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.storage.StorageManager
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
-    override fun parkServerSpecified() {
+    override fun parkServerChanged() {
+        operaGarage.clear()
         operaGarage.updateStatus()
     }
 
@@ -63,6 +65,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     val operaGarage: Garage = Garage()
+    private var serverBeforePause: String? = null
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
     }
@@ -117,8 +120,19 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onResume() {
         super.onResume()
-        operaGarage.updateStatus()
+        if (serverBeforePause != StorageManager.getServer()) {
+            // Server has changed since last time the activity was open
+            parkServerChanged()
+        } else {
+            operaGarage.updateStatus()
+        }
+        serverBeforePause = null
         getDynamicLink()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        serverBeforePause = StorageManager.getServer()
     }
 
     /**
@@ -187,6 +201,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, top, null, null)
     }
 
+    private fun showingErrorPlaceholder(): Boolean {
+        return !StorageManager.hasServer() || //TODO: This doesn't work when switching from a working server to a non working server
+                NetworkManager.lastRequestFailed ||
+                NetworkManager.waitingOnNetwork
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -195,14 +215,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
-        R.id.menu_third_parties -> consume { showThirdPartyList() }
+        R.id.menu_settings -> consume { navigateToSettings() }
         R.id.server_dialog -> consume { showServerDialog() }
         R.id.remove_server -> consume { removeServer() }
         else -> super.onOptionsItemSelected(item)
     }
 
-    private fun navigateToManageCars() {
-        val intent = Intent(this, ManageCarsActivity::class.java)
+    private fun navigateToSettings() {
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
@@ -212,6 +232,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         startActivity(intent)
     }
 
+    private fun navigateToManageCars() {
+        val intent = Intent(this, ManageCarsActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
@@ -239,6 +263,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val statusBarColor: Int
         val title: String
         when {
+            showingErrorPlaceholder() -> {
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
+                title = getString(R.string.app_name)
+            }
             freeSpots <= 0 -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
@@ -261,16 +290,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             window.statusBarColor = statusBarColor
         }
         supportActionBar?.title = title
-    }
-
-    private fun showThirdPartyList() {
-        val fragment = LicensesDialogFragment.Builder(this)
-                .setNotices(R.raw.notices)
-                .setShowFullLicenseText(false)
-                .setIncludeOwnLicense(true)
-                .build()
-
-        fragment.show(supportFragmentManager, null)
     }
 
     private fun showServerDialog() {

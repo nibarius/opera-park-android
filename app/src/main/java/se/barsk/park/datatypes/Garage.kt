@@ -26,6 +26,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         get() = CAPACITY - parkedCars.count()
 
     fun addListener(listener: GarageStatusChangedListener) = listeners.add(listener)
+    fun clear() { parkedCars = listOf() }
     fun isParked(car: OwnCar): Boolean = parkedCars.any { it.regNo == car.regNo }
     fun isFull(): Boolean = parkedCars.size == CAPACITY
     fun isEmpty(): Boolean = parkedCars.isEmpty()

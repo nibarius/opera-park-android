@@ -14,14 +14,13 @@ import android.webkit.URLUtil
 import android.widget.EditText
 import se.barsk.park.R
 import se.barsk.park.Utils
-import se.barsk.park.network.NetworkManager
 import se.barsk.park.storage.StorageManager
 
 
 class SpecifyServerDialog : DialogFragment() {
 
     interface SpecifyServerDialogListener {
-        fun parkServerSpecified()
+        fun parkServerChanged()
         fun parkServerDialogCancelled()
     }
 
@@ -65,9 +64,8 @@ class SpecifyServerDialog : DialogFragment() {
                     dialog.cancel()
                 })
                 .setPositiveButton("OK", { _, _: Int ->
-                    val server = Utils.fixUrl(editText.text.toString())
-                    StorageManager.setServer(server)
-                    listener.parkServerSpecified()
+                    StorageManager.setServer(editText.text.toString())
+                    listener.parkServerChanged()
                 })
                 .create()
         editText.setOnEditorActionListener({ _, _, _ ->
