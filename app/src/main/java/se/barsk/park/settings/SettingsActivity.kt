@@ -19,10 +19,10 @@ import se.barsk.park.storage.StorageManager
 class SettingsActivity : AppCompatActivity() {
     // https://stackoverflow.com/questions/26509180/no-actionbar-in-preferenceactivity-after-upgrade-to-support-library-v21
     override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState);
+        super.onPostCreate(savedInstanceState)
         val fragment = ParkPreferenceFragment()
         fragment.setThirdPartyClickListener(Preference.OnPreferenceClickListener { consume { showThirdPartyList() } })
-        fragmentManager.beginTransaction().replace(android.R.id.content, fragment).commit();
+        fragmentManager.beginTransaction().replace(android.R.id.content, fragment).commit()
     }
 
 
@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
     class ParkPreferenceFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-        lateinit var thirdPartyListener: Preference.OnPreferenceClickListener
+        private lateinit var thirdPartyListener: Preference.OnPreferenceClickListener
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             updateSummary(key)
@@ -75,7 +75,7 @@ class SettingsActivity : AppCompatActivity() {
                     pref.summary = if (pref.text.isEmpty())
                         getString(R.string.no_server_placeholder_text)
                     else
-                        pref.text + " lite"
+                        pref.text
                 }
             }
         }

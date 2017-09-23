@@ -55,13 +55,17 @@ class SharedPrefs(private val sharedPreferences: SharedPreferences) {
     // Need to fix url when reading from storage, rather than writing to storage
     // since the settings view write to settings directly without a chance to modify the value before.
     fun getServer() = Utils.fixUrl(readSetting(keys.SERVER_URL))
+
     fun setServer(server: String) = putSetting(keys.SERVER_URL, server)
 
 
+    /**
+     * Listener used to be notified about changes done to the server via the settings activity
+     */
     inner class InternalServerChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
             if (key == SharedPrefs.keys.SERVER_URL) {
-                NetworkManager.serverUrl = getServer()
+                NetworkManager.setServer(getServer())
             }
         }
     }

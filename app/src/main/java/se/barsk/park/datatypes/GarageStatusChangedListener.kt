@@ -5,5 +5,5 @@ package se.barsk.park.datatypes
  */
 interface GarageStatusChangedListener {
     fun onGarageStatusChange()
-    fun onGarageUpdateFail(errorMessage: String)
+    fun onGarageUpdateFail(errorMessage: String?)
 }

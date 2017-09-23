@@ -21,7 +21,6 @@ class SpecifyServerDialog : DialogFragment() {
 
     interface SpecifyServerDialogListener {
         fun parkServerChanged()
-        fun parkServerDialogCancelled()
     }
 
     companion object {
@@ -49,11 +48,6 @@ class SpecifyServerDialog : DialogFragment() {
         super.onStart()
         updatePositiveButton()
         editText.addTextChangedListener(DialogTextWatcher())
-    }
-
-    override fun onCancel(dialog: DialogInterface?) {
-        super.onCancel(dialog)
-        listener.parkServerDialogCancelled()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

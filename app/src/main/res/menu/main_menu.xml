@@ -1,26 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_manage_cars"
-        app:showAsAction="collapseActionView"
-        android:title="Manage cars">
+        android:title="@string/menu_manage_cars_entry"
+        app:showAsAction="collapseActionView">
     </item>
     <item
         android:id="@+id/menu_settings"
-        app:showAsAction="collapseActionView"
-        android:title="Settings">
-    </item>
-
-    <item
-        android:id="@+id/server_dialog"
-        app:showAsAction="collapseActionView"
-        android:title="Change server">
-    </item>
-
-    <item
-        android:id="@+id/remove_server"
-        app:showAsAction="collapseActionView"
-        android:title="Remove server">
+        android:title="@string/menu_settings_entry"
+        app:showAsAction="collapseActionView">
     </item>
 </menu>

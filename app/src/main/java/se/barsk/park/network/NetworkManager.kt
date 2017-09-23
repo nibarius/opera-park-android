@@ -15,17 +15,28 @@ import se.barsk.park.storage.StorageManager
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    var serverUrl: String = if (isTesting()) "" else StorageManager.getServer()
-    var lastRequestFailed: Boolean = false
-    /**
-     * True if status check request have been made, but the response haven't been received yet.
-     */
-    var waitingOnNetwork: Boolean = false
+    private var serverUrl: String = if (isTesting()) "" else StorageManager.getServer()
+    var state: State = State.FIRST_RESPONSE_NOT_RECEIVED
     private const val STATUS = "status"
     private const val PARK = "park"
     private const val UNPARK = "unpark"
 
-    private enum class Action {PARK, UNPARK }
+    private enum class Action { PARK, UNPARK }
+
+    /**
+     * Describes the state of the NetworkManager. This can be used to decide which
+     * placeholder should shown to the user if there are no data from the server available.
+     */
+    enum class State {
+        FIRST_RESPONSE_NOT_RECEIVED,
+        ONLY_FAILED_REQUESTS,
+        HAVE_MADE_SUCCESSFUL_REQUEST
+    }
+
+    fun setServer(server: String) {
+        serverUrl = server
+        state = State.FIRST_RESPONSE_NOT_RECEIVED
+    }
 
     /**
      * Makes a http request to the park server to check the current status.
@@ -33,28 +44,28 @@ object NetworkManager {
      */
     fun checkStatus(resultReadyListener: (Result) -> Unit) {
         if (serverUrl.isEmpty()) {
+            resultReadyListener(Result.NoServer())
             return
         }
-        waitingOnNetwork = true
         Fuel.get(serverUrl + STATUS).responseJson { _, _, result ->
-            waitingOnNetwork = false
             when (result) {
                 is com.github.kittinunf.result.Result.Failure -> {
                     val (_, error) = result
-                    lastRequestFailed = true
+                    if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
+                        state = State.ONLY_FAILED_REQUESTS
+                    }
                     resultReadyListener(Result.Fail(null, "Failed to update parking status: $error"))
                 }
                 is com.github.kittinunf.result.Result.Success -> {
                     try {
                         val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
                         val parkedCars = getParkedCarsFromResponse(data)
-                        lastRequestFailed = false
+                        state = State.HAVE_MADE_SUCCESSFUL_REQUEST
+
                         resultReadyListener(Result.Success(parkedCars))
                     } catch (e: org.json.JSONException) {
-                        lastRequestFailed = true
                         resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown data returned by server"))
                     } catch (e: Exception) {
-                        lastRequestFailed = true
                         resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown error"))
                     }
                 }
@@ -101,24 +112,20 @@ object NetworkManager {
                                 val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
                                 val success = data.getString("result") == "ok"
                                 val parkedCars = getParkedCarsFromResponse(data)
-                                lastRequestFailed = false
                                 if (success) {
                                     resultReadyListener(Result.Success(parkedCars))
                                 } else {
                                     resultReadyListener(Result.Fail(parkedCars, errorMessage))
                                 }
                             } catch (e: org.json.JSONException) {
-                                lastRequestFailed = true
                                 val msg = "$errorMessage\n" + "Unknown data returned by server"
                                 resultReadyListener(Result.Fail(null, msg))
                             } catch (e: Exception) {
-                                lastRequestFailed = true
                                 val msg = "$errorMessage\n" + "Unknown error"
                                 resultReadyListener(Result.Fail(null, msg))
                             }
                         }
                         is com.github.kittinunf.result.Result.Failure -> {
-                            lastRequestFailed = true
                             val msg = "$errorMessage\n" +
                                     "${response.httpStatusCode}: ${response.httpResponseMessage}"
                             resultReadyListener(Result.Fail(null, msg))

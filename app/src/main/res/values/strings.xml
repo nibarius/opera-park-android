@@ -24,10 +24,12 @@
     <plurals name="share_car_title">
         <item quantity="one">Share car with</item>
         <item quantity="other">Share cars with</item>
-    </plurals >
+    </plurals>
     <string name="settings_usage_statistics">Usage statistics</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">About %s</string>
     <string name="settings_version">Version: %s</string>
+    <string name="menu_settings_entry">Settings</string>
+    <string name="menu_manage_cars_entry">Manage cars</string>
 
 </resources>

@@ -4,7 +4,7 @@ import android.net.Uri
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.network.NetworkManager
+import se.barsk.park.storage.StorageManager
 
 /**
  * Class for handling handling incoming deep links and generating deep links
@@ -25,7 +25,7 @@ class DeepLink(link: Uri) {
                     .scheme(SCHEME)
                     .authority(AUTHORITY)
                     .appendPath(PATH)
-                    .appendQueryParameter(PARAMETER_SERVER, NetworkManager.serverUrl)
+                    .appendQueryParameter(PARAMETER_SERVER, StorageManager.getServer())
             for ((regNo, owner) in cars) {
                 builder.appendQueryParameter(PARAMETER_REGNO, regNo)
                 builder.appendQueryParameter(PARAMETER_OWNER, owner)

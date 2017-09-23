@@ -15,8 +15,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
 
     private var listeners: MutableList<GarageStatusChangedListener> = mutableListOf()
 
-    var parkedCars: List<ParkedCar> by Delegates.observable(initialParkedCars) {
-        property, oldValue, newValue ->
+    var parkedCars: List<ParkedCar> by Delegates.observable(initialParkedCars) { property, oldValue, newValue ->
         for (listener in listeners) {
             listener.onGarageStatusChange()
         }
@@ -26,7 +25,10 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         get() = CAPACITY - parkedCars.count()
 
     fun addListener(listener: GarageStatusChangedListener) = listeners.add(listener)
-    fun clear() { parkedCars = listOf() }
+    fun clear() {
+        parkedCars = listOf()
+    }
+
     fun isParked(car: OwnCar): Boolean = parkedCars.any { it.regNo == car.regNo }
     fun isFull(): Boolean = parkedCars.size == CAPACITY
     fun isEmpty(): Boolean = parkedCars.isEmpty()
@@ -34,7 +36,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
     fun parkCar(car: OwnCar) = NetworkManager.parkCar(car, this::onResultReady)
     fun unparkCar(car: OwnCar) = NetworkManager.unparkCar(car, this::onResultReady)
 
-    private fun notifyListenersAboutFail(msg: String) {
+    private fun notifyListenersAboutFail(msg: String?) {
         for (listener in listeners) {
             listener.onGarageUpdateFail(msg)
         }
@@ -47,6 +49,9 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
             }
             is Result.Fail -> {
                 notifyListenersAboutFail(result.message)
+            }
+            is Result.NoServer -> {
+                notifyListenersAboutFail(null)
             }
         }
     }

@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -22,7 +21,6 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
-import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.*
 import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.DynamicLinkFailedEvent
@@ -40,23 +38,23 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         operaGarage.updateStatus()
     }
 
-    override fun parkServerDialogCancelled() {
-        showParkedCarsPlaceholderIfNeeded()
-    }
-
     override fun onGarageStatusChange() {
+        updateParkingState()
         updateToolbar(operaGarage.spotsFree)
         updateListOfParkedCars()
         showParkedCarsPlaceholderIfNeeded()
         CarCollection.updateParkStatus(operaGarage)
     }
 
-    override fun onGarageUpdateFail(errorMessage: String) {
-        val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
-        val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
-        textView.maxLines = 5
-        snackbar.show()
+    override fun onGarageUpdateFail(errorMessage: String?) {
+        updateParkingState()
         showParkedCarsPlaceholderIfNeeded()
+        if (errorMessage != null) {
+            val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
+            val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
+            textView.maxLines = 5
+            snackbar.show()
+        }
     }
 
     override fun onCarCollectionStatusChange() {
@@ -64,7 +62,20 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         showOwnCarsPlaceholderIfNeeded()
     }
 
+    private enum class ParkingState {
+        NO_SERVER,
+        WAITING_ON_RESPONSE,
+        REQUEST_FAILED,
+        EMPTY,
+        FREE_SPACE,
+        ALMOST_FULL,
+        FULL;
+
+        fun showsPlaceholder(): Boolean = ordinal <= EMPTY.ordinal
+    }
+
     val operaGarage: Garage = Garage()
+    private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
@@ -107,20 +118,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         operaGarage.addListener(this)
         CarCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
-
-        if (StorageManager.hasServer()) {
-            // Wait a little bit with showing placeholders so the network request can
-            // kick off and, maybe even finish if it's quick.
-            Handler().postDelayed({ showParkedCarsPlaceholderIfNeeded() }, 500)
-        } else {
-            // Show missing server placeholder immediately
-            showParkedCarsPlaceholderIfNeeded()
-        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (serverBeforePause != StorageManager.getServer()) {
+        if (serverBeforePause != null && serverBeforePause != StorageManager.getServer()) {
             // Server has changed since last time the activity was open
             parkServerChanged()
         } else {
@@ -153,7 +155,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.parked_cars_view_switcher)
         val parkedCarsView = findViewById<View>(R.id.parked_cars_recycler_view)
         val empty = operaGarage.isEmpty()
-        setCorrectParkedCarsPlaceholder()
+        if (parkingState.showsPlaceholder()) {
+            setCorrectParkedCarsPlaceholder()
+        }
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
 
@@ -166,45 +170,67 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val spinner = findViewById<ProgressBar>(R.id.loading_spinner)
         val text: String
         val top: Drawable?
-        if (!StorageManager.hasServer()) {
-            // no server set up
-            spinner.visibility = View.GONE
-            text = getString(R.string.no_server_placeholder_text)
-            top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
-            parkServerButton.visibility = View.VISIBLE
-            parkServerButton.text = getString(R.string.no_server_placeholder_button)
-            parkServerButton.setOnClickListener { _ -> showServerDialog() }
-        } else if (NetworkManager.lastRequestFailed) {
-            // failed to communicate with server
-            spinner.visibility = View.GONE
-            text = getString(R.string.unable_to_connect_placeholder_text, NetworkManager.serverUrl)
-            top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
-            parkServerButton.visibility = View.VISIBLE
-            parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
-            parkServerButton.setOnClickListener { _ ->
-                operaGarage.updateStatus()
-                setCorrectParkedCarsPlaceholder()
+        when (parkingState) {
+            ParkingState.NO_SERVER -> {
+                // no server set up
+                spinner.visibility = View.GONE
+                text = getString(R.string.no_server_placeholder_text)
+                top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
+                parkServerButton.visibility = View.VISIBLE
+                parkServerButton.text = getString(R.string.no_server_placeholder_button)
+                parkServerButton.setOnClickListener { _ -> showServerDialog() }
             }
-        } else if (NetworkManager.waitingOnNetwork) {
-            spinner.visibility = View.VISIBLE
-            text = getString(R.string.updating_status_placeholder)
-            top = null
-            parkServerButton.visibility = View.GONE
-        } else {
-            // No parked cars
-            spinner.visibility = View.GONE
-            text = getString(R.string.parked_cars_placeholder)
-            top = getDrawable(R.drawable.empty_parking)
-            parkServerButton.visibility = View.GONE
+            ParkingState.REQUEST_FAILED -> {
+                // failed to communicate with server
+                spinner.visibility = View.GONE
+                text = getString(R.string.unable_to_connect_placeholder_text, StorageManager.getServer())
+                top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
+                parkServerButton.visibility = View.VISIBLE
+                parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
+                parkServerButton.setOnClickListener { _ ->
+                    operaGarage.updateStatus()
+                    setCorrectParkedCarsPlaceholder()
+                }
+            }
+            ParkingState.WAITING_ON_RESPONSE -> {
+                spinner.visibility = View.VISIBLE
+                text = getString(R.string.updating_status_placeholder)
+                top = null
+                parkServerButton.visibility = View.GONE
+            }
+            ParkingState.EMPTY -> {
+                // No parked cars
+                spinner.visibility = View.GONE
+                text = getString(R.string.parked_cars_placeholder)
+                top = getDrawable(R.drawable.empty_parking)
+                parkServerButton.visibility = View.GONE
+            }
+            else -> {
+                throw RuntimeException("No need for a placeholder")
+            }
         }
         textView.text = text
         textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, top, null, null)
     }
 
-    private fun showingErrorPlaceholder(): Boolean {
-        return !StorageManager.hasServer() || //TODO: This doesn't work when switching from a working server to a non working server
-                NetworkManager.lastRequestFailed ||
-                NetworkManager.waitingOnNetwork
+    private fun updateParkingState() {
+        parkingState = if (!StorageManager.hasServer()) {
+            ParkingState.NO_SERVER
+        } else if (NetworkManager.state == NetworkManager.State.ONLY_FAILED_REQUESTS) {
+            ParkingState.REQUEST_FAILED
+        } else if (NetworkManager.state == NetworkManager.State.FIRST_RESPONSE_NOT_RECEIVED) {
+            ParkingState.WAITING_ON_RESPONSE
+        } else if (operaGarage.isEmpty()) {
+            ParkingState.EMPTY
+        } else if (operaGarage.spotsFree > 1) {
+            ParkingState.FREE_SPACE
+        } else if (operaGarage.spotsFree == 1) {
+            ParkingState.ALMOST_FULL
+        } else if (operaGarage.isFull()) {
+            ParkingState.FULL
+        } else {
+            throw RuntimeException("Unknown parking state")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -216,8 +242,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
-        R.id.server_dialog -> consume { showServerDialog() }
-        R.id.remove_server -> consume { removeServer() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -263,17 +287,17 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val statusBarColor: Int
         val title: String
         when {
-            showingErrorPlaceholder() -> {
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
+            parkingState.showsPlaceholder() -> {
+                toolbarColor = ContextCompat.getColor(this, R.color.colorPrimary)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryDark)
                 title = getString(R.string.app_name)
             }
-            freeSpots <= 0 -> {
+            parkingState == ParkingState.FULL -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
                 title = "Full"
             }
-            freeSpots == 1 -> {
+            parkingState == ParkingState.ALMOST_FULL -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
                 title = "Last spot"
@@ -296,11 +320,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
     }
 
-    private fun removeServer() {
-        StorageManager.setServer("")
-        showParkedCarsPlaceholderIfNeeded()
-    }
-
     private fun getDynamicLink() {
         val listener = DynamicLinkListener()
         FirebaseDynamicLinks.getInstance()
@@ -321,8 +340,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
             if (!StorageManager.hasServer()) {
                 StorageManager.setServer(deepLink.server)
-                operaGarage.updateStatus()
-                showParkedCarsPlaceholderIfNeeded()
+                parkServerChanged()
             }
             CarCollection.addCarsThatDoesNotExist(deepLink.cars)
         }
