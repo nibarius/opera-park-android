@@ -1,3 +1,4 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="own_cars_bar_landscape_width">160dp</dimen>
 </resources>

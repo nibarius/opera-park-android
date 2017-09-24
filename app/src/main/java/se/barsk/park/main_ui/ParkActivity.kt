@@ -1,6 +1,7 @@
 package se.barsk.park.main_ui
 
 import android.content.Intent
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -80,12 +81,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
     }
-    private val layoutManager: RecyclerView.LayoutManager by lazy {
-        LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-    }
-    private val layoutManager2: RecyclerView.LayoutManager by lazy {
-        LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
-    }
 
     private val ownCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.own_cars_recycler_view)
@@ -104,10 +99,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        parkedCarsRecyclerView.layoutManager = layoutManager
+        parkedCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
 
-        ownCarsRecyclerView.layoutManager = layoutManager2
+        ownCarsRecyclerView.layoutManager =
+                if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
+                    LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+                else
+                    LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
                 CarCollection.getCars(), this::onOwnCarClicked)

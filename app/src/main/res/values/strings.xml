@@ -13,6 +13,7 @@
     <string name="manage_cars_context_menu_delete">Delete</string>
     <string name="no_cars_add_car_button">Add a car</string>
     <string name="no_cars_placeholder_message">You haven\'t added any cars yet</string>
+    <string name="no_cars_placeholder_message_short">You have no cars</string>
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="parked_cars_placeholder">No parked cars</string>
     <string name="notices_title">Third party licences</string>
@@ -31,5 +32,6 @@
     <string name="settings_version">Version: %s</string>
     <string name="menu_settings_entry">Settings</string>
     <string name="menu_manage_cars_entry">Manage cars</string>
+    <string name="my_cars_label">My cars</string>
 
 </resources>
