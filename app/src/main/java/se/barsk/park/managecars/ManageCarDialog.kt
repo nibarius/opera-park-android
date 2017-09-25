@@ -1,4 +1,4 @@
-package se.barsk.park.manage_cars
+package se.barsk.park.managecars
 
 import android.app.Dialog
 import android.content.Context

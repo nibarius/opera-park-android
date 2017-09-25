@@ -1,4 +1,4 @@
-package se.barsk.park.main_ui
+package se.barsk.park.mainui
 
 import android.content.Context
 import android.view.LayoutInflater

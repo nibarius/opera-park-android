@@ -1,4 +1,4 @@
-package se.barsk.park.manage_cars
+package se.barsk.park.managecars
 
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar

@@ -1,4 +1,4 @@
-package se.barsk.park.main_ui
+package se.barsk.park.mainui
 
 import android.content.Intent
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
@@ -26,7 +26,7 @@ import se.barsk.park.*
 import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
-import se.barsk.park.manage_cars.ManageCarsActivity
+import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.storage.StorageManager

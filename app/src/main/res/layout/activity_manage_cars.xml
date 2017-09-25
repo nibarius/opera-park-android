@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="se.barsk.park.manage_cars.ManageCarsActivity">
+    tools:context="se.barsk.park.managecars.ManageCarsActivity">
 
     <ViewSwitcher
         android:id="@+id/manage_cars_view_switcher"

@@ -1,10 +1,10 @@
-package se.barsk.park.main_ui
+package se.barsk.park.mainui
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import se.barsk.park.datatypes.Car
-import se.barsk.park.manage_cars.ManageCarsListEntry
+import se.barsk.park.managecars.ManageCarsListEntry
 
 
 /**

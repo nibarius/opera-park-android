@@ -1,8 +1,8 @@
-package se.barsk.park.manage_cars
+package se.barsk.park.managecars
 
 import android.util.SparseBooleanArray
 import se.barsk.park.datatypes.Car
-import se.barsk.park.main_ui.CarsAdapter
+import se.barsk.park.mainui.CarsAdapter
 
 /**
  * Adapter for a selectable list of cars

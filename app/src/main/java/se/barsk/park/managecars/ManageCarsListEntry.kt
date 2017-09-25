@@ -1,4 +1,4 @@
-package se.barsk.park.manage_cars
+package se.barsk.park.managecars
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
@@ -10,7 +10,7 @@ import android.widget.TextView
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.main_ui.CarListEntry
+import se.barsk.park.mainui.CarListEntry
 
 
 /**
