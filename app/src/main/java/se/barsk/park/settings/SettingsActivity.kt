@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.preference.EditTextPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
+import android.preference.PreferenceScreen
 import android.support.v7.app.AppCompatActivity
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
-import se.barsk.park.consume
 import se.barsk.park.storage.StorageManager
 
 
@@ -21,7 +21,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         val fragment = ParkPreferenceFragment()
-        fragment.setThirdPartyClickListener(Preference.OnPreferenceClickListener { consume { showThirdPartyList() } })
+        fragment.setThirdPartyClickListener({ showThirdPartyList() })
         fragmentManager.beginTransaction().replace(android.R.id.content, fragment).commit()
     }
 
@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
     class ParkPreferenceFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-        private lateinit var thirdPartyListener: Preference.OnPreferenceClickListener
+        private lateinit var thirdPartyListener: () -> Unit
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             updateSummary(key)
@@ -48,17 +48,28 @@ class SettingsActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             preferenceManager.sharedPreferencesName = StorageManager.SHARED_PREF_FILE_SETTINGS
             addPreferencesFromResource(R.xml.preferences)
-            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onResume() {
             super.onResume()
             updateSummary("park_server_url")
             setTitles()
-            findPreference("third_party_licenses").onPreferenceClickListener = thirdPartyListener
+            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
 
-        fun setThirdPartyClickListener(listener: Preference.OnPreferenceClickListener) {
+        override fun onPause() {
+            super.onPause()
+            preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        }
+
+        override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
+            if (preference?.key == "third_party_licenses") {
+                thirdPartyListener.invoke()
+            }
+            return super.onPreferenceTreeClick(preferenceScreen, preference)
+        }
+
+        fun setThirdPartyClickListener(listener: () -> Unit) {
             thirdPartyListener = listener
         }
 
