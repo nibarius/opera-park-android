@@ -9,7 +9,7 @@ android {
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "se.barsk.park"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "$majorVersion.$minorVersion"
