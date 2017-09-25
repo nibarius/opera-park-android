@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.text.Editable
@@ -25,12 +26,11 @@ abstract class ManageCarDialog() : DialogFragment() {
     abstract fun fetchOwnCar(): OwnCar
 
     var listener: ManageCarDialogListener? = null
-    val dialogView: View by lazy {
-        activity.layoutInflater.inflate(R.layout.manage_car_dialog, null) as View
-    }
-    val regNoView: EditText by lazy { dialogView.findViewById<EditText>(R.id.regno) }
-    val ownerView: EditText by lazy { dialogView.findViewById<EditText>(R.id.owner) }
-    val ownCar: OwnCar by lazy { fetchOwnCar() }
+    private val dialogView: View by lazy { activity.layoutInflater.inflate(R.layout.manage_car_dialog, null) as View }
+    private val fab: FloatingActionButton by lazy { activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab) }
+    private val regNoView: EditText by lazy { dialogView.findViewById<EditText>(R.id.regno) }
+    private val ownerView: EditText by lazy { dialogView.findViewById<EditText>(R.id.owner) }
+    private val ownCar: OwnCar by lazy { fetchOwnCar() }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -49,6 +49,12 @@ abstract class ManageCarDialog() : DialogFragment() {
         val dialogWatcher = DialogTextWatcher()
         regNoView.addTextChangedListener(dialogWatcher)
         ownerView.addTextChangedListener(dialogWatcher)
+        fab.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        fab.show()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -83,7 +89,7 @@ abstract class ManageCarDialog() : DialogFragment() {
         (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = canSave
     }
 
-    inner class DialogTextWatcher() : TextWatcher {
+    inner class DialogTextWatcher : TextWatcher {
         override fun afterTextChanged(s: Editable?) = updatePositiveButton()
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -92,5 +98,4 @@ abstract class ManageCarDialog() : DialogFragment() {
     enum class DialogType {
         EDIT, ADD
     }
-
 }
