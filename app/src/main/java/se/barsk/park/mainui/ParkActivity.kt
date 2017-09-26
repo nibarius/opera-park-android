@@ -93,8 +93,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Analytics.init(applicationContext)
         StorageManager.init(applicationContext)
+        Analytics.init(applicationContext)
         setContentView(R.layout.activity_park)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
+import se.barsk.park.analytics.Analytics
 import se.barsk.park.storage.StorageManager
 
 
@@ -41,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
         private lateinit var thirdPartyListener: () -> Unit
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            updateSummary(key)
+            preferenceChanged(key)
         }
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +53,7 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onResume() {
             super.onResume()
-            updateSummary("park_server_url")
+            preferenceChanged("park_server_url")
             setTitles()
             preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
@@ -78,7 +79,7 @@ class SettingsActivity : AppCompatActivity() {
             findPreference("version").title = getString(R.string.settings_version, BuildConfig.VERSION_NAME)
         }
 
-        private fun updateSummary(key: String) {
+        private fun preferenceChanged(key: String) {
             val pref = findPreference(key)
             when (key) {
                 "park_server_url" -> {
@@ -87,6 +88,9 @@ class SettingsActivity : AppCompatActivity() {
                         getString(R.string.no_server_placeholder_text)
                     else
                         pref.text
+                }
+                "usage_statistics" -> {
+                    Analytics.optOutToggled()
                 }
             }
         }

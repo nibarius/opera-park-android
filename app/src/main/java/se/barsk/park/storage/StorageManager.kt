@@ -20,9 +20,10 @@ object StorageManager {
     fun getServer() = sharedPrefs.getServer()
     fun setServer(server: String) = sharedPrefs.setServer(server)
 
+    fun statsEnabled(): Boolean = sharedPrefs.statsEnabled()
+
     // Database interaction functions
     fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
-
     fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
     fun remove(ownCar: OwnCar) = database.remove(ownCar)
 }

@@ -27,6 +27,7 @@ class SharedPrefs(private val sharedPreferences: SharedPreferences) {
         sharedPreferences.registerOnSharedPreferenceChangeListener(internalServerChangeListener)
     }
 
+    private fun readBoolean(key: String): Boolean = sharedPreferences.getBoolean(key, false)
     private fun readSetting(key: String): String = sharedPreferences.getString(key, "")
     private fun putSetting(key: String, value: String) {
         val editor = sharedPreferences.edit()
@@ -57,7 +58,7 @@ class SharedPrefs(private val sharedPreferences: SharedPreferences) {
     fun getServer() = Utils.fixUrl(readSetting(keys.SERVER_URL))
 
     fun setServer(server: String) = putSetting(keys.SERVER_URL, server)
-
+    fun statsEnabled(): Boolean = readBoolean("usage_statistics")
 
     /**
      * Listener used to be notified about changes done to the server via the settings activity
