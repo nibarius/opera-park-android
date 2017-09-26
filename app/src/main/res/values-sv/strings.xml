@@ -1,0 +1,58 @@
+<resources>
+    <string name="dialog_button_cancel">Avbryt</string>
+    <string name="dialog_button_save">Spara</string>
+
+    <!-- Manage cars activity -->
+    <string name="manage_cars_activity_title">Hantera bilar</string>
+    <string name="manage_car_dialog_license_plate_hint">Registreringsnummer (t.ex. ABC 123)</string>
+    <string name="manage_car_dialog_owner_hint">Ägare (t.ex. anvnamn)</string>
+    <string name="edit_car_dialog_title">Redigera bil</string>
+    <string name="add_car_dialog_title">Lägg till bil</string>
+    <string name="manage_cars_select_option">Välj</string>
+    <string name="manage_cars_select_all_option">Välj alla</string>
+    <string name="action_mode_title">Välj bilar</string>
+    <string name="manage_cars_context_menu_share">Dela</string>
+    <string name="manage_cars_context_menu_delete">Ta bort</string>
+    <string name="manage_cars_list_placeholder">Lägg till en bil genom att trycka på + knappen</string>
+    <string name="manage_cars_list_entry">%1$s (ägare: %2$s)</string>
+    <plurals name="share_car_title">
+        <item quantity="one">Dela bil med</item>
+        <item quantity="other">Dela bilar med</item>
+    </plurals>
+
+    <!-- Main UI activity -->
+    <string name="no_cars_add_car_button">Lägg till bil</string>
+    <string name="no_cars_placeholder_message">Du har inte lagt till någon bil än</string>
+    <string name="no_cars_placeholder_message_short">Du har ingen bil</string>
+    <string name="parked_cars_placeholder">Inga bilar parkerade</string>
+    <string name="no_server_placeholder_button">Ange server</string>
+    <string name="no_server_placeholder_text">Ingen server angiven</string>
+    <string name="unable_to_connect_placeholder_button">Försök igen</string>
+    <string name="unable_to_connect_placeholder_text">Kan inte ansluta till\n%1$s</string>
+    <string name="updating_status_placeholder">Uppdaterar…</string>
+    <string name="menu_settings_entry">Inställningar</string>
+    <string name="menu_manage_cars_entry">Hantera bilar</string>
+    <string name="my_cars_label">Mina bilar</string>
+    <string name="park_status_full">Fullt</string>
+    <string name="park_status_almost_full">Sista platsen</string>
+    <string name="park_status_free">%d lediga platser</string>
+    <string name="specify_server_dialog_title">Ange server</string>
+    <string name="unpark_label">Avparkera</string>
+    <string name="park_label">Parkera</string>
+
+    <!-- Settings activity -->
+    <string name="notices_title">Tredjepartslicenser</string>
+    <string name="settings_usage_statistics">Användningsstatistik</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_about_group_title">Om %s</string>
+    <string name="settings_version">Version: %s</string>
+
+    <!-- Network manager errors -->
+    <string name="failed_to_update_generic">Misslyckades att uppdatera status: %s</string>
+    <string name="failed_to_update">Misslyckades att uppdatera status"</string>
+    <string name="failed_to_park">Misslyckades att parkera %s</string>
+    <string name="failed_to_unpark">Misslyckades att avparkera %s</string>
+    <string name="fail_reason_unknown_data">Servern svarade med okänd data</string>
+    <string name="fail_reason_unknown_error">Okänt fel</string>
+    <string name="dialog_button_ok">OK</string>
+</resources>
