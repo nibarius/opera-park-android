@@ -2,10 +2,7 @@ package se.barsk.park.settings
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.EditTextPreference
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceScreen
+import android.preference.*
 import android.support.v7.app.AppCompatActivity
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
@@ -53,6 +50,7 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onResume() {
             super.onResume()
+            preferenceChanged("refresh_interval")
             preferenceChanged("park_server_url")
             setTitles()
             preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
@@ -82,6 +80,10 @@ class SettingsActivity : AppCompatActivity() {
         private fun preferenceChanged(key: String) {
             val pref = findPreference(key)
             when (key) {
+                "refresh_interval" -> {
+                    pref as ListPreference
+                    pref.summary = pref.entry
+                }
                 "park_server_url" -> {
                     pref as EditTextPreference
                     pref.summary = if (pref.text.isEmpty())

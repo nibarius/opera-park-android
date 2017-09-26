@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:title="@string/refresh_interval"
+        android:key="refresh_interval"
+        android:entries="@array/refresh_intervals"
+        android:entryValues="@array/refresh_interval_values"
+        android:defaultValue="10"/>
     <EditTextPreference
         android:title="@string/settings_server"
         android:hint="@string/park_server_input_hint"
-        android:key="park_server_url"/>
+        android:key="park_server_url"
+        android:defaultValue="@string/the_empty_string"/>
     <CheckBoxPreference
         android:title="@string/settings_usage_statistics"
         android:defaultValue="true"

@@ -49,6 +49,11 @@
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">About %s</string>
     <string name="settings_version">Version: %s</string>
+    <string name="refresh_interval">Automatic refresh</string>
+    <string name="seconds10">Every 10 seconds</string>
+    <string name="seconds30">Every 30 seconds</string>
+    <string name="auto_refresh_disabled">Disabled</string>
+    <string name="the_empty_string" translatable="false"/>
 
     <!-- Network manager errors -->
     <string name="failed_to_update_generic">Failed to update parking status: %s</string>

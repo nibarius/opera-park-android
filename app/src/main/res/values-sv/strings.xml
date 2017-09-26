@@ -55,4 +55,8 @@
     <string name="fail_reason_unknown_data">Servern svarade med okänd data</string>
     <string name="fail_reason_unknown_error">Okänt fel</string>
     <string name="dialog_button_ok">OK</string>
+    <string name="refresh_interval">Automatisk uppdatering</string>
+    <string name="seconds10">Var 10e sekund</string>
+    <string name="seconds30">Var 30e sekund</string>
+    <string name="auto_refresh_disabled">Avstängd</string>
 </resources>
