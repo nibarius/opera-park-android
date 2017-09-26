@@ -36,7 +36,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
     override fun parkServerChanged() {
         operaGarage.clear()
-        operaGarage.updateStatus()
+        operaGarage.updateStatus(applicationContext)
     }
 
     override fun onGarageStatusChange() {
@@ -125,7 +125,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             // Server has changed since last time the activity was open
             parkServerChanged()
         } else {
-            operaGarage.updateStatus()
+            operaGarage.updateStatus(applicationContext)
         }
         serverBeforePause = null
         getDynamicLink()
@@ -187,7 +187,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
                 parkServerButton.setOnClickListener { _ ->
-                    operaGarage.updateStatus()
+                    operaGarage.updateStatus(applicationContext)
                     setCorrectParkedCarsPlaceholder()
                 }
             }
@@ -263,9 +263,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
         if (operaGarage.isParked(car)) {
-            operaGarage.unparkCar(car)
+            operaGarage.unparkCar(applicationContext, car)
         } else if (!operaGarage.isFull()) {
-            operaGarage.parkCar(car)
+            operaGarage.parkCar(applicationContext, car)
         } else {
             return
         }
@@ -294,17 +294,17 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             parkingState == ParkingState.FULL -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
-                title = "Full"
+                title = getString(R.string.park_status_full)
             }
             parkingState == ParkingState.ALMOST_FULL -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
-                title = "Last spot"
+                title = getString(R.string.park_status_almost_full)
             }
             else -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
-                title = "$freeSpots free spots"
+                title = getString(R.string.park_status_free, freeSpots)
             }
         }
         supportActionBar?.setBackgroundDrawable(ColorDrawable(toolbarColor))
@@ -324,7 +324,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(intent)
                 .addOnSuccessListener(this, listener)
-                .addOnFailureListener(this, listener);
+                .addOnFailureListener(this, listener)
     }
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {

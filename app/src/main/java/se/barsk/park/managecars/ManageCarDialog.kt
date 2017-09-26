@@ -16,7 +16,7 @@ import android.widget.EditText
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
-abstract class ManageCarDialog() : DialogFragment() {
+abstract class ManageCarDialog : DialogFragment() {
     interface ManageCarDialogListener {
         fun onDialogPositiveClick(newCar: OwnCar, dialogType: DialogType)
     }
@@ -64,8 +64,8 @@ abstract class ManageCarDialog() : DialogFragment() {
 
         builder.setView(dialogView)
                 .setTitle(dialogTitle)
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .setPositiveButton(R.string.save, { _, _ ->
+                .setNegativeButton(R.string.dialog_button_cancel, { _, _ -> })
+                .setPositiveButton(R.string.dialog_button_save, { _, _ ->
                     val newCar = OwnCar(
                             regNoView.text.toString().trim(),
                             ownerView.text.toString().trim(),

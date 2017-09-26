@@ -1,37 +1,61 @@
 <resources>
-    <string name="app_name">Opera Park</string>
-    <string name="regno">Licence plate (e.g. ABC 123)</string>
-    <string name="owner">Owner (e.g. username)</string>
+    <string name="app_name" translatable="false">Opera Park</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_save">Save</string>
+    <string name="dialog_button_ok">OK</string>
+
+    <!-- Manage cars activity -->
+    <string name="manage_cars_activity_title">Manage cars</string>
+    <string name="manage_car_dialog_license_plate_hint">Licence plate (e.g. ABC 123)</string>
+    <string name="manage_car_dialog_owner_hint">Owner (e.g. username)</string>
     <string name="edit_car_dialog_title">Edit car</string>
     <string name="add_car_dialog_title">Add car</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="manage_mode">Select</string>
-    <string name="select_all">Select all</string>
-    <string name="select_cars">Select cars</string>
+    <string name="manage_cars_select_option">Select</string>
+    <string name="manage_cars_select_all_option">Select all</string>
+    <string name="action_mode_title">Select cars</string>
     <string name="manage_cars_context_menu_share">Share</string>
     <string name="manage_cars_context_menu_delete">Delete</string>
-    <string name="no_cars_add_car_button">Add a car</string>
-    <string name="no_cars_placeholder_message">You haven\'t added any cars yet</string>
-    <string name="no_cars_placeholder_message_short">You have no cars</string>
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
-    <string name="parked_cars_placeholder">No parked cars</string>
-    <string name="notices_title">Third party licences</string>
-    <string name="no_server_placeholder_button">Set park server</string>
-    <string name="no_server_placeholder_text">No park server set</string>
-    <string name="unable_to_connect_placeholder_button">Retry</string>
-    <string name="unable_to_connect_placeholder_text">Unable to connect to\n%1$s</string>
-    <string name="updating_status_placeholder">Updating status…</string>
+    <string name="manage_cars_list_entry">%1$s (owner: %2$s)</string>
     <plurals name="share_car_title">
         <item quantity="one">Share car with</item>
         <item quantity="other">Share cars with</item>
     </plurals>
+
+    <!-- Main UI activity -->
+    <string name="no_cars_add_car_button">Add a car</string>
+    <string name="no_cars_placeholder_message">You haven\'t added any cars yet</string>
+    <string name="no_cars_placeholder_message_short">You have no cars</string>
+    <string name="parked_cars_placeholder">No parked cars</string>
+    <string name="no_server_placeholder_button">Set server</string>
+    <string name="no_server_placeholder_text">No server set</string>
+    <string name="unable_to_connect_placeholder_button">Retry</string>
+    <string name="unable_to_connect_placeholder_text">Unable to connect to\n%1$s</string>
+    <string name="updating_status_placeholder">Updating…</string>
+    <string name="menu_settings_entry">Settings</string>
+    <string name="menu_manage_cars_entry">Manage cars</string>
+    <string name="my_cars_label">My cars</string>
+    <string name="park_server_input_hint" translatable="false">http://park.example.com/</string>
+    <string name="park_status_full">Full</string>
+    <string name="park_status_almost_full">Last spot</string>
+    <string name="park_status_free">%d free spots</string>
+    <string name="specify_server_dialog_title">Specify server</string>
+    <string name="unpark_label">Unpark</string>
+    <string name="park_label">Park</string>
+
+    <!-- Settings activity -->
+    <string name="notices_title">Third party licences</string>
     <string name="settings_usage_statistics">Usage statistics</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">About %s</string>
     <string name="settings_version">Version: %s</string>
-    <string name="menu_settings_entry">Settings</string>
-    <string name="menu_manage_cars_entry">Manage cars</string>
-    <string name="my_cars_label">My cars</string>
+
+    <!-- Network manager errors -->
+    <string name="failed_to_update_generic">Failed to update parking status: %s</string>
+    <string name="failed_to_update">Failed to update parking status"</string>
+    <string name="failed_to_park">Failed to park %s</string>
+    <string name="failed_to_unpark">Failed to unpark %s</string>
+    <string name="fail_reason_unknown_data">The server returned unknown data</string>
+    <string name="fail_reason_unknown_error">Unknown error</string>
 
 </resources>

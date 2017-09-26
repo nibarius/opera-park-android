@@ -23,9 +23,9 @@ class OwnCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry
         car as OwnCar
         regNoView.text = car.regNo
         if (car.parked) {
-            actionLabelView.text = "Unpark"
+            actionLabelView.text = context.getString(R.string.unpark_label)
         } else {
-            actionLabelView.text = "Park"
+            actionLabelView.text = context.getString(R.string.park_label)
         }
     }
 }

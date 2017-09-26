@@ -30,7 +30,7 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListE
 
     override fun showItem(car: Car, selected: Boolean) {
         car as OwnCar
-        regNoView.text = "${car.regNo} (owner: ${car.owner})"
+        regNoView.text = context.getString(R.string.manage_cars_list_entry, car.regNo, car.owner)
 
         unselectedColor = getColorForCar(car, context)
         avatarTextView.text = car.regNo.substring(0, 1)

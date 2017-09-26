@@ -52,12 +52,12 @@ class SpecifyServerDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = AlertDialog.Builder(activity)
-                .setTitle("Specify park server")
+                .setTitle(R.string.specify_server_dialog_title)
                 .setView(dialogView)
-                .setNegativeButton(R.string.cancel, { _, _ ->
+                .setNegativeButton(R.string.dialog_button_cancel, { _, _ ->
                     dialog.cancel()
                 })
-                .setPositiveButton("OK", { _, _: Int ->
+                .setPositiveButton(R.string.dialog_button_ok, { _, _: Int ->
                     StorageManager.setServer(editText.text.toString())
                     listener.parkServerChanged()
                 })
@@ -77,7 +77,7 @@ class SpecifyServerDialog : DialogFragment() {
         (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = canSave
     }
 
-    inner class DialogTextWatcher() : TextWatcher {
+    inner class DialogTextWatcher : TextWatcher {
         override fun afterTextChanged(s: Editable?) = updatePositiveButton()
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}

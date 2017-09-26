@@ -124,7 +124,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
 
     private fun startActionModeWithoutSelection() {
         startActionMode()
-        actionMode?.title = getString(R.string.select_cars)
+        actionMode?.title = getString(R.string.action_mode_title)
     }
 
     private fun deleteSelectedItems() {

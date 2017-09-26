@@ -81,7 +81,7 @@
         android:gravity="center_vertical"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
-        android:text="My cars"
+        android:text="@string/my_cars_label"
         android:textColor="@color/colorBlack54percent"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/own_cars_view_switcher"

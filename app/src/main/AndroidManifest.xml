@@ -29,7 +29,7 @@
         <activity
             android:name=".managecars.ManageCarsActivity"
             android:parentActivityName=".mainui.ParkActivity"
-            android:label="Manage cars"
+            android:label="@string/manage_cars_activity_title"
             android:launchMode="singleTop"/>
         <activity
             android:name=".settings.SettingsActivity"

@@ -1,11 +1,13 @@
 package se.barsk.park.network
 
+import android.content.Context
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
+import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 import se.barsk.park.isTesting
@@ -40,9 +42,10 @@ object NetworkManager {
 
     /**
      * Makes a http request to the park server to check the current status.
+     * @param context context to use to get resources for error messages
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun checkStatus(resultReadyListener: (Result) -> Unit) {
+    fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
         if (serverUrl.isEmpty()) {
             resultReadyListener(Result.NoServer())
             return
@@ -54,7 +57,7 @@ object NetworkManager {
                     if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
                         state = State.ONLY_FAILED_REQUESTS
                     }
-                    resultReadyListener(Result.Fail(null, "Failed to update parking status: $error"))
+                    resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic ,error)))
                 }
                 is com.github.kittinunf.result.Result.Success -> {
                     try {
@@ -64,9 +67,13 @@ object NetworkManager {
 
                         resultReadyListener(Result.Success(parkedCars))
                     } catch (e: org.json.JSONException) {
-                        resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown data returned by server"))
+                        val errorMessage = context.getString(R.string.failed_to_update) +
+                                "\n" + context.getString(R.string.fail_reason_unknown_data)
+                        resultReadyListener(Result.Fail(null, errorMessage))
                     } catch (e: Exception) {
-                        resultReadyListener(Result.Fail(null, "Failed to update parking status\nUnknown error"))
+                        val errorMessage = context.getString(R.string.failed_to_update) +
+                                "\n" + context.getString(R.string.fail_reason_unknown_error)
+                        resultReadyListener(Result.Fail(null, errorMessage))
                     }
                 }
             }
@@ -85,7 +92,7 @@ object NetworkManager {
         return parkedCars
     }
 
-    private fun doAction(ownCar: OwnCar, action: Action, resultReadyListener: (Result) -> Unit) {
+    private fun doAction(context: Context, ownCar: OwnCar, action: Action, resultReadyListener: (Result) -> Unit) {
         if (serverUrl.isEmpty()) {
             return
         }
@@ -95,12 +102,12 @@ object NetworkManager {
         parameters.add(Pair("regno", ownCar.regNo))
         when (action) {
             Action.PARK -> {
-                errorMessage = "Failed to park " + ownCar.regNo
+                errorMessage = context.getString(R.string.failed_to_park, ownCar.regNo)
                 url = serverUrl + PARK
                 parameters.add(Pair("user", ownCar.owner))
             }
             Action.UNPARK -> {
-                errorMessage = "Failed to unpark " + ownCar.regNo
+                errorMessage = context.getString(R.string.failed_to_unpark, ownCar.regNo)
                 url = serverUrl + UNPARK
             }
         }
@@ -118,10 +125,12 @@ object NetworkManager {
                                     resultReadyListener(Result.Fail(parkedCars, errorMessage))
                                 }
                             } catch (e: org.json.JSONException) {
-                                val msg = "$errorMessage\n" + "Unknown data returned by server"
+                                val msg = "$errorMessage\n" +
+                                        context.getString(R.string.fail_reason_unknown_data)
                                 resultReadyListener(Result.Fail(null, msg))
                             } catch (e: Exception) {
-                                val msg = "$errorMessage\n" + "Unknown error"
+                                val msg = "$errorMessage\n" +
+                                        context.getString(R.string.fail_reason_unknown_error)
                                 resultReadyListener(Result.Fail(null, msg))
                             }
                         }
@@ -136,19 +145,21 @@ object NetworkManager {
 
     /**
      * Makes an http post request to the park server to park a car.
+     * @param context context to use to get resources for error messages
      * @param ownCar The car to park.
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun parkCar(ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
-        doAction(ownCar, Action.PARK, resultReadyListener)
+    fun parkCar(context: Context, ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
+        doAction(context, ownCar, Action.PARK, resultReadyListener)
     }
 
     /**
      * Makes an http post request to the park server to unpark a car.
+     * @param context context to use to get resources for error messages
      * @param car The car to unpark.
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun unparkCar(car: OwnCar, resultReadyListener: (Result) -> Unit) {
-        doAction(car, Action.UNPARK, resultReadyListener)
+    fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) {
+        doAction(context, car, Action.UNPARK, resultReadyListener)
     }
 }

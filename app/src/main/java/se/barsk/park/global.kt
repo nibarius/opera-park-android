@@ -21,10 +21,10 @@ inline fun consume(f: () -> Unit): Boolean {
  */
 fun isTesting(): Boolean {
     try {
-        Class.forName("se.barsk.park.TestIndicator");
-        return true;
+        Class.forName("se.barsk.park.TestIndicator")
+        return true
     } catch (e: ClassNotFoundException) {
-        return false;
+        return false
     }
 }
 

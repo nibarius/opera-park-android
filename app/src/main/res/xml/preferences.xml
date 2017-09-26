@@ -2,6 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
         android:title="@string/settings_server"
+        android:hint="@string/park_server_input_hint"
         android:key="park_server_url"/>
     <CheckBoxPreference
         android:title="@string/settings_usage_statistics"
