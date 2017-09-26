@@ -2,6 +2,7 @@ package se.barsk.park.storage
 
 import android.content.SharedPreferences
 import se.barsk.park.BuildConfig
+import se.barsk.park.R
 import se.barsk.park.Utils
 import se.barsk.park.network.NetworkManager
 
@@ -59,6 +60,7 @@ class SharedPrefs(private val sharedPreferences: SharedPreferences) {
 
     fun setServer(server: String) = putSetting(keys.SERVER_URL, server)
     fun statsEnabled(): Boolean = readBoolean("usage_statistics")
+    fun getAutomaticUpdateInterval(): Long = sharedPreferences.getString("refresh_interval", "10").toLong()
 
     /**
      * Listener used to be notified about changes done to the server via the settings activity

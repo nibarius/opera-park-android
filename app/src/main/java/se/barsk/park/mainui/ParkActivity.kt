@@ -73,6 +73,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         FULL;
 
         fun showsPlaceholder(): Boolean = ordinal <= EMPTY.ordinal
+        fun communicatesWithServer(): Boolean = ordinal >= EMPTY.ordinal
     }
 
     val operaGarage: Garage = Garage()
@@ -89,6 +90,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private val containerView: View by lazy {
         findViewById<View>(R.id.container_view)
     }
+    private lateinit var automaticUpdateTask: RepeatableTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,13 +130,26 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             operaGarage.updateStatus(applicationContext)
         }
         serverBeforePause = null
+        automaticUpdateTask = RepeatableTask({ automaticUpdate() }, StorageManager.getAutomaticUpdateInterval())
+        automaticUpdateTask.start()
         getDynamicLink()
     }
 
     override fun onPause() {
         super.onPause()
         serverBeforePause = StorageManager.getServer()
+        automaticUpdateTask.stop()
     }
+
+    private fun automaticUpdate() {
+        // Only try to update if we can communicate with the server and there is no update
+        // in progress
+        if (parkingState.communicatesWithServer() &&
+                NetworkManager.updateState != NetworkManager.UpdateState.UPDATE_IN_PROGRESS) {
+            operaGarage.updateStatus(applicationContext)
+        }
+    }
+
 
     /**
      * Show list of own cars if there are any own cars, otherwise show the placeholder.

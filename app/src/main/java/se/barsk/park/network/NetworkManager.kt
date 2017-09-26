@@ -19,6 +19,7 @@ import se.barsk.park.storage.StorageManager
 object NetworkManager {
     private var serverUrl: String = if (isTesting()) "" else StorageManager.getServer()
     var state: State = State.FIRST_RESPONSE_NOT_RECEIVED
+    var updateState: UpdateState = UpdateState.IDLE
     private const val STATUS = "status"
     private const val PARK = "park"
     private const val UNPARK = "unpark"
@@ -33,6 +34,11 @@ object NetworkManager {
         FIRST_RESPONSE_NOT_RECEIVED,
         ONLY_FAILED_REQUESTS,
         HAVE_MADE_SUCCESSFUL_REQUEST
+    }
+
+    enum class UpdateState {
+        IDLE,
+        UPDATE_IN_PROGRESS
     }
 
     fun setServer(server: String) {
@@ -50,7 +56,9 @@ object NetworkManager {
             resultReadyListener(Result.NoServer())
             return
         }
+        updateState = UpdateState.UPDATE_IN_PROGRESS
         Fuel.get(serverUrl + STATUS).responseJson { _, _, result ->
+            updateState = UpdateState.IDLE
             when (result) {
                 is com.github.kittinunf.result.Result.Failure -> {
                     val (_, error) = result
