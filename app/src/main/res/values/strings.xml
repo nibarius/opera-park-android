@@ -47,6 +47,7 @@
     <string name="settings_activity_title">Settings</string>
     <string name="notices_title">Third party licences</string>
     <string name="settings_usage_statistics">Usage statistics</string>
+    <string name="settings_crash_reporting">Crash reporting</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">About %s</string>
     <string name="settings_version">Version: %s</string>

@@ -44,6 +44,7 @@
     <string name="settings_activity_title">Inställningar</string>
     <string name="notices_title">Tredjepartslicenser</string>
     <string name="settings_usage_statistics">Användningsstatistik</string>
+    <string name="settings_crash_reporting">Krashrapportering</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">Om %s</string>
     <string name="settings_version">Version: %s</string>

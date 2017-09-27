@@ -36,6 +36,10 @@
             android:parentActivityName=".mainui.ParkActivity"
             android:label="@string/settings_activity_title"
             android:launchMode="singleTop"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="59c6f5b2454cee38d5933c1c2959181195317d5c"
+            />
     </application>
 
 </manifest>

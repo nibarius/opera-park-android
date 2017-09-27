@@ -15,6 +15,10 @@
         android:title="@string/settings_usage_statistics"
         android:defaultValue="@string/default_usage_statistics"
         android:key="@string/key_usage_statistics" />
+    <CheckBoxPreference
+        android:title="@string/settings_crash_reporting"
+        android:defaultValue="@string/default_usage_statistics"
+        android:key="@string/key_crash_reporting" />
     <PreferenceCategory
         android:title="@string/settings_about_group_title"
         android:key="@string/key_about_group">

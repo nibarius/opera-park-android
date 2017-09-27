@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'io.fabric'
+
+repositories {
+
+}
 
 android {
     def majorVersion = 1
@@ -45,6 +50,9 @@ dependencies {
     compile 'com.google.firebase:firebase-core:11.2.0'
     compile 'com.google.firebase:firebase-invites:11.2.0'
     compile 'de.psdev.licensesdialog:licensesdialog:1.8.3'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
     testCompile 'junit:junit:4.12'
     testCompile 'org.json:json:20140107'
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -54,7 +62,18 @@ repositories {
     maven {
         url "https://maven.google.com"
     }
+    maven { url 'https://maven.fabric.io/public' }
+
 }
 apply plugin: 'com.google.gms.google-services'
 buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        // We recommend changing it to the latest version from our changelog:
+        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
+        classpath 'io.fabric.tools:gradle:1.22.0'
+    }
 }

@@ -19,12 +19,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
+import io.fabric.sdk.android.Fabric
 import se.barsk.park.*
 import se.barsk.park.analytics.Analytics
+import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
 import se.barsk.park.managecars.ManageCarsActivity
@@ -99,8 +102,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Fabric.with(this, Crashlytics());
         StorageManager.init(applicationContext)
+        CrashReporting.init(applicationContext)
         Analytics.init(applicationContext)
         setContentView(R.layout.activity_park)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)

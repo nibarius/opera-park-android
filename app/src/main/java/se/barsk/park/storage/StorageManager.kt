@@ -22,6 +22,7 @@ object StorageManager {
     fun setServer(server: String) = sharedPrefs.setServer(server)
 
     fun statsEnabled(): Boolean = sharedPrefs.statsEnabled()
+    fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
     fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
 
     // Database interaction functions

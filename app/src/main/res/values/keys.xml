@@ -5,6 +5,7 @@
     <string name="key_refresh_interval" translatable="false">refresh_interval</string>
     <string name="key_park_server_url" translatable="false">park_server_url</string>
     <string name="key_usage_statistics" translatable="false">usage_statistics</string>
+    <string name="key_crash_reporting" translatable="false">key_crash_reporting</string>
     <string name="key_about_group" translatable="false">about_group</string>
     <string name="key_version" translatable="false">version</string>
     <string name="key_third_party_licenses" translatable="false">third_party_licenses</string>
@@ -12,6 +13,7 @@
     <string name="key_first_version_name" translatable="false">fvn</string>
     <string name="key_current_version_code" translatable="false">cvc</string>
     <string name="key_previous_version_code" translatable="false">pvc</string>
+
 
     <!-- Default values -->
     <string name="the_empty_string" translatable="false"/>

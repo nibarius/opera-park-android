@@ -17,6 +17,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val PREVIOUS_VERSION_CODE = context.getString(R.string.key_previous_version_code)
     private val SERVER_URL = context.getString(R.string.key_park_server_url)
     private val USAGE_STATISTICS = context.getString(R.string.key_usage_statistics)
+    private val CRASH_REPORTING = context.getString(R.string.key_crash_reporting)
     private val DEFAULT_USAGE_STATISTICS = context.getString(R.string.default_usage_statistics).toBoolean()
     private val REFRESH_INTERVAL = context.getString(R.string.key_refresh_interval)
 
@@ -62,6 +63,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
 
     fun setServer(server: String) = putSetting(SERVER_URL, server)
     fun statsEnabled(): Boolean = sharedPreferences.getBoolean(USAGE_STATISTICS, DEFAULT_USAGE_STATISTICS)
+    fun crashReportingEnabled(): Boolean = sharedPreferences.getBoolean(CRASH_REPORTING, DEFAULT_USAGE_STATISTICS)
     fun getAutomaticUpdateInterval(): Long = sharedPreferences.getString(REFRESH_INTERVAL,
             context.getString(R.string.default_refresh_interval)).toLong()
 
