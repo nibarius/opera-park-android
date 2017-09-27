@@ -2,28 +2,28 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
         android:title="@string/refresh_interval"
-        android:key="refresh_interval"
+        android:key="@string/key_refresh_interval"
         android:entries="@array/refresh_intervals"
         android:entryValues="@array/refresh_interval_values"
-        android:defaultValue="10"/>
+        android:defaultValue="@string/default_refresh_interval"/>
     <EditTextPreference
         android:title="@string/settings_server"
         android:hint="@string/park_server_input_hint"
-        android:key="park_server_url"
+        android:key="@string/key_park_server_url"
         android:defaultValue="@string/the_empty_string"/>
     <CheckBoxPreference
         android:title="@string/settings_usage_statistics"
-        android:defaultValue="true"
-        android:key="usage_statistics" />
+        android:defaultValue="@string/default_usage_statistics"
+        android:key="@string/key_usage_statistics" />
     <PreferenceCategory
         android:title="@string/settings_about_group_title"
-        android:key="about_group">
+        android:key="@string/key_about_group">
         <Preference
             android:title="@string/settings_version"
-            android:key="version"/>
+            android:key="@string/key_version"/>
         <Preference
             android:title="@string/notices_title"
-            android:key="third_party_licenses"/>
+            android:key="@string/key_third_party_licenses"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -41,11 +41,15 @@
     <string name="park_label">Parkera</string>
 
     <!-- Settings activity -->
+    <string name="settings_activity_title">Inställningar</string>
     <string name="notices_title">Tredjepartslicenser</string>
     <string name="settings_usage_statistics">Användningsstatistik</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">Om %s</string>
     <string name="settings_version">Version: %s</string>
+    <string name="seconds10">Var 10e sekund</string>
+    <string name="seconds30">Var 30e sekund</string>
+    <string name="auto_refresh_disabled">Avstängd</string>
 
     <!-- Network manager errors -->
     <string name="failed_to_update_generic">Misslyckades att uppdatera status: %s</string>
@@ -56,8 +60,4 @@
     <string name="fail_reason_unknown_error">Okänt fel</string>
     <string name="dialog_button_ok">OK</string>
     <string name="refresh_interval">Automatisk uppdatering</string>
-    <string name="seconds10">Var 10e sekund</string>
-    <string name="seconds30">Var 30e sekund</string>
-    <string name="auto_refresh_disabled">Avstängd</string>
-    <string name="settings_activity_title">Inställningar</string>
 </resources>

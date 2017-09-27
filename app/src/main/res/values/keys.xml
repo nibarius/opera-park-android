@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shared_prefs_file_name" translatable="false">settings</string>
+    <!-- Shared preferences keys -->
+    <string name="key_refresh_interval" translatable="false">refresh_interval</string>
+    <string name="key_park_server_url" translatable="false">park_server_url</string>
+    <string name="key_usage_statistics" translatable="false">usage_statistics</string>
+    <string name="key_about_group" translatable="false">about_group</string>
+    <string name="key_version" translatable="false">version</string>
+    <string name="key_third_party_licenses" translatable="false">third_party_licenses</string>
+    <string name="key_first_version_code" translatable="false">fvc</string>
+    <string name="key_first_version_name" translatable="false">fvn</string>
+    <string name="key_current_version_code" translatable="false">cvc</string>
+    <string name="key_previous_version_code" translatable="false">pvc</string>
+
+    <!-- Default values -->
+    <string name="the_empty_string" translatable="false"/>
+    <string name="default_usage_statistics" translatable="false">true</string>
+    <string name="default_refresh_interval" translatable="false">10</string>
+
+</resources>

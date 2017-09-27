@@ -8,7 +8,6 @@ import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
 import se.barsk.park.analytics.Analytics
-import se.barsk.park.storage.StorageManager
 
 
 /**
@@ -44,14 +43,14 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            preferenceManager.sharedPreferencesName = StorageManager.SHARED_PREF_FILE_SETTINGS
+            preferenceManager.sharedPreferencesName = getString(R.string.shared_prefs_file_name)
             addPreferencesFromResource(R.xml.preferences)
         }
 
         override fun onResume() {
             super.onResume()
-            preferenceChanged("refresh_interval")
-            preferenceChanged("park_server_url")
+            preferenceChanged(getString(R.string.key_refresh_interval))
+            preferenceChanged(getString(R.string.key_park_server_url))
             setTitles()
             preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
@@ -62,7 +61,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
-            if (preference?.key == "third_party_licenses") {
+            if (preference?.key == getString(R.string.key_third_party_licenses)) {
                 thirdPartyListener.invoke()
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference)
@@ -73,25 +72,25 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setTitles() {
-            findPreference("about_group").title = getString(R.string.settings_about_group_title, getString(R.string.app_name))
-            findPreference("version").title = getString(R.string.settings_version, BuildConfig.VERSION_NAME)
+            findPreference(getString(R.string.key_about_group)).title = getString(R.string.settings_about_group_title, getString(R.string.app_name))
+            findPreference(getString(R.string.key_version)).title = getString(R.string.settings_version, BuildConfig.VERSION_NAME)
         }
 
         private fun preferenceChanged(key: String) {
             val pref = findPreference(key)
             when (key) {
-                "refresh_interval" -> {
+                getString(R.string.key_refresh_interval) -> {
                     pref as ListPreference
                     pref.summary = pref.entry
                 }
-                "park_server_url" -> {
+                getString(R.string.key_park_server_url) -> {
                     pref as EditTextPreference
                     pref.summary = if (pref.text.isEmpty())
                         getString(R.string.no_server_placeholder_text)
                     else
                         pref.text
                 }
-                "usage_statistics" -> {
+                getString(R.string.key_usage_statistics) -> {
                     Analytics.optOutToggled()
                 }
             }
