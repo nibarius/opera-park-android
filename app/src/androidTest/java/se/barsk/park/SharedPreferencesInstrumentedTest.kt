@@ -1,10 +1,14 @@
 package se.barsk.park
 
+import android.content.Context
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import se.barsk.park.storage.SharedPrefs
 import java.lang.reflect.Modifier
 
 @RunWith(AndroidJUnit4::class)
@@ -34,5 +38,63 @@ class SharedPreferencesInstrumentedTest {
                         // ignore
                     }
                 }
+    }
+
+    private val prefsFile = "test_prefs_file"
+
+    @Before
+    fun clearSharedPrefs() {
+        val context = InstrumentationRegistry.getTargetContext()
+        context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE).edit().clear().apply()
+    }
+
+    /**
+     * Test that first and current version code/name is written to shared preferences
+     * on first install
+     */
+    @Test
+    fun sharedPrefsFirstInstallTest() {
+        val context = InstrumentationRegistry.getTargetContext()
+        val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+        Assert.assertFalse(sharedPreferences.contains(context.getString(R.string.key_first_version_code)))
+        Assert.assertFalse(sharedPreferences.contains(context.getString(R.string.key_first_version_name)))
+        Assert.assertFalse(sharedPreferences.contains(context.getString(R.string.key_current_version_code)))
+        val sharedPrefs = SharedPrefs(context, sharedPreferences)
+        Assert.assertEquals(BuildConfig.VERSION_CODE.toString(), sharedPreferences.getString(context.getString(R.string.key_first_version_code), ""))
+        Assert.assertEquals(BuildConfig.VERSION_NAME, sharedPreferences.getString(context.getString(R.string.key_first_version_name), ""))
+        Assert.assertEquals(BuildConfig.VERSION_CODE.toString(), sharedPreferences.getString(context.getString(R.string.key_current_version_code), ""))
+    }
+
+
+    /**
+     * Test that first and current version code/name is updated properly on upgrade
+     */
+    @Test
+    fun sharedPrefsUpgradeTest() {
+        val context = InstrumentationRegistry.getTargetContext()
+        val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(context.getString(R.string.key_first_version_code), "0")
+        editor.putString(context.getString(R.string.key_first_version_name), "0.1")
+        editor.putString(context.getString(R.string.key_current_version_code), "0")
+        editor.apply()
+        val sharedPrefs = SharedPrefs(context, sharedPreferences)
+        Assert.assertEquals("0", sharedPreferences.getString(context.getString(R.string.key_first_version_code), ""))
+        Assert.assertEquals("0.1", sharedPreferences.getString(context.getString(R.string.key_first_version_name), ""))
+        Assert.assertEquals(BuildConfig.VERSION_CODE.toString(), sharedPreferences.getString(context.getString(R.string.key_current_version_code), ""))
+    }
+
+    /**
+     * Test that the expected default values are reported on clean install before the user
+     * have changed anything.
+     */
+    @Test
+    fun defaultsTest() {
+        val context = InstrumentationRegistry.getTargetContext()
+        val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+        val sharedPrefs = SharedPrefs(context, sharedPreferences)
+        assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.crashReportingEnabled())
+        assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.statsEnabled())
+        assertEquals(context.getString(R.string.default_refresh_interval).toLong(), sharedPrefs.getAutomaticUpdateInterval())
     }
 }
