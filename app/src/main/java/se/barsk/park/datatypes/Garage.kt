@@ -37,22 +37,23 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
     fun parkCar(context: Context, car: OwnCar) = NetworkManager.parkCar(context, car, this::onResultReady)
     fun unparkCar(context: Context, car: OwnCar) = NetworkManager.unparkCar(context, car, this::onResultReady)
 
-    private fun notifyListenersAboutFail(msg: String?) {
+    private fun notifyListenersAboutReady(success: Boolean = true, errorMessage: String? = null) {
         for (listener in listeners) {
-            listener.onGarageUpdateFail(msg)
+            listener.onGarageUpdateReady(success, errorMessage)
         }
     }
 
     private fun onResultReady(result: Result) {
         when (result) {
             is Result.Success -> {
+                notifyListenersAboutReady()
                 parkedCars = result.parkedCars
             }
             is Result.Fail -> {
-                notifyListenersAboutFail(result.message)
+                notifyListenersAboutReady(false, result.message)
             }
             is Result.NoServer -> {
-                notifyListenersAboutFail(null)
+                notifyListenersAboutReady(false)
             }
         }
     }

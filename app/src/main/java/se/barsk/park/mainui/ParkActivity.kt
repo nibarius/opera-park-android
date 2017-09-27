@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -47,7 +48,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         CarCollection.updateParkStatus(operaGarage)
     }
 
-    override fun onGarageUpdateFail(errorMessage: String?) {
+    override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
+        pullToRefreshView.isRefreshing = false
         updateParkingState()
         showParkedCarsPlaceholderIfNeeded()
         if (errorMessage != null) {
@@ -76,9 +78,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         fun communicatesWithServer(): Boolean = ordinal >= EMPTY.ordinal
     }
 
-    val operaGarage: Garage = Garage()
+    private val operaGarage: Garage = Garage()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
+    private val pullToRefreshView: SwipeRefreshLayout by lazy {
+        findViewById<SwipeRefreshLayout>(R.id.parked_cars_pull_to_refresh)
+    }
     private val parkedCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
     }
@@ -115,6 +120,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
         val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
+
+        pullToRefreshView.setOnRefreshListener { operaGarage.updateStatus(applicationContext) }
 
         operaGarage.addListener(this)
         CarCollection.addListener(this)
@@ -167,12 +174,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      */
     private fun showParkedCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.parked_cars_view_switcher)
-        val parkedCarsView = findViewById<View>(R.id.parked_cars_recycler_view)
-        val empty = operaGarage.isEmpty()
         if (parkingState.showsPlaceholder()) {
             setCorrectParkedCarsPlaceholder()
         }
-        showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
+        showPlaceholderIfNeeded(viewSwitcher, pullToRefreshView, operaGarage.isEmpty())
     }
 
     /**
