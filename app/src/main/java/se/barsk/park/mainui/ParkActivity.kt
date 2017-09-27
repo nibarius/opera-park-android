@@ -36,16 +36,16 @@ import se.barsk.park.storage.StorageManager
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
     override fun parkServerChanged() {
-        operaGarage.clear()
-        operaGarage.updateStatus(applicationContext)
+        garage.clear()
+        garage.updateStatus(applicationContext)
     }
 
     override fun onGarageStatusChange() {
         updateParkingState()
-        updateToolbar(operaGarage.spotsFree)
+        updateToolbar(garage.spotsFree)
         updateListOfParkedCars()
         showParkedCarsPlaceholderIfNeeded()
-        CarCollection.updateParkStatus(operaGarage)
+        CarCollection.updateParkStatus(garage)
     }
 
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
@@ -78,7 +78,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         fun communicatesWithServer(): Boolean = ordinal >= EMPTY.ordinal
     }
 
-    private val operaGarage: Garage = Garage()
+    private val garage: Garage = Garage()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
@@ -121,9 +121,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
 
-        pullToRefreshView.setOnRefreshListener { operaGarage.updateStatus(applicationContext) }
+        pullToRefreshView.setOnRefreshListener { garage.updateStatus(applicationContext) }
 
-        operaGarage.addListener(this)
+        garage.addListener(this)
         CarCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
     }
@@ -134,7 +134,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             // Server has changed since last time the activity was open
             parkServerChanged()
         } else {
-            operaGarage.updateStatus(applicationContext)
+            garage.updateStatus(applicationContext)
         }
         serverBeforePause = null
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, StorageManager.getAutomaticUpdateInterval())
@@ -153,7 +153,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         // in progress
         if (parkingState.communicatesWithServer() &&
                 NetworkManager.updateState != NetworkManager.UpdateState.UPDATE_IN_PROGRESS) {
-            operaGarage.updateStatus(applicationContext)
+            garage.updateStatus(applicationContext)
         }
     }
 
@@ -177,7 +177,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         if (parkingState.showsPlaceholder()) {
             setCorrectParkedCarsPlaceholder()
         }
-        showPlaceholderIfNeeded(viewSwitcher, pullToRefreshView, operaGarage.isEmpty())
+        showPlaceholderIfNeeded(viewSwitcher, pullToRefreshView, garage.isEmpty())
     }
 
     /**
@@ -207,7 +207,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
                 parkServerButton.setOnClickListener { _ ->
-                    operaGarage.updateStatus(applicationContext)
+                    garage.updateStatus(applicationContext)
                     setCorrectParkedCarsPlaceholder()
                 }
             }
@@ -239,13 +239,13 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             ParkingState.REQUEST_FAILED
         } else if (NetworkManager.state == NetworkManager.State.FIRST_RESPONSE_NOT_RECEIVED) {
             ParkingState.WAITING_ON_RESPONSE
-        } else if (operaGarage.isEmpty()) {
+        } else if (garage.isEmpty()) {
             ParkingState.EMPTY
-        } else if (operaGarage.spotsFree > 1) {
+        } else if (garage.spotsFree > 1) {
             ParkingState.FREE_SPACE
-        } else if (operaGarage.spotsFree == 1) {
+        } else if (garage.spotsFree == 1) {
             ParkingState.ALMOST_FULL
-        } else if (operaGarage.isFull()) {
+        } else if (garage.isFull()) {
             ParkingState.FULL
         } else {
             throw RuntimeException("Unknown parking state")
@@ -282,10 +282,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
-        if (operaGarage.isParked(car)) {
-            operaGarage.unparkCar(applicationContext, car)
-        } else if (!operaGarage.isFull()) {
-            operaGarage.parkCar(applicationContext, car)
+        if (garage.isParked(car)) {
+            garage.unparkCar(applicationContext, car)
+        } else if (!garage.isFull()) {
+            garage.parkCar(applicationContext, car)
         } else {
             return
         }
@@ -293,7 +293,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private fun updateListOfParkedCars() {
         parkedCarsRecyclerView.swapAdapter(
-                CarsAdapter(CarsAdapter.Type.PARKED_CARS, operaGarage.parkedCars, { /*listener that does nothing */ }), false)
+                CarsAdapter(CarsAdapter.Type.PARKED_CARS, garage.parkedCars, { /*listener that does nothing */ }), false)
     }
 
     private fun updateListOfOwnCars() {

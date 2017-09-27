@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Opera Park</string>
+    <string name="app_name" translatable="false">Opark</string>
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_button_save">Save</string>
     <string name="dialog_button_ok">OK</string>
