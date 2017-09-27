@@ -59,4 +59,5 @@
     <string name="seconds10">Var 10e sekund</string>
     <string name="seconds30">Var 30e sekund</string>
     <string name="auto_refresh_disabled">Avstängd</string>
+    <string name="settings_activity_title">Inställningar</string>
 </resources>

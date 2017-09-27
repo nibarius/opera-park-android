@@ -34,7 +34,7 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:parentActivityName=".mainui.ParkActivity"
-            android:label="Settings"
+            android:label="@string/settings_activity_title"
             android:launchMode="singleTop"/>
     </application>
 

@@ -62,5 +62,6 @@
     <string name="failed_to_unpark">Failed to unpark %s</string>
     <string name="fail_reason_unknown_data">The server returned unknown data</string>
     <string name="fail_reason_unknown_error">Unknown error</string>
+    <string name="settings_activity_title">Settings</string>
 
 </resources>
