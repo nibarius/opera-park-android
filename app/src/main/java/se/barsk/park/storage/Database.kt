@@ -63,11 +63,56 @@ class Database(context: Context, dbName: String = context.getString(R.string.par
     }
 
     fun remove(ownCar: OwnCar) {
+        val position = getPosition(ownCar)
         val db = dbHelper.writableDatabase
         db.delete(
                 ParkContract.CarCollectionTable.TABLE_NAME,
                 "${ParkContract.CarCollectionTable.COLUMN_NAME_UUID} = ?",
                 arrayOf(ownCar.id)
         )
+        decreasePositionsAbove(position)
+    }
+
+    /**
+     * Returns the position for the given car or Int.MAX_VALUE if the car doesn't exist
+     */
+    private fun getPosition(ownCar: OwnCar): Int {
+        val projection: Array<String> = arrayOf(
+                ParkContract.CarCollectionTable.COLUMN_NAME_POSITION
+        )
+        val selection = ParkContract.CarCollectionTable.COLUMN_NAME_UUID + " = ?"
+        val selectionArgs: Array<String> = arrayOf(ownCar.id)
+
+        val db = dbHelper.readableDatabase
+        val cursor = db.query(
+                ParkContract.CarCollectionTable.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null, // No grouping
+                null, // No filtering
+                null // No sorting
+        )
+
+        val pos = if (cursor.moveToFirst()) {
+            cursor.getInt(cursor.getColumnIndexOrThrow(ParkContract.CarCollectionTable.COLUMN_NAME_POSITION))
+        } else {
+            Int.MAX_VALUE
+        }
+        cursor.close()
+        return pos
+    }
+
+    /**
+     * Decrease the position by one of all items with higher position than the given position.
+     */
+    private fun decreasePositionsAbove(position: Int) {
+        val updateSQL = "UPDATE " + ParkContract.CarCollectionTable.TABLE_NAME +
+                " SET " + ParkContract.CarCollectionTable.COLUMN_NAME_POSITION +
+                " = " + ParkContract.CarCollectionTable.COLUMN_NAME_POSITION + " - 1" +
+                " WHERE " + ParkContract.CarCollectionTable.COLUMN_NAME_POSITION +
+                " > " + position
+        val db = dbHelper.writableDatabase
+        db.execSQL(updateSQL)
     }
 }
