@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Non translatable string constants used in the code for storage and other things -->
+
+    <!-- Filenames -->
     <string name="shared_prefs_file_name" translatable="false">settings</string>
+    <string name="parked_cars_database_name" translatable="false">Park.db</string>
+
     <!-- Shared preferences keys -->
     <string name="key_refresh_interval" translatable="false">refresh_interval</string>
     <string name="key_park_server_url" translatable="false">park_server_url</string>
@@ -13,7 +18,6 @@
     <string name="key_first_version_name" translatable="false">fvn</string>
     <string name="key_current_version_code" translatable="false">cvc</string>
     <string name="key_previous_version_code" translatable="false">pvc</string>
-
 
     <!-- Default values -->
     <string name="the_empty_string" translatable="false"/>

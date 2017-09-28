@@ -4,10 +4,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class ParkDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class ParkDbHelper(context: Context, dbName: String) : SQLiteOpenHelper(context, dbName, null, DATABASE_VERSION) {
     companion object {
         val DATABASE_VERSION = 1
-        val DATABASE_NAME = "Park.db"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {

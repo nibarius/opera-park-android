@@ -27,6 +27,11 @@ object StorageManager {
 
     // Database interaction functions
     fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
+
+    /**
+     * Adds a car to persistent storage if it doesn't already exist. If it exists the data
+     * for the car is updated. The id of the car is used to check if the car already exists.
+     */
     fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
     fun remove(ownCar: OwnCar) = database.remove(ownCar)
 }

@@ -3,13 +3,14 @@ package se.barsk.park.storage
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
 /**
  * Class for handling all the interactions with the database storage.
  */
-class Database(context: Context) {
-    private val dbHelper = ParkDbHelper(context)
+class Database(context: Context, dbName: String = context.getString(R.string.parked_cars_database_name)) {
+    private val dbHelper = ParkDbHelper(context, dbName)
 
     fun fetchAllCars(): MutableList<OwnCar> {
         val projection: Array<String> = arrayOf(
