@@ -10,14 +10,14 @@ import org.json.JSONObject
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
-import se.barsk.park.isTesting
+import se.barsk.park.isMocking
 import se.barsk.park.storage.StorageManager
 
 /**
  * The network manager is used to make requests to the parking server.
  */
 object NetworkManager {
-    private var serverUrl: String = if (isTesting()) "" else StorageManager.getServer()
+    private var serverUrl: String = if (isMocking()) "" else StorageManager.getServer()
     var state: State = State.FIRST_RESPONSE_NOT_RECEIVED
     var updateState: UpdateState = UpdateState.IDLE
     private const val STATUS = "status"
@@ -65,7 +65,7 @@ object NetworkManager {
                     if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
                         state = State.ONLY_FAILED_REQUESTS
                     }
-                    resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic ,error)))
+                    resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, error)))
                 }
                 is com.github.kittinunf.result.Result.Success -> {
                     try {

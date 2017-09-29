@@ -1,6 +1,7 @@
 package se.barsk.park.datatypes
 
-import se.barsk.park.isTesting
+import se.barsk.park.BuildConfig
+import se.barsk.park.isMocking
 import se.barsk.park.storage.StorageManager
 
 /**
@@ -11,7 +12,7 @@ import se.barsk.park.storage.StorageManager
 object CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
-    private val ownCars: MutableList<OwnCar> = if (isTesting()) mutableListOf() else StorageManager.fetchAllCars()
+    private val ownCars: MutableList<OwnCar> = if (isMocking()) mutableListOf() else StorageManager.fetchAllCars()
 
     private fun notifyListeners() {
         for (listener in listeners) {
@@ -19,6 +20,7 @@ object CarCollection {
         }
     }
 
+    fun init() = setMockContentIfNeeded()
     fun addListener(listener: CarCollectionStatusChangedListener) = listeners.add(listener)
     fun removeListener(listener: CarCollectionStatusChangedListener) = listeners.remove(listener)
 
@@ -132,9 +134,20 @@ object CarCollection {
      * storage
      */
     fun replaceContent(newCars: MutableList<OwnCar>) {
-        if (isTesting()) {
+        if (isMocking()) {
             ownCars.clear()
             ownCars.addAll(newCars)
+        }
+    }
+
+    /**
+     * Sets predefined static content in screenshot builds.
+     */
+    private fun setMockContentIfNeeded() {
+        if (BuildConfig.isScreenshotBuild) {
+            val car1 = OwnCar("ALP 110", "Margaretha")
+            val car2 = OwnCar("MLB 803", "Margaretha")
+            CarCollection.replaceContent(mutableListOf(car1, car2))
         }
     }
 }

@@ -1,6 +1,7 @@
 package se.barsk.park.datatypes
 
 import android.content.Context
+import se.barsk.park.BuildConfig
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.network.Result
 import kotlin.properties.Delegates
@@ -9,9 +10,21 @@ import kotlin.properties.Delegates
  * A garage that can have several cars parked and can notify listeners
  * of changes to the garage.
  */
-class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
+open class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
     companion object {
         const val CAPACITY = 6
+
+        /**
+         * Returns an appropriate garage depending on if it's a normal build
+         * or a special build for creating screenshots with static content.
+         */
+        fun getInstance(): Garage {
+            return if (BuildConfig.isScreenshotBuild) {
+                ScreenshotGarage()
+            } else {
+                Garage()
+            }
+        }
     }
 
     private var listeners: MutableList<GarageStatusChangedListener> = mutableListOf()
@@ -33,11 +46,11 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
     fun isParked(car: OwnCar): Boolean = parkedCars.any { it.regNo == car.regNo }
     fun isFull(): Boolean = parkedCars.size == CAPACITY
     fun isEmpty(): Boolean = parkedCars.isEmpty()
-    fun updateStatus(context: Context) = NetworkManager.checkStatus(context, this::onResultReady)
+    open fun updateStatus(context: Context) = NetworkManager.checkStatus(context, this::onResultReady)
     fun parkCar(context: Context, car: OwnCar) = NetworkManager.parkCar(context, car, this::onResultReady)
     fun unparkCar(context: Context, car: OwnCar) = NetworkManager.unparkCar(context, car, this::onResultReady)
 
-    private fun notifyListenersAboutReady(success: Boolean = true, errorMessage: String? = null) {
+    fun notifyListenersAboutReady(success: Boolean = true, errorMessage: String? = null) {
         for (listener in listeners) {
             listener.onGarageUpdateReady(success, errorMessage)
         }

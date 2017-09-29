@@ -29,6 +29,8 @@ fun isTesting(): Boolean {
     }
 }
 
+fun isMocking() = isTesting() || BuildConfig.isScreenshotBuild
+
 /**
  * Takes a ViewSwitcher that contains a list and a placeholder view, the list it holds
  * and a boolean saying if the list is empty. Given this it ensures that the placeholder

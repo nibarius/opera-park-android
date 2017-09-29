@@ -81,7 +81,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         fun communicatesWithServer(): Boolean = ordinal >= EMPTY.ordinal
     }
 
-    private val garage: Garage = Garage()
+    private val garage: Garage = Garage.getInstance()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
@@ -106,6 +106,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         StorageManager.init(applicationContext)
         CrashReporting.init(applicationContext)
         Analytics.init(applicationContext)
+        CarCollection.init()
         setContentView(R.layout.activity_park)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
