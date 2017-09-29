@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import android.widget.TextView
 import se.barsk.park.R
+import se.barsk.park.Utils.fixRegnoForDisplay
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.ParkedCar
 
@@ -24,7 +25,7 @@ class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEn
     override fun showItem(car: Car, selected: Boolean) {
         car as ParkedCar
         parkTimeView.text = car.startTime.substring(11, 19) // Skip the date part
-        regNoView.text = "${car.regNo.toUpperCase()} - ${car.owner}"
+        regNoView.text = "${fixRegnoForDisplay(car.regNo)} - ${car.owner}"
         setAvatarColor(car, context, avatarTextView)
         avatarTextView.text = car.regNo.substring(0, 1)
     }

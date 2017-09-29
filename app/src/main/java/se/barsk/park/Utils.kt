@@ -20,4 +20,12 @@ object Utils {
 
         return fixedUrl
     }
+
+    /**
+     * Takes a licence plate string and makes it consistent and nicer for display.
+     * It makes all letters uppercase and tries to insert a space between letters
+     * and numbers.
+     */
+    fun fixRegnoForDisplay(regNo: String): String =
+            regNo.toUpperCase().replace("[A-Z][0-9]".toRegex()) { "${it.value[0]} ${it.value[1]}" }
 }
