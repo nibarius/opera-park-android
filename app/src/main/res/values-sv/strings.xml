@@ -5,7 +5,7 @@
     <!-- Manage cars activity -->
     <string name="manage_cars_activity_title">Hantera bilar</string>
     <string name="manage_car_dialog_license_plate_hint">Registreringsnummer (t.ex. ABC 123)</string>
-    <string name="manage_car_dialog_owner_hint">Ägare (t.ex. anvnamn)</string>
+    <string name="manage_car_dialog_owner_hint">Ägare (t.ex. användarnamn)</string>
     <string name="edit_car_dialog_title">Redigera bil</string>
     <string name="add_car_dialog_title">Lägg till bil</string>
     <string name="manage_cars_select_option">Välj</string>
