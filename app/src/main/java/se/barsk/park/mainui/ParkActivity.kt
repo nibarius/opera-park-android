@@ -225,7 +225,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 // No parked cars
                 spinner.visibility = View.GONE
                 text = getString(R.string.parked_cars_placeholder)
-                top = getDrawable(R.drawable.empty_parking)
+                top = getDrawable(R.drawable.empty_placeholder)
                 parkServerButton.visibility = View.GONE
             }
             else -> {

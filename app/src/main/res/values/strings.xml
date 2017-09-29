@@ -26,7 +26,7 @@
     <string name="no_cars_add_car_button">Add a car</string>
     <string name="no_cars_placeholder_message">You haven\'t added any cars yet</string>
     <string name="no_cars_placeholder_message_short">You have no cars</string>
-    <string name="parked_cars_placeholder">No parked cars</string>
+    <string name="parked_cars_placeholder">All spots free</string>
     <string name="no_server_placeholder_button">Set server</string>
     <string name="no_server_placeholder_text">No server set</string>
     <string name="unable_to_connect_placeholder_button">Retry</string>

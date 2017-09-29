@@ -24,7 +24,7 @@
     <string name="no_cars_add_car_button">Lägg till bil</string>
     <string name="no_cars_placeholder_message">Du har inte lagt till någon bil än</string>
     <string name="no_cars_placeholder_message_short">Du har ingen bil</string>
-    <string name="parked_cars_placeholder">Inga bilar parkerade</string>
+    <string name="parked_cars_placeholder">Alla platser är lediga</string>
     <string name="no_server_placeholder_button">Ange server</string>
     <string name="no_server_placeholder_text">Ingen server angiven</string>
     <string name="unable_to_connect_placeholder_button">Försök igen</string>

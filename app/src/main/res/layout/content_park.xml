@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:drawablePadding="16dp"
-                android:drawableTop="@drawable/empty_parking"
+                android:drawableTop="@drawable/empty_placeholder"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:padding="16dp"
