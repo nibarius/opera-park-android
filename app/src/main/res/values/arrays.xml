@@ -5,7 +5,7 @@
         <item>@string/seconds30</item>
         <item>@string/auto_refresh_disabled</item>
     </string-array>
-    <string-array name="refresh_interval_values">
+    <string-array name="refresh_interval_values" translatable="false">
         <item>10</item>
         <item>30</item>
         <item>0</item>
