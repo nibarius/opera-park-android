@@ -29,7 +29,7 @@ open class CarsAdapter(val type: Type, var cars: List<Car>, val listener: (Car) 
         val vh: ViewHolder
         when (type) {
             Type.OWN_CARS -> {
-                vh = ViewHolder(OwnCarListEntry(parent.context))
+                vh = ViewHolder(OwnCarListEntry(parent.context, listener))
             }
             Type.PARKED_CARS -> {
                 vh = ViewHolder(ParkedCarListEntry(parent.context))

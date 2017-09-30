@@ -2,35 +2,26 @@
 <!-- TODO: merge node instead of relative layout -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/own_cars_layout_width"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
-                android:padding="16dp">
-
-    <TextView
-        android:id="@+id/action_label"
-        android:layout_width="wrap_content"
+                android:paddingTop="@dimen/own_cars_padding_top"
+                android:paddingStart="@dimen/own_cars_padding_start"
+                android:paddingEnd="@dimen/own_cars_padding_end"
+                android:paddingBottom="@dimen/own_cars_padding_bottom">
+    <Button
+        android:id="@+id/park_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
-        android:textColor="@color/colorBlack87percent"
-        android:textSize="16sp"
-        tools:text="Unpark"/>
-
-    <TextView
-        android:id="@+id/regno"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/action_label"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
-        android:textColor="@color/colorBlack87percent"
-        android:textSize="24sp"
-        tools:text="AAA111"/>
+        android:stateListAnimator="@null"
+        android:fontFamily="sans-serif-medium"
+        tools:text="Park\nABC 123"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:paddingTop="7dp"
+        android:paddingBottom="12dp"
+        android:paddingLeft="36dp"
+        android:paddingRight="36dp"
+        />
 
 </RelativeLayout>

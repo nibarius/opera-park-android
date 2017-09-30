@@ -110,7 +110,8 @@
             android:id="@+id/own_cars_recycler_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:overScrollMode="never"
             android:scrollbars="horizontal"
             app:layout_constraintVertical_bias="1.0"/>

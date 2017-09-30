@@ -20,7 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/my_cars_label">
+        app:layout_constraintRight_toLeftOf="@+id/own_cars_view_switcher">
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/parked_cars_pull_to_refresh"
@@ -78,7 +78,7 @@
 
     <TextView
         android:id="@+id/my_cars_label"
-        android:layout_width="@dimen/own_cars_bar_landscape_width"
+        android:layout_width="0dp"
         android:layout_height="56dp"
         android:background="@color/ownCarsBottomSheet"
         android:elevation="4dp"
@@ -96,7 +96,7 @@
 
     <ViewSwitcher
         android:id="@+id/own_cars_view_switcher"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/own_cars_bar_landscape_width"
         android:layout_height="0dp"
         android:background="@color/ownCarsBottomSheet"
         android:elevation="4dp"
@@ -109,14 +109,16 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/own_cars_recycler_view"
-            android:layout_width="@dimen/own_cars_bar_landscape_width"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:overScrollMode="never"
             android:scrollbars="vertical"
             app:layout_constraintVertical_bias="1.0"/>
 
         <LinearLayout
-            android:layout_width="@dimen/own_cars_bar_landscape_width"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
