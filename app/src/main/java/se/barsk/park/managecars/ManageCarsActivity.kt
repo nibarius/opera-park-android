@@ -23,11 +23,16 @@ import se.barsk.park.datatypes.OwnCar
 
 class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener, CarCollectionStatusChangedListener {
     override fun onCarCollectionStatusChange() {
-        showCarsPlaceholderIfNeeded()
+        if (recyclerViewIsAnimating) {
+            delayedPlaceholderSwitch = true
+        } else {
+            showCarsPlaceholderIfNeeded()
+        }
     }
 
     // Called when the user clicks Save in the add/edit car dialog
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
+        recyclerViewIsAnimating = !showsPlaceholder()
         when (dialogType) {
             ManageCarDialog.DialogType.EDIT -> {
                 CarCollection.updateCar(newCar)
@@ -42,6 +47,8 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private var actionMode: ActionMode? = null
+    private var recyclerViewIsAnimating = false
+    private var delayedPlaceholderSwitch = true
     private val adapter = SelectableCarsAdapter(CarCollection.getCars(), {})
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
@@ -55,7 +62,15 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         setContentView(R.layout.activity_manage_cars)
 
         manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        manageCarsRecyclerView.itemAnimator = DefaultItemAnimator()
+        manageCarsRecyclerView.itemAnimator = object : DefaultItemAnimator() {
+            override fun onAnimationFinished(viewHolder: RecyclerView.ViewHolder?) {
+                recyclerViewIsAnimating = false
+                if (delayedPlaceholderSwitch) {
+                    delayedPlaceholderSwitch = false
+                    showCarsPlaceholderIfNeeded()
+                }
+            }
+        }
         manageCarsRecyclerView.adapter = adapter
         val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) {
@@ -128,6 +143,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun deleteSelectedItems() {
+        recyclerViewIsAnimating = true
         val selected = adapter.selectedItemsIds
         for (i in selected.size() - 1 downTo 0) {
             val itemToDelete = selected.keyAt(i)
@@ -161,6 +177,8 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         val empty = CarCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
+
+    private fun showsPlaceholder() = CarCollection.getCars().isEmpty()
 
     private fun shareSelectedItems() {
         val selected = adapter.selectedItemsIds
