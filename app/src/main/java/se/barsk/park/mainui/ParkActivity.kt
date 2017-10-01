@@ -44,11 +44,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     override fun onGarageStatusChange() {
-        updateParkingState()
-        updateToolbar(garage.spotsFree)
+
         updateListOfParkedCars()
-        showParkedCarsPlaceholderIfNeeded()
-        CarCollection.updateParkStatus(garage)
+        updateGarageStatus()
     }
 
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
@@ -83,6 +81,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private val garage: Garage = Garage.getInstance()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
+    private var parkedCarsRecyclerViewIsAnimating = false
+    private var delayedGarageStatusChange = false
     private var serverBeforePause: String? = null
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
         findViewById<SwipeRefreshLayout>(R.id.parked_cars_pull_to_refresh)
@@ -102,7 +102,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics());
+        Fabric.with(this, Crashlytics())
         StorageManager.init(applicationContext)
         CrashReporting.init(applicationContext)
         Analytics.init(applicationContext)
@@ -112,7 +112,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         setSupportActionBar(toolbar)
 
         parkedCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
+        parkedCarsRecyclerView.itemAnimator = object : DefaultItemAnimator() {
+            override fun onAnimationFinished(viewHolder: RecyclerView.ViewHolder?) {
+                parkedCarsRecyclerViewIsAnimating = false
+                if (delayedGarageStatusChange) {
+                    delayedGarageStatusChange = false
+                    updateGarageStatus()
+                }
+            }
+        }
 
         ownCarsRecyclerView.layoutManager =
                 if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
@@ -297,8 +305,34 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateListOfParkedCars() {
+        parkedCarsRecyclerViewIsAnimating = !parkingState.showsPlaceholder()
         parkedCarsRecyclerView.swapAdapter(
                 CarsAdapter(CarsAdapter.Type.PARKED_CARS, garage.parkedCars, { /*listener that does nothing */ }), false)
+    }
+
+    /**
+     * Updates the garage status (except the list of parked cars) if the RecyclerView is
+     * not currently animating. If it's animating it sets a flag that signals that the
+     * RecyclerView animator should trigger an update once the animation is ready.
+     *
+     * If the RecyclerView is replaced with a placeholder before the animation have finished
+     * the animation will continue from the same state when the RecyclerView becomes visible
+     * again.
+     */
+    private fun updateGarageStatus() {
+        // Don't update the garage status while the RecyclerView is animating. The recycler
+        // view will call this function again once the animation is done.
+        // If the RecyclerView is replaced with a placeholder before the animation have finished
+        // the animation will continue from the same state when the RecyclerView becomes visible
+        // again.
+        if (parkedCarsRecyclerViewIsAnimating) {
+            delayedGarageStatusChange = true
+        } else {
+            updateParkingState()
+            updateToolbar(garage.spotsFree)
+            showParkedCarsPlaceholderIfNeeded()
+            CarCollection.updateParkStatus(garage)
+        }
     }
 
     private fun updateListOfOwnCars() {
