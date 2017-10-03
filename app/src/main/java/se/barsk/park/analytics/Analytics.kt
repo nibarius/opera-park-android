@@ -1,18 +1,14 @@
 package se.barsk.park.analytics
 
-import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
+import se.barsk.park.ParkApp
 import se.barsk.park.storage.StorageManager
 
 /**
  * Object for handling all analytics reporting.
  */
-object Analytics {
-    private lateinit var fa: FirebaseAnalytics
-    fun init(context: Context) {
-        fa = FirebaseAnalytics.getInstance(context)
-        updateOptOutState()
-    }
+class Analytics {
+    private val fa: FirebaseAnalytics = FirebaseAnalytics.getInstance(ParkApp.context)
 
     fun optOutToggled() {
         updateOptOutState()

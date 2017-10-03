@@ -1,18 +1,19 @@
 package se.barsk.park.storage
 
-import android.content.Context
+import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
 
 object StorageManager {
-    private lateinit var sharedPrefs: SharedPrefs
-    private lateinit var database: Database
+    private val sharedPrefs: SharedPrefs
+    private val database: Database
 
-    fun init(context: Context) {
+    init {
+        val context = ParkApp.context
         database = Database(context)
         val prefsFile = context.getString(R.string.shared_prefs_file_name)
-        sharedPrefs = SharedPrefs(context, context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE))
+        sharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences(prefsFile))
     }
 
     // Shared preferences interaction functions

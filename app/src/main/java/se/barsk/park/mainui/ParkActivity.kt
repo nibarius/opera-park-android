@@ -19,15 +19,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
-import io.fabric.sdk.android.Fabric
 import se.barsk.park.*
-import se.barsk.park.analytics.Analytics
-import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
 import se.barsk.park.managecars.ManageCarsActivity
@@ -102,11 +98,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
-        StorageManager.init(applicationContext)
-        CrashReporting.init(applicationContext)
-        Analytics.init(applicationContext)
-        CarCollection.init()
+        ParkApp.init(this)
         setContentView(R.layout.activity_park)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -129,7 +121,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                     LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
-                CarCollection.getCars(), this::onOwnCarClicked)
+                ParkApp.carCollection.getCars(), this::onOwnCarClicked)
 
         val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
@@ -137,7 +129,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         pullToRefreshView.setOnRefreshListener { garage.updateStatus(applicationContext) }
 
         garage.addListener(this)
-        CarCollection.addListener(this)
+        ParkApp.carCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
     }
 
@@ -177,7 +169,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun showOwnCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.own_cars_view_switcher)
         val ownCarsView = findViewById<View>(R.id.own_cars_recycler_view)
-        val empty = CarCollection.getCars().isEmpty()
+        val empty = ParkApp.carCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
     }
 
@@ -331,13 +323,13 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             updateParkingState()
             updateToolbar(garage.spotsFree)
             showParkedCarsPlaceholderIfNeeded()
-            CarCollection.updateParkStatus(garage)
+            ParkApp.carCollection.updateParkStatus(garage)
         }
     }
 
     private fun updateListOfOwnCars() {
         ownCarsRecyclerView.swapAdapter(
-                CarsAdapter(CarsAdapter.Type.OWN_CARS, CarCollection.getCars(), this::onOwnCarClicked), false)
+                CarsAdapter(CarsAdapter.Type.OWN_CARS, ParkApp.carCollection.getCars(), this::onOwnCarClicked), false)
     }
 
     private fun updateToolbar(freeSpots: Int) {
@@ -388,7 +380,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
         override fun onFailure(exception: java.lang.Exception) {
-            Analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
+            ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
         }
 
         override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
@@ -400,7 +392,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 StorageManager.setServer(deepLink.server)
                 parkServerChanged()
             }
-            CarCollection.addCarsThatDoesNotExist(deepLink.cars)
+            ParkApp.carCollection.addCarsThatDoesNotExist(deepLink.cars)
         }
     }
 }

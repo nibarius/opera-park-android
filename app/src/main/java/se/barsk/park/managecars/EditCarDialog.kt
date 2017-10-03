@@ -1,10 +1,9 @@
 package se.barsk.park.managecars
 
 import android.os.Bundle
+import se.barsk.park.ParkApp
 import se.barsk.park.R
-import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.OwnCar
-
 
 
 class EditCarDialog : ManageCarDialog() {
@@ -15,9 +14,7 @@ class EditCarDialog : ManageCarDialog() {
     override val dialogType: DialogType
         get() = DialogType.EDIT
 
-    override fun fetchOwnCar(): OwnCar {
-        return CarCollection.getCar(arguments.getString(ARG_ID))
-    }
+    override fun fetchOwnCar(): OwnCar = ParkApp.carCollection.getCar(arguments.getString(ARG_ID))
 
     companion object {
         private const val ARG_ID: String = "id"

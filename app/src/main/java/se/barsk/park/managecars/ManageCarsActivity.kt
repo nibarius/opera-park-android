@@ -14,9 +14,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ViewSwitcher
 import se.barsk.park.*
-import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.ShareCarEvent
-import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
 
@@ -35,21 +33,21 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         recyclerViewIsAnimating = !showsPlaceholder()
         when (dialogType) {
             ManageCarDialog.DialogType.EDIT -> {
-                CarCollection.updateCar(newCar)
+                ParkApp.carCollection.updateCar(newCar)
                 finishActionMode()
             }
             ManageCarDialog.DialogType.ADD -> {
-                CarCollection.addCar(newCar)
+                ParkApp.carCollection.addCar(newCar)
             }
         }
-        adapter.cars = CarCollection.getCars()
+        adapter.cars = ParkApp.carCollection.getCars()
         adapter.notifyDataSetChanged()
     }
 
     private var actionMode: ActionMode? = null
     private var recyclerViewIsAnimating = false
     private var delayedPlaceholderSwitch = true
-    private val adapter = SelectableCarsAdapter(CarCollection.getCars(), {})
+    private val adapter = SelectableCarsAdapter(ParkApp.carCollection.getCars(), {})
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
     }
@@ -59,6 +57,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ParkApp.init(this)
         setContentView(R.layout.activity_manage_cars)
 
         manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
@@ -79,7 +78,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
                     onListItemSelect(position)
                 } else {
                     // Edit item when not in action mode
-                    showEditDialog(CarCollection.getCarId(position))
+                    showEditDialog(ParkApp.carCollection.getCarId(position))
                 }
             }
 
@@ -93,13 +92,13 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
             showAddDialog()
         }
 
-        CarCollection.addListener(this)
+        ParkApp.carCollection.addListener(this)
         showCarsPlaceholderIfNeeded()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        CarCollection.removeListener(this)
+        ParkApp.carCollection.removeListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -147,9 +146,9 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         val selected = adapter.selectedItemsIds
         for (i in selected.size() - 1 downTo 0) {
             val itemToDelete = selected.keyAt(i)
-            CarCollection.removeCarAt(itemToDelete)
+            ParkApp.carCollection.removeCarAt(itemToDelete)
         }
-        adapter.cars = CarCollection.getCars()
+        adapter.cars = ParkApp.carCollection.getCars()
         adapter.notifyDataSetChanged()
         finishActionMode()
     }
@@ -174,22 +173,22 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private fun showCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)
         val parkedCarsView = findViewById<View>(R.id.manage_cars_recyclerview)
-        val empty = CarCollection.getCars().isEmpty()
+        val empty = ParkApp.carCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
 
-    private fun showsPlaceholder() = CarCollection.getCars().isEmpty()
+    private fun showsPlaceholder() = ParkApp.carCollection.getCars().isEmpty()
 
     private fun shareSelectedItems() {
         val selected = adapter.selectedItemsIds
         val cars: MutableList<OwnCar> = mutableListOf()
         (0 until selected.size())
                 .map { selected.keyAt(it) }
-                .mapTo(cars) { CarCollection.getCarAtPosition(it) }
+                .mapTo(cars) { ParkApp.carCollection.getCarAtPosition(it) }
         val linkToShare = DeepLink.getDynamicLinkFor(cars)
         val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
         startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle))
-        Analytics.logEvent(ShareCarEvent(selected.size()))
+        ParkApp.analytics.logEvent(ShareCarEvent(selected.size()))
     }
 
     private fun createShareIntent(url: String): Intent {

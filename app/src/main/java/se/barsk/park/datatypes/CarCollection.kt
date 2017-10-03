@@ -9,7 +9,7 @@ import se.barsk.park.storage.StorageManager
  * cars from local storage and any changes done are saved to local storage
  * as they happen.
  */
-object CarCollection {
+class CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
     private val ownCars: MutableList<OwnCar> = if (isMocking()) mutableListOf() else StorageManager.fetchAllCars()
@@ -20,7 +20,10 @@ object CarCollection {
         }
     }
 
-    fun init() = setMockContentIfNeeded()
+    init {
+        setMockContentIfNeeded()
+    }
+
     fun addListener(listener: CarCollectionStatusChangedListener) = listeners.add(listener)
     fun removeListener(listener: CarCollectionStatusChangedListener) = listeners.remove(listener)
 
@@ -147,7 +150,7 @@ object CarCollection {
         if (BuildConfig.isScreenshotBuild) {
             val car1 = OwnCar("ALP 110", "Margaretha")
             val car2 = OwnCar("MLB 803", "Margaretha")
-            CarCollection.replaceContent(mutableListOf(car1, car2))
+            replaceContent(mutableListOf(car1, car2))
         }
     }
 }

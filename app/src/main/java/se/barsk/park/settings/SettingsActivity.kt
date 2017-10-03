@@ -6,14 +6,19 @@ import android.preference.*
 import android.support.v7.app.AppCompatActivity
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
+import se.barsk.park.ParkApp
 import se.barsk.park.R
-import se.barsk.park.analytics.Analytics
 
 
 /**
  * Activity for settings
  */
 class SettingsActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ParkApp.init(this)
+    }
+
     // https://stackoverflow.com/questions/26509180/no-actionbar-in-preferenceactivity-after-upgrade-to-support-library-v21
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -91,7 +96,7 @@ class SettingsActivity : AppCompatActivity() {
                         pref.text
                 }
                 getString(R.string.key_usage_statistics) -> {
-                    Analytics.optOutToggled()
+                    ParkApp.analytics.optOutToggled()
                 }
             }
         }
