@@ -43,6 +43,10 @@ object NetworkManager {
 
     fun setServer(server: String) {
         serverUrl = server
+        resetState()
+    }
+
+    fun resetState() {
         state = State.FIRST_RESPONSE_NOT_RECEIVED
     }
 

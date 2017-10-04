@@ -65,6 +65,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
+    compile 'joda-time:joda-time:2.9.9'
     testCompile 'junit:junit:4.12'
     testCompile 'org.json:json:20140107'
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"

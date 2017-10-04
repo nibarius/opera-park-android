@@ -30,6 +30,7 @@ import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.storage.StorageManager
+import se.barsk.park.utils.TimeUtils
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
@@ -40,13 +41,13 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     override fun onGarageStatusChange() {
-
         updateListOfParkedCars()
         updateGarageStatus()
     }
 
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
         pullToRefreshView.isRefreshing = false
+        lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
         showParkedCarsPlaceholderIfNeeded()
         if (errorMessage != null) {
@@ -80,6 +81,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private var parkedCarsRecyclerViewIsAnimating = false
     private var delayedGarageStatusChange = false
     private var serverBeforePause: String? = null
+    private var lastGarageUpdateTime = TimeUtils.now()
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
         findViewById<SwipeRefreshLayout>(R.id.parked_cars_pull_to_refresh)
     }
@@ -135,6 +137,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     override fun onResume() {
         super.onResume()
+
+        if (TimeUtils.isBeforeReset(lastGarageUpdateTime) && TimeUtils.isAfterReset(TimeUtils.now())) {
+            // The server have automatically reset the parked cars since last update so assume
+            // the garage is empty and that we haven't talked to the server yet.
+            garage.clear()
+            NetworkManager.resetState()
+        }
+
         if (serverBeforePause != null && serverBeforePause != StorageManager.getServer()) {
             // Server has changed since last time the activity was open
             parkServerChanged()

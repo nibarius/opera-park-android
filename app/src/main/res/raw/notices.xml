@@ -28,6 +28,12 @@
         <license>MIT License</license>
     </notice>
     <notice>
+        <name>Joda-Time</name>
+        <url>http://www.joda.org/joda-time/</url>
+        <copyright/>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
         <name>Material icons</name>
         <url>https://material.io/icons/</url>
         <copyright/>
