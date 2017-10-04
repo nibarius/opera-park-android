@@ -141,6 +141,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         } else {
             garage.updateStatus(applicationContext)
         }
+        updateGarageStatus()
         serverBeforePause = null
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, StorageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
