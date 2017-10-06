@@ -3,40 +3,41 @@
        xmlns:app="http://schemas.android.com/apk/res-auto"
        xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
-        android:id="@+id/avatar_frame_layout"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/circle_drawable"
-        android:padding="0dp">
-
         <TextView
             android:id="@+id/avatar_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/circle_drawable"
+            android:padding="0dp"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:textColor="@color/colorAvatarTextColor"
             android:textSize="27dp"
             android:visibility="visible"
-            tools:ignore="SpUsage"/>
+            tools:ignore="SpUsage"
+            tools:text="J"/>
 
         <ImageView
             android:id="@+id/avatar_check_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/circle_drawable"
             android:gravity="center"
             android:padding="8dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_check_24dp"
             tools:ignore="ContentDescription"/>
 
-    </FrameLayout>
 
     <TextView
         android:id="@+id/manage_cars_entry"

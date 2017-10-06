@@ -3,7 +3,7 @@ package se.barsk.park.managecars
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
-import android.widget.FrameLayout
+import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -18,7 +18,6 @@ import se.barsk.park.mainui.CarListEntry
  */
 class ManageCarsListEntry(context: Context?) : RelativeLayout(context, null, R.attr.manageCarsEntryStyle), CarListEntry {
     private val regNoView: TextView by lazy { findViewById<TextView>(R.id.manage_cars_entry) }
-    private val avatarFrame: FrameLayout by lazy { findViewById<FrameLayout>(R.id.avatar_frame_layout) }
     private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
     private val avatarCheckView: ImageView by lazy { findViewById<ImageView>(R.id.avatar_check_view) }
     private val selectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
@@ -45,14 +44,14 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context, null, R.a
     fun select() {
         avatarTextView.visibility = GONE
         avatarCheckView.visibility = VISIBLE
-        setAvatarColor(selectedColor)
+        setAvatarColor(selectedColor, avatarCheckView)
     }
 
     fun deselect() {
         avatarTextView.visibility = VISIBLE
         avatarCheckView.visibility = GONE
-        setAvatarColor(unselectedColor)
+        setAvatarColor(unselectedColor, avatarTextView)
     }
 
-    private fun setAvatarColor(color: Int) = setAvatarColor(color, context, avatarFrame)
+    private fun setAvatarColor(color: Int, view: View) = setAvatarColor(color, context, view)
 }
