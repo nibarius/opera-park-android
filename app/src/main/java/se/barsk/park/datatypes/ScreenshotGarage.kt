@@ -12,8 +12,9 @@ class ScreenshotGarage : Garage(listOf()) {
     override fun updateStatus(context: Context) {
         NetworkManager.state = NetworkManager.State.HAVE_MADE_SUCCESSFUL_REQUEST
         notifyListenersAboutReady()
-        if (BuildConfig.garageFull) {
-            parkedCars = listOf(
+        @Suppress("ConstantConditionIf")
+        parkedCars = if (BuildConfig.garageFull) {
+            listOf(
                     ParkedCar("DZU 241", "Henrik", "2017-10-01 08:05:15"),
                     ParkedCar("CRF 461", "Erik", "2017-10-01 08:16:55"),
                     ParkedCar("WNF 766", "Rikard", "2017-10-01 08:21:06"),
@@ -21,7 +22,7 @@ class ScreenshotGarage : Garage(listOf()) {
                     ParkedCar("ALP 110", "Margaretha", "2017-10-29 08:38:14"),
                     ParkedCar("MLB 942", "Per", "2017-10-01 09:01:33"))
         } else {
-            parkedCars = listOf(
+            listOf(
                     ParkedCar("DZU 241", "Henrik", "2017-10-01 08:05:15"),
                     ParkedCar("CRF 461", "Erik", "2017-10-01 08:16:55"),
                     ParkedCar("WNF 766", "Rikard", "2017-10-01 08:21:06"),

@@ -37,20 +37,20 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
         }
         val firstLen = park.length
         val spannable = SpannableString("${park.toUpperCase()}\n${car.regNo}")
-        spannable.setSpan(RelativeSizeSpan(0.67f), 0, firstLen, 0);
+        spannable.setSpan(RelativeSizeSpan(0.67f), 0, firstLen, 0)
         parkButton.text = spannable
         parkButton.setOnClickListener { listener?.invoke(car) }
 
         if (car.parked) {
-            setBackroundPreservePadding(parkButton, R.drawable.bg_unpark_button)
+            setBackgroundPreservePadding(parkButton, R.drawable.bg_unpark_button)
             parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
         } else {
-            setBackroundPreservePadding(parkButton, R.drawable.bg_park_button)
+            setBackgroundPreservePadding(parkButton, R.drawable.bg_park_button)
             parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         }
     }
 
-    private fun setBackroundPreservePadding(view: View, background: Int) {
+    private fun setBackgroundPreservePadding(view: View, background: Int) {
         val pL = view.paddingLeft
         val pT = view.paddingTop
         val pR = view.paddingRight

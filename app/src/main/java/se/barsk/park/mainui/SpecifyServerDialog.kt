@@ -35,9 +35,9 @@ class SpecifyServerDialog : DialogFragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        try {
+        listener = try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            listener = activity as SpecifyServerDialogListener
+            activity as SpecifyServerDialogListener
         } catch (e: ClassCastException) {
             // The activity doesn't implement the interface, throw exception
             throw ClassCastException(activity.toString() + " must implement SpecifyServerDialogListener")
@@ -79,7 +79,7 @@ class SpecifyServerDialog : DialogFragment() {
 
     inner class DialogTextWatcher : TextWatcher {
         override fun afterTextChanged(s: Editable?) = updatePositiveButton()
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
     }
 }

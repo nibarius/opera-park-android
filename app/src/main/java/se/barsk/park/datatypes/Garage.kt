@@ -19,6 +19,7 @@ open class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
          * or a special build for creating screenshots with static content.
          */
         fun getInstance(): Garage {
+            @Suppress("ConstantConditionIf")
             return if (BuildConfig.isScreenshotBuild) {
                 ScreenshotGarage()
             } else {
@@ -56,18 +57,16 @@ open class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         }
     }
 
-    private fun onResultReady(result: Result) {
-        when (result) {
-            is Result.Success -> {
-                notifyListenersAboutReady()
-                parkedCars = result.parkedCars
-            }
-            is Result.Fail -> {
-                notifyListenersAboutReady(false, result.message)
-            }
-            is Result.NoServer -> {
-                notifyListenersAboutReady(false)
-            }
+    private fun onResultReady(result: Result) = when (result) {
+        is Result.Success -> {
+            notifyListenersAboutReady()
+            parkedCars = result.parkedCars
+        }
+        is Result.Fail -> {
+            notifyListenersAboutReady(false, result.message)
+        }
+        is Result.NoServer -> {
+            notifyListenersAboutReady(false)
         }
     }
 }

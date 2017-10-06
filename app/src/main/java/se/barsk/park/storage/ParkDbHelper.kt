@@ -13,7 +13,6 @@ class ParkDbHelper(context: Context, dbName: String) : SQLiteOpenHelper(context,
         db?.execSQL(ParkContract.SQL_CREATE_ENTRIES)
     }
 
-    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
-        TODO("We're still at version 1 this should never happen")
-    }
+    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int): Unit =
+            TODO("We're still at version 1 this should never happen")
 }

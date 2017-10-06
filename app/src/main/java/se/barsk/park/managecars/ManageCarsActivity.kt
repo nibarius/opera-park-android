@@ -20,12 +20,10 @@ import se.barsk.park.datatypes.OwnCar
 
 
 class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener, CarCollectionStatusChangedListener {
-    override fun onCarCollectionStatusChange() {
-        if (recyclerViewIsAnimating) {
-            delayedPlaceholderSwitch = true
-        } else {
-            showCarsPlaceholderIfNeeded()
-        }
+    override fun onCarCollectionStatusChange() = if (recyclerViewIsAnimating) {
+        delayedPlaceholderSwitch = true
+    } else {
+        showCarsPlaceholderIfNeeded()
     }
 
     // Called when the user clicks Save in the add/edit car dialog
@@ -72,14 +70,12 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         }
         manageCarsRecyclerView.adapter = adapter
         val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView, object : RecyclerTouchListener.ClickListener {
-            override fun onClick(view: View, position: Int) {
-                if (actionMode != null) {
-                    // Select item in action mode
-                    onListItemSelect(position)
-                } else {
-                    // Edit item when not in action mode
-                    showEditDialog(ParkApp.carCollection.getCarId(position))
-                }
+            override fun onClick(view: View, position: Int) = if (actionMode != null) {
+                // Select item in action mode
+                onListItemSelect(position)
+            } else {
+                // Edit item when not in action mode
+                showEditDialog(ParkApp.carCollection.getCarId(position))
             }
 
             override fun onLongClick(view: View, position: Int) = onListItemSelect(position)
@@ -144,10 +140,9 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private fun deleteSelectedItems() {
         recyclerViewIsAnimating = true
         val selected = adapter.selectedItemsIds
-        for (i in selected.size() - 1 downTo 0) {
-            val itemToDelete = selected.keyAt(i)
-            ParkApp.carCollection.removeCarAt(itemToDelete)
-        }
+        (selected.size() - 1 downTo 0)
+                .map { selected.keyAt(it) }
+                .forEach { ParkApp.carCollection.removeCarAt(it) }
         adapter.cars = ParkApp.carCollection.getCars()
         adapter.notifyDataSetChanged()
         finishActionMode()
@@ -162,13 +157,10 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         actionMode = null
     }
 
-    private fun showEditDialog(carId: String) {
-        EditCarDialog.newInstance(carId).show(supportFragmentManager, "editCar")
-    }
+    private fun showEditDialog(carId: String) =
+            EditCarDialog.newInstance(carId).show(supportFragmentManager, "editCar")
 
-    private fun showAddDialog() {
-        AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
-    }
+    private fun showAddDialog() = AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
 
     private fun showCarsPlaceholderIfNeeded() {
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)

@@ -14,8 +14,6 @@ class AddCarDialog : ManageCarDialog() {
         get() = DialogType.ADD
 
     companion object {
-        fun newInstance(): AddCarDialog {
-            return AddCarDialog()
-        }
+        fun newInstance(): AddCarDialog = AddCarDialog()
     }
 }

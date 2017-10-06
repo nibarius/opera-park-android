@@ -13,9 +13,8 @@ import se.barsk.park.datatypes.Car
 interface CarListEntry {
     fun showItem(car: Car, selected: Boolean)
 
-    fun setAvatarColor(car: Car, context: Context, view: View) {
-        setAvatarColor(getColorForCar(car, context), context, view)
-    }
+    fun setAvatarColor(car: Car, context: Context, view: View) =
+            setAvatarColor(getColorForCar(car, context), context, view)
 
     fun setAvatarColor(color: Int, context: Context, view: View) {
         val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)

@@ -10,13 +10,13 @@ import se.barsk.park.network.NetworkManager
  * Tests for getting parked cars
  */
 class GetParkedCarsTest {
-    val noParked = """
+    private val noParked = """
 {
   "free": 6,
   "used": []
 }"""
 
-    val oneParked = """
+    private val oneParked = """
 {
   "free": 5,
   "used": [{
@@ -26,7 +26,7 @@ class GetParkedCarsTest {
   }]
 }"""
 
-    val allParked = """
+    private val allParked = """
 {
   "free": 0,
   "used": [{

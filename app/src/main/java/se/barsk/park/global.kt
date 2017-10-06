@@ -20,13 +20,11 @@ inline fun consume(f: () -> Unit): Boolean {
 /**
  * Method used to see if the app is currently running as a unit test.
  */
-fun isTesting(): Boolean {
-    try {
-        Class.forName("se.barsk.park.TestIndicator")
-        return true
-    } catch (e: ClassNotFoundException) {
-        return false
-    }
+fun isTesting(): Boolean = try {
+    Class.forName("se.barsk.park.TestIndicator")
+    true
+} catch (e: ClassNotFoundException) {
+    false
 }
 
 fun isMocking() = isTesting() || BuildConfig.isScreenshotBuild

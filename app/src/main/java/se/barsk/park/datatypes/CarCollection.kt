@@ -72,9 +72,7 @@ class CarCollection {
     /**
      * Removes the car at the given index and persists the removal to persistent storage
      */
-    fun removeCarAt(index: Int) {
-        removeCar(ownCars[index])
-    }
+    fun removeCarAt(index: Int) = removeCar(ownCars[index])
 
     /**
      * Removes the given car and persists the removal to persistent storage
@@ -146,11 +144,11 @@ class CarCollection {
     /**
      * Sets predefined static content in screenshot builds.
      */
-    private fun setMockContentIfNeeded() {
-        if (BuildConfig.isScreenshotBuild) {
-            val car1 = OwnCar("ALP 110", "Margaretha")
-            val car2 = OwnCar("MLB 803", "Margaretha")
-            replaceContent(mutableListOf(car1, car2))
-        }
-    }
+    private fun setMockContentIfNeeded() = @Suppress("ConstantConditionIf")
+    if (BuildConfig.isScreenshotBuild) {
+        val car1 = OwnCar("ALP 110", "Margaretha")
+        val car2 = OwnCar("MLB 803", "Margaretha")
+        replaceContent(mutableListOf(car1, car2))
+    } else {}
+
 }

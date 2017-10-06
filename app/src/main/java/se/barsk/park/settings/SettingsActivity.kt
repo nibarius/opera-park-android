@@ -42,9 +42,8 @@ class SettingsActivity : AppCompatActivity() {
 
         private lateinit var thirdPartyListener: () -> Unit
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            preferenceChanged(key)
-        }
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) =
+                preferenceChanged(key)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)

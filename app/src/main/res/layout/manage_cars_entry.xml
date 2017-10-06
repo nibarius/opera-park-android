@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:background="?android:attr/selectableItemBackground"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:layout_height="56dp"
                 xmlns:tools="http://schemas.android.com/tools">
     <FrameLayout
@@ -25,7 +25,8 @@
             android:gravity="center"
             android:textColor="@color/colorAvatarTextColor"
             android:textSize="27dp"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            tools:ignore="SpUsage" />
 
         <ImageView
             android:id="@+id/avatar_check_view"
@@ -34,7 +35,8 @@
             android:gravity="center"
             android:padding="8dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/ic_check_24dp"/>
+            app:srcCompat="@drawable/ic_check_24dp"
+            tools:ignore="ContentDescription" />
 
     </FrameLayout>
     <TextView
@@ -45,9 +47,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:paddingLeft="72dp"
-        android:paddingRight="16dp"
-        android:gravity="left|center"
+        android:paddingStart="72dp"
+        android:paddingEnd="16dp"
+        android:gravity="start|center"
         android:textSize="16sp"
         android:fontFamily="sans-serif"
         tools:text="AAA 111 (as user)"/>

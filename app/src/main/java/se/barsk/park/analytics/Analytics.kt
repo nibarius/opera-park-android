@@ -10,13 +10,8 @@ import se.barsk.park.storage.StorageManager
 class Analytics {
     private val fa: FirebaseAnalytics = FirebaseAnalytics.getInstance(ParkApp.context)
 
-    fun optOutToggled() {
-        updateOptOutState()
-    }
-
-    fun logEvent(event: AnalyticsEvent) {
-        fa.logEvent(event.name, event.parameters)
-    }
+    fun optOutToggled() = updateOptOutState()
+    fun logEvent(event: AnalyticsEvent) = fa.logEvent(event.name, event.parameters)
 
     private fun updateOptOutState() = fa.setAnalyticsCollectionEnabled(StorageManager.statsEnabled())
 }

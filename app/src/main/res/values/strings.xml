@@ -37,8 +37,10 @@
     <string name="my_cars_label">My cars</string>
     <string name="park_server_input_hint" translatable="false">http://park.example.com/</string>
     <string name="park_status_full">Full</string>
-    <string name="park_status_almost_full">Last spot</string>
-    <string name="park_status_free">%d free spots</string>
+    <plurals name="park_status_free">
+        <item quantity="one">Last spot</item>
+        <item quantity="other">%d free spots</item>
+    </plurals>
     <string name="specify_server_dialog_title">Specify server</string>
     <string name="unpark_label">Unpark</string>
     <string name="park_label">Park</string>

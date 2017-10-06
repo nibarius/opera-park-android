@@ -17,7 +17,7 @@ class GarageTest {
             ParkedCar("xxx777", "owner3", "1 hour ago"),
             ParkedCar("www666", "owner4", "1 hour ago"),
             ParkedCar("uuu444", "owner6", "1 hour ago")))
-    val fullGarage = Garage(initialParkedCars = listOf(
+    private val fullGarage = Garage(initialParkedCars = listOf(
             ParkedCar("zzz999", "owner", "1 hour ago"),
             ParkedCar("yyy888", "owner2", "1 hour ago"),
             ParkedCar("xxx777", "owner3", "1 hour ago"),
@@ -48,9 +48,7 @@ class GarageTest {
     }
 
     @Test
-    fun garageIsFull() {
-        assertEquals(true, fullGarage.isFull())
-    }
+    fun garageIsFull() = assertEquals(true, fullGarage.isFull())
 
     @Test
     fun garageIsNotFull() {
@@ -59,19 +57,13 @@ class GarageTest {
     }
 
     @Test
-    fun allSpotsFree() {
-        assertEquals(Garage.CAPACITY, emptyGarage.spotsFree)
-    }
+    fun allSpotsFree() = assertEquals(Garage.CAPACITY, emptyGarage.spotsFree)
 
     @Test
-    fun someSpotsFree() {
-        assertEquals(1, almostFullGarage.spotsFree)
-    }
+    fun someSpotsFree() = assertEquals(1, almostFullGarage.spotsFree)
 
     @Test
-    fun noSpotsFree() {
-        assertEquals(0, fullGarage.spotsFree)
-    }
+    fun noSpotsFree() = assertEquals(0, fullGarage.spotsFree)
 
     @Test
     fun clear() {

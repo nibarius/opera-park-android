@@ -18,9 +18,7 @@ class CarCollectionTest {
     private val carCollection = CarCollection()
 
     @Test
-    fun testTestDetection() {
-        assertEquals(true, isTesting())
-    }
+    fun testTestDetection() = assertEquals(true, isTesting())
 
     @Test
     fun testEmptyCarCollection() {
@@ -87,7 +85,7 @@ class CarCollectionTest {
     }
 
     @Test(expected = RuntimeException::class)
-    fun testPositionOfDoesNotExsit() {
+    fun testPositionOfDoesNotExist() {
         carCollection.replaceContent(mutableListOf())
         carCollection.positionOf(OwnCar("uuu444", "me"))
     }

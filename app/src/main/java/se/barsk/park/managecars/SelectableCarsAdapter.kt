@@ -23,7 +23,7 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
     }
 
     fun selectAll() {
-        for (i in 0..itemCount - 1) {
+        for (i in 0 until itemCount) {
             selectedItemsIds.put(i, true)
             updateViewLayout(i)
         }
@@ -31,7 +31,7 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
 
     fun clearSelection() {
         selectedItemsIds.clear()
-        for (i in 0..itemCount - 1) {
+        for (i in 0 until itemCount) {
             updateViewLayout(i)
         }
     }

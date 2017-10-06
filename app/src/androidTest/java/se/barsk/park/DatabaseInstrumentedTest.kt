@@ -14,7 +14,7 @@ import se.barsk.park.storage.Database
 class DatabaseInstrumentedTest {
 
     private val databaseName = "test.db"
-    lateinit var db: Database
+    private lateinit var db: Database
 
     @Before
     fun createDb() {
@@ -29,9 +29,7 @@ class DatabaseInstrumentedTest {
     }
 
     @Test
-    fun emptyDatabaseTest() {
-        assertEquals(true, db.fetchAllCars().isEmpty())
-    }
+    fun emptyDatabaseTest() = assertEquals(true, db.fetchAllCars().isEmpty())
 
     @Test
     fun insertCarTest() {

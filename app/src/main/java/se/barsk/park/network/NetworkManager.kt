@@ -148,7 +148,7 @@ object NetworkManager {
                         }
                         is com.github.kittinunf.result.Result.Failure -> {
                             val msg = "$errorMessage\n" +
-                                    "${response.httpStatusCode}: ${response.httpResponseMessage}"
+                                    "${response.statusCode}: ${response.responseMessage}"
                             resultReadyListener(Result.Fail(null, msg))
                         }
                     }
@@ -161,9 +161,8 @@ object NetworkManager {
      * @param ownCar The car to park.
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun parkCar(context: Context, ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
-        doAction(context, ownCar, Action.PARK, resultReadyListener)
-    }
+    fun parkCar(context: Context, ownCar: OwnCar, resultReadyListener: (Result) -> Unit) =
+            doAction(context, ownCar, Action.PARK, resultReadyListener)
 
     /**
      * Makes an http post request to the park server to unpark a car.
@@ -171,7 +170,6 @@ object NetworkManager {
      * @param car The car to unpark.
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) {
-        doAction(context, car, Action.UNPARK, resultReadyListener)
-    }
+    fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
+            doAction(context, car, Action.UNPARK, resultReadyListener)
 }

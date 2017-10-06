@@ -338,10 +338,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
-    private fun updateListOfOwnCars() {
-        ownCarsRecyclerView.swapAdapter(
-                CarsAdapter(CarsAdapter.Type.OWN_CARS, ParkApp.carCollection.getCars(), this::onOwnCarClicked), false)
-    }
+    private fun updateListOfOwnCars() = ownCarsRecyclerView.swapAdapter(
+            CarsAdapter(CarsAdapter.Type.OWN_CARS, ParkApp.carCollection.getCars(), this::onOwnCarClicked), false)
 
     private fun updateToolbar(freeSpots: Int) {
         val toolbarColor: Int
@@ -361,12 +359,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             parkingState == ParkingState.ALMOST_FULL -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
-                title = getString(R.string.park_status_almost_full)
+                title = resources.getQuantityString(R.plurals.park_status_free, freeSpots)
             }
             else -> {
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
-                title = getString(R.string.park_status_free, freeSpots)
+                title = resources.getQuantityString(R.plurals.park_status_free, freeSpots, freeSpots)
             }
         }
         supportActionBar?.setBackgroundDrawable(ColorDrawable(toolbarColor))
@@ -377,9 +375,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         supportActionBar?.title = title
     }
 
-    private fun showServerDialog() {
-        SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
-    }
+    private fun showServerDialog() =
+            SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
 
     private fun getDynamicLink() {
         val listener = DynamicLinkListener()
@@ -390,9 +387,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
-        override fun onFailure(exception: java.lang.Exception) {
-            ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
-        }
+        override fun onFailure(exception: java.lang.Exception) =
+                ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
 
         override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
             if (pendingDynamicLinkData == null) return

@@ -11,7 +11,7 @@ import se.barsk.park.storage.StorageManager
 class CrashReporting {
     fun enableIfAllowed() {
         if (StorageManager.crashReportingEnabled()) {
-            Fabric.with(ParkApp.context, Crashlytics());
+            Fabric.with(ParkApp.context, Crashlytics())
         }
     }
 }
