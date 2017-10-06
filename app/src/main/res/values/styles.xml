@@ -8,6 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_close_24dp</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
+        <item name="ownCarEntryStyle">@style/OwnCarEntryStyle</item>
+        <item name="manageCarsEntryStyle">@style/ManageCarsEntryStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -31,6 +33,18 @@
 
     <style name="MyActionModeSubtitleStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
         <item name="android:textColor">@color/colorPrimaryDarkText</item>
+    </style>
+
+    <style name="OwnCarEntryStyle">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:paddingTop">@dimen/own_cars_padding_top</item>
+        <item name="android:paddingStart">@dimen/own_cars_padding_start</item>
+        <item name="android:paddingEnd">@dimen/own_cars_padding_end</item>
+        <item name="android:paddingBottom">@dimen/own_cars_padding_bottom</item>
+    </style>
+
+    <style name="ManageCarsEntryStyle">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
 </resources>

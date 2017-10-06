@@ -16,7 +16,7 @@ import se.barsk.park.datatypes.OwnCar
 /**
  * One entry in the list of own cars
  */
-class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : RelativeLayout(context), CarListEntry {
+class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : RelativeLayout(context, null, R.attr.ownCarEntryStyle), CarListEntry {
     constructor(context: Context?) : this(context, null)
 
     private val parkButton: Button by lazy { findViewById<Button>(R.id.park_button) }

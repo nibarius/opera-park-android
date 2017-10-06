@@ -16,8 +16,8 @@ import se.barsk.park.mainui.CarListEntry
 /**
  * One entry in the manage cars list
  */
-class ManageCarsListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
-    private val regNoView: TextView by  lazy { findViewById<TextView>(R.id.manage_cars_entry) }
+class ManageCarsListEntry(context: Context?) : RelativeLayout(context, null, R.attr.manageCarsEntryStyle), CarListEntry {
+    private val regNoView: TextView by lazy { findViewById<TextView>(R.id.manage_cars_entry) }
     private val avatarFrame: FrameLayout by lazy { findViewById<FrameLayout>(R.id.avatar_frame_layout) }
     private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
     private val avatarCheckView: ImageView by lazy { findViewById<ImageView>(R.id.avatar_check_view) }

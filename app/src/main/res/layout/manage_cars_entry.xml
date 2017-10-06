@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:layout_height="56dp"
-                xmlns:tools="http://schemas.android.com/tools">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools">
+
     <FrameLayout
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:padding="0dp"
+        android:id="@+id/avatar_frame_layout"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:id="@+id/avatar_frame_layout"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/circle_drawable">
+        android:background="@drawable/circle_drawable"
+        android:padding="0dp">
 
         <TextView
             android:id="@+id/avatar_text_view"
@@ -26,7 +24,7 @@
             android:textColor="@color/colorAvatarTextColor"
             android:textSize="27dp"
             android:visibility="visible"
-            tools:ignore="SpUsage" />
+            tools:ignore="SpUsage"/>
 
         <ImageView
             android:id="@+id/avatar_check_view"
@@ -36,22 +34,22 @@
             android:padding="8dp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_check_24dp"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
     </FrameLayout>
+
     <TextView
         android:id="@+id/manage_cars_entry"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="56dp"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:paddingStart="72dp"
-        android:paddingEnd="16dp"
-        android:gravity="start|center"
-        android:textSize="16sp"
         android:fontFamily="sans-serif"
+        android:gravity="start|center"
+        android:paddingEnd="16dp"
+        android:paddingStart="72dp"
+        android:textSize="16sp"
         tools:text="AAA 111 (as user)"/>
-
-</RelativeLayout>
+</merge>

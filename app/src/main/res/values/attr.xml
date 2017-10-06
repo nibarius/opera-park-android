@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Styleables for being able to specify themes for the list entry custom views used
+     in the recycler views in order to use a merge tag.
+     See http://trickyandroid.com/protip-inflating-layout-for-your-custom-view/ -->
+    <declare-styleable name="OwnCarEntryStyleable">
+        <attr name="ownCarEntryStyle" format="reference"/>
+    </declare-styleable>
+    <declare-styleable name="ManageCarsEntryStyleable">
+        <attr name="manageCarsEntryStyle" format="reference"/>
+    </declare-styleable>
+</resources>
