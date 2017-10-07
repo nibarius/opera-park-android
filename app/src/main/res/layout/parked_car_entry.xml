@@ -19,31 +19,16 @@
         android:visibility="visible"
         tools:ignore="SpUsage"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/parked_entry_text"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:gravity="center_vertical"
-        android:orientation="vertical"
+        android:lineSpacingExtra="3sp"
         android:paddingEnd="16dp"
-        android:paddingStart="72dp">
-
-        <TextView
-            android:id="@+id/regno"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/colorBlack87percent"
-            android:textSize="16sp"
-            tools:text="AAA111 (user)"/>
-
-        <TextView
-            android:id="@+id/park_start_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/colorBlack38percent"
-            android:textSize="14sp"
-            tools:text="15:38:03"/>
-    </LinearLayout>
-
+        android:paddingStart="72dp"
+        android:textColor="@color/colorBlack38percent"
+        android:textSize="14sp"
+        tools:text="AAA 123 - user\n15:38:03">
+    </TextView>
 </merge>
