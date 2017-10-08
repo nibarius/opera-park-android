@@ -2,6 +2,7 @@ package se.barsk.park
 
 import android.content.Context
 import android.content.SharedPreferences
+import net.danlew.android.joda.JodaTimeAndroid
 import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
@@ -26,6 +27,7 @@ object ParkApp {
         this.context = context.applicationContext
         crashlytics = CrashReporting()
         crashlytics.enableIfAllowed()
+        JodaTimeAndroid.init(this.context)
         analytics = Analytics()
         carCollection = CarCollection()
 
