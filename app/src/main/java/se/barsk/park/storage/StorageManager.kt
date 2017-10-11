@@ -1,11 +1,27 @@
 package se.barsk.park.storage
 
+import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
 
-object StorageManager {
+open class StorageManager {
+    companion object {
+        /**
+         * Returns an appropriate storage manager depending on if it's a normal build
+         * or a special build for creating screenshots with static content.
+         */
+        fun getInstance(): StorageManager {
+            @Suppress("ConstantConditionIf")
+            return if (BuildConfig.isScreenshotBuild) {
+                MockStorageManager()
+            } else {
+                StorageManager()
+            }
+        }
+    }
+
     private val sharedPrefs: SharedPrefs
     private val database: Database
 
@@ -17,22 +33,23 @@ object StorageManager {
     }
 
     // Shared preferences interaction functions
-    fun hasServer() = sharedPrefs.hasServer()
+    open fun hasServer() = sharedPrefs.hasServer()
 
-    fun getServer() = sharedPrefs.getServer()
-    fun setServer(server: String) = sharedPrefs.setServer(server)
+    open fun getServer() = sharedPrefs.getServer()
+    open fun setServer(server: String) = sharedPrefs.setServer(server)
 
-    fun statsEnabled(): Boolean = sharedPrefs.statsEnabled()
-    fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
-    fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
+    open fun statsEnabled(): Boolean = sharedPrefs.statsEnabled()
+    open fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
+    open fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
 
     // Database interaction functions
-    fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
+    open fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
 
     /**
      * Adds a car to persistent storage if it doesn't already exist. If it exists the data
      * for the car is updated. The id of the car is used to check if the car already exists.
      */
-    fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
-    fun remove(ownCar: OwnCar) = database.remove(ownCar)
+    open fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
+
+    open fun remove(ownCar: OwnCar) = database.remove(ownCar)
 }

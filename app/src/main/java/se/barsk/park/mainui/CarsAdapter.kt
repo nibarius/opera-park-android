@@ -12,7 +12,7 @@ import se.barsk.park.managecars.ManageCarsListEntry
  */
 open class CarsAdapter(private val type: Type, var cars: List<Car>, val listener: (Car) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    enum class Type {PARKED_CARS, OWN_CARS, MANAGE_CARS }
+    enum class Type { PARKED_CARS, OWN_CARS, MANAGE_CARS }
 
     var recyclerView: RecyclerView? = null
 

@@ -7,24 +7,35 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
+import se.barsk.park.BuildConfig
+import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
-import se.barsk.park.isMocking
-import se.barsk.park.storage.StorageManager
 
 /**
  * The network manager is used to make requests to the parking server.
  */
-object NetworkManager {
-    private var serverUrl: String = if (isMocking()) "" else StorageManager.getServer()
-    var state: State = State.FIRST_RESPONSE_NOT_RECEIVED
-    var updateState: UpdateState = UpdateState.IDLE
-    private const val STATUS = "status"
-    private const val PARK = "park"
-    private const val UNPARK = "unpark"
+open class NetworkManager {
 
-    private enum class Action { PARK, UNPARK }
+    companion object {
+        private const val STATUS = "status"
+        private const val PARK = "park"
+        private const val UNPARK = "unpark"
+
+        /**
+         * Returns an appropriate car collection depending on if it's a normal build
+         * or a special build for creating screenshots with static content.
+         */
+        fun getInstance(): NetworkManager {
+            @Suppress("ConstantConditionIf")
+            return if (BuildConfig.isScreenshotBuild) {
+                MockNetworkManager()
+            } else {
+                NetworkManager()
+            }
+        }
+    }
 
     /**
      * Describes the state of the NetworkManager. This can be used to decide which
@@ -41,21 +52,29 @@ object NetworkManager {
         UPDATE_IN_PROGRESS
     }
 
-    fun setServer(server: String) {
-        serverUrl = server
-        resetState()
-    }
+    var state: State = State.FIRST_RESPONSE_NOT_RECEIVED
+    var updateState: UpdateState = UpdateState.IDLE
+
+    private enum class Action { PARK, UNPARK }
+
+    /**
+     * Call this to notify the NetworkManager that the sever has been changed.
+     */
+    fun serverChanged() = resetState()
 
     fun resetState() {
         state = State.FIRST_RESPONSE_NOT_RECEIVED
     }
+
+    open protected fun readServerFromStorage() = ParkApp.storageManager.getServer()
 
     /**
      * Makes a http request to the park server to check the current status.
      * @param context context to use to get resources for error messages
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
+    open fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
+        val serverUrl = readServerFromStorage()
         if (serverUrl.isEmpty()) {
             resultReadyListener(Result.NoServer())
             return
@@ -105,6 +124,7 @@ object NetworkManager {
     }
 
     private fun doAction(context: Context, ownCar: OwnCar, action: Action, resultReadyListener: (Result) -> Unit) {
+        val serverUrl = readServerFromStorage()
         if (serverUrl.isEmpty()) {
             return
         }
@@ -161,7 +181,7 @@ object NetworkManager {
      * @param ownCar The car to park.
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun parkCar(context: Context, ownCar: OwnCar, resultReadyListener: (Result) -> Unit) =
+    open fun parkCar(context: Context, ownCar: OwnCar, resultReadyListener: (Result) -> Unit) =
             doAction(context, ownCar, Action.PARK, resultReadyListener)
 
     /**
@@ -170,6 +190,6 @@ object NetworkManager {
      * @param car The car to unpark.
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
+    open fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
             doAction(context, car, Action.UNPARK, resultReadyListener)
 }

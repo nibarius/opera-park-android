@@ -13,5 +13,5 @@ class Analytics {
     fun optOutToggled() = updateOptOutState()
     fun logEvent(event: AnalyticsEvent) = fa.logEvent(event.name, event.parameters)
 
-    private fun updateOptOutState() = fa.setAnalyticsCollectionEnabled(StorageManager.statsEnabled())
+    private fun updateOptOutState() = fa.setAnalyticsCollectionEnabled(ParkApp.storageManager.statsEnabled())
 }

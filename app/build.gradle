@@ -33,11 +33,13 @@ android {
             buildConfigField "boolean", "isScreenshotBuild", "true"
             buildConfigField "boolean", "garageFull", "true"
             signingConfig signingConfigs.debug
+            debuggable true
         }
         screenshots {
             buildConfigField "boolean", "isScreenshotBuild", "true"
             buildConfigField "boolean", "garageFull", "false"
             signingConfig signingConfigs.debug
+            debuggable true
         }
     }
     configurations.all {

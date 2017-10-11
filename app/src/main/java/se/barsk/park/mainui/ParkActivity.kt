@@ -29,7 +29,6 @@ import se.barsk.park.datatypes.*
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
-import se.barsk.park.storage.StorageManager
 import se.barsk.park.utils.TimeUtils
 
 
@@ -76,7 +75,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         fun communicatesWithServer(): Boolean = ordinal >= EMPTY.ordinal
     }
 
-    private val garage: Garage = Garage.getInstance()
+    private val garage: Garage = Garage()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var parkedCarsRecyclerViewIsAnimating = false
     private var delayedGarageStatusChange = false
@@ -142,10 +141,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             // The server have automatically reset the parked cars since last update so assume
             // the garage is empty and that we haven't talked to the server yet.
             garage.clear()
-            NetworkManager.resetState()
+            ParkApp.networkManager.resetState()
         }
 
-        if (serverBeforePause != null && serverBeforePause != StorageManager.getServer()) {
+        if (serverBeforePause != null && serverBeforePause != ParkApp.storageManager.getServer()) {
             // Server has changed since last time the activity was open
             parkServerChanged()
         } else {
@@ -153,14 +152,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
         updateGarageStatus()
         serverBeforePause = null
-        automaticUpdateTask = RepeatableTask({ automaticUpdate() }, StorageManager.getAutomaticUpdateInterval())
+        automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
         getDynamicLink()
     }
 
     override fun onPause() {
         super.onPause()
-        serverBeforePause = StorageManager.getServer()
+        serverBeforePause = ParkApp.storageManager.getServer()
         automaticUpdateTask.stop()
     }
 
@@ -168,7 +167,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         // Only try to update if we can communicate with the server and there is no update
         // in progress
         if (parkingState.communicatesWithServer() &&
-                NetworkManager.updateState != NetworkManager.UpdateState.UPDATE_IN_PROGRESS) {
+                ParkApp.networkManager.updateState != NetworkManager.UpdateState.UPDATE_IN_PROGRESS) {
             garage.updateStatus(applicationContext)
         }
     }
@@ -218,7 +217,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             ParkingState.REQUEST_FAILED -> {
                 // failed to communicate with server
                 spinner.visibility = View.GONE
-                text = getString(R.string.unable_to_connect_placeholder_text, StorageManager.getServer())
+                text = getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
                 top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
@@ -249,11 +248,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateParkingState() {
-        parkingState = if (!StorageManager.hasServer()) {
+        parkingState = if (!ParkApp.storageManager.hasServer()) {
             ParkingState.NO_SERVER
-        } else if (NetworkManager.state == NetworkManager.State.ONLY_FAILED_REQUESTS) {
+        } else if (ParkApp.networkManager.state == NetworkManager.State.ONLY_FAILED_REQUESTS) {
             ParkingState.REQUEST_FAILED
-        } else if (NetworkManager.state == NetworkManager.State.FIRST_RESPONSE_NOT_RECEIVED) {
+        } else if (ParkApp.networkManager.state == NetworkManager.State.FIRST_RESPONSE_NOT_RECEIVED) {
             ParkingState.WAITING_ON_RESPONSE
         } else if (garage.isEmpty()) {
             ParkingState.EMPTY
@@ -395,8 +394,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             val deepLink = DeepLink(pendingDynamicLinkData.link)
             if (!deepLink.isValid) return
 
-            if (!StorageManager.hasServer()) {
-                StorageManager.setServer(deepLink.server)
+            if (!ParkApp.storageManager.hasServer()) {
+                ParkApp.storageManager.setServer(deepLink.server)
                 parkServerChanged()
             }
             ParkApp.carCollection.addCarsThatDoesNotExist(deepLink.cars)

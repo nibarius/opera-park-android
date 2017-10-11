@@ -2,10 +2,7 @@ package se.barsk.park
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import se.barsk.park.datatypes.CarCollection
-import se.barsk.park.datatypes.Garage
-import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.datatypes.*
 
 class CarCollectionTest {
     private val fullGarage = Garage(listOf(
@@ -15,7 +12,7 @@ class CarCollectionTest {
             ParkedCar("www666", "owner4", "1 hour ago"),
             ParkedCar("vvv555", "owner5", "1 hour ago"),
             ParkedCar("uuu444", "owner6", "1 hour ago")))
-    private val carCollection = CarCollection()
+    private val carCollection = MockCarCollection()
 
     @Test
     fun testTestDetection() = assertEquals(true, isTesting())

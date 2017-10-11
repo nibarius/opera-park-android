@@ -1,27 +1,40 @@
 package se.barsk.park.datatypes
 
 import se.barsk.park.BuildConfig
+import se.barsk.park.ParkApp
 import se.barsk.park.isMocking
-import se.barsk.park.storage.StorageManager
 
 /**
  * A collection of all the cars the user owns. On initialization it reads
  * cars from local storage and any changes done are saved to local storage
  * as they happen.
  */
-class CarCollection {
+open class CarCollection {
+
+    companion object {
+        /**
+         * Returns an appropriate car collection depending on if it's a normal build
+         * or a special build for creating screenshots with static content.
+         */
+        fun getInstance(): CarCollection {
+            @Suppress("ConstantConditionIf")
+            return if (BuildConfig.isScreenshotBuild) {
+                MockCarCollection()
+            } else {
+                CarCollection()
+            }
+        }
+    }
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
-    private val ownCars: MutableList<OwnCar> = if (isMocking()) mutableListOf() else StorageManager.fetchAllCars()
+    private val ownCars: MutableList<OwnCar> = readCarsFromStorage()
+
+    open protected fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
 
     private fun notifyListeners() {
         for (listener in listeners) {
             listener.onCarCollectionStatusChange()
         }
-    }
-
-    init {
-        setMockContentIfNeeded()
     }
 
     fun addListener(listener: CarCollectionStatusChangedListener) = listeners.add(listener)
@@ -52,7 +65,7 @@ class CarCollection {
      */
     fun addCar(ownCar: OwnCar, notify: Boolean = true) {
         ownCars.add(ownCar)
-        StorageManager.insertOrReplace(ownCar, ownCars.lastIndex)
+        persistUpdate(ownCar, ownCars.lastIndex)
         if (notify) {
             notifyListeners()
         }
@@ -79,7 +92,7 @@ class CarCollection {
      */
     private fun removeCar(ownCar: OwnCar) {
         ownCars.remove(ownCar)
-        StorageManager.remove(ownCar)
+        persistRemoval(ownCar)
         notifyListeners()
     }
 
@@ -89,9 +102,12 @@ class CarCollection {
     fun updateCar(ownCar: OwnCar) {
         val position = positionOf(ownCar)
         ownCars[position] = ownCar
-        StorageManager.insertOrReplace(ownCar, position)
+        persistUpdate(ownCar, position)
         notifyListeners()
     }
+
+    open fun persistRemoval(ownCar: OwnCar) = ParkApp.storageManager.remove(ownCar)
+    open fun persistUpdate(ownCar: OwnCar, position: Int) = ParkApp.storageManager.insertOrReplace(ownCar, position)
 
     /**
      * Returns true if the car collection already has a car with the same license plate
@@ -140,15 +156,4 @@ class CarCollection {
             ownCars.addAll(newCars)
         }
     }
-
-    /**
-     * Sets predefined static content in screenshot builds.
-     */
-    private fun setMockContentIfNeeded() = @Suppress("ConstantConditionIf")
-    if (BuildConfig.isScreenshotBuild) {
-        val car1 = OwnCar("ALP 110", "Margaretha")
-        val car2 = OwnCar("MLB 803", "Margaretha")
-        replaceContent(mutableListOf(car1, car2))
-    } else {}
-
 }

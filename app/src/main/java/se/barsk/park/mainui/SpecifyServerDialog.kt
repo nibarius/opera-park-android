@@ -12,6 +12,7 @@ import android.view.View
 import android.view.WindowManager
 import android.webkit.URLUtil
 import android.widget.EditText
+import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.Utils
 import se.barsk.park.storage.StorageManager
@@ -58,7 +59,7 @@ class SpecifyServerDialog : DialogFragment() {
                     dialog.cancel()
                 })
                 .setPositiveButton(R.string.dialog_button_ok, { _, _: Int ->
-                    StorageManager.setServer(editText.text.toString())
+                    ParkApp.storageManager.setServer(editText.text.toString())
                     listener.parkServerChanged()
                 })
                 .create()
@@ -66,7 +67,7 @@ class SpecifyServerDialog : DialogFragment() {
             dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
             false
         })
-        editText.setText(StorageManager.getServer())
+        editText.setText(ParkApp.storageManager.getServer())
         dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog

@@ -6,6 +6,8 @@ import net.danlew.android.joda.JodaTimeAndroid
 import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
+import se.barsk.park.network.NetworkManager
+import se.barsk.park.storage.StorageManager
 
 
 /**
@@ -19,17 +21,21 @@ object ParkApp {
     lateinit var analytics: Analytics
     lateinit private var crashlytics: CrashReporting
     lateinit var carCollection: CarCollection
+    lateinit var networkManager: NetworkManager
+    lateinit var storageManager: StorageManager
 
     fun init(context: Context) {
         if (isInitiated) {
             return
         }
         this.context = context.applicationContext
+        storageManager = StorageManager.getInstance()
         crashlytics = CrashReporting()
         crashlytics.enableIfAllowed()
         JodaTimeAndroid.init(this.context)
         analytics = Analytics()
-        carCollection = CarCollection()
+        networkManager = NetworkManager.getInstance()
+        carCollection = CarCollection.getInstance()
 
         isInitiated = true
     }

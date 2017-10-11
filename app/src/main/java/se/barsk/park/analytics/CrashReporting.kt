@@ -11,7 +11,7 @@ import se.barsk.park.storage.StorageManager
  */
 class CrashReporting {
     fun enableIfAllowed() {
-        if (StorageManager.crashReportingEnabled()) {
+        if (ParkApp.storageManager.crashReportingEnabled()) {
             Fabric.with(ParkApp.context, Crashlytics())
             Crashlytics.setBool("public_release", BuildConfig.releaseBuild)
         }

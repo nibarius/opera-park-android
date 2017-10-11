@@ -3,9 +3,9 @@ package se.barsk.park.storage
 import android.content.Context
 import android.content.SharedPreferences
 import se.barsk.park.BuildConfig
+import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.Utils
-import se.barsk.park.network.NetworkManager
 
 /**
  * Class for handing all interactions with the SharedPreferences
@@ -73,7 +73,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     inner class InternalServerChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
             if (key == SERVER_URL) {
-                NetworkManager.setServer(getServer())
+                ParkApp.networkManager.serverChanged()
             }
         }
     }

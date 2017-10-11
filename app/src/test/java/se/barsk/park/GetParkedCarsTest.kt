@@ -4,6 +4,7 @@ import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.network.NetworkManager
 
 /**
@@ -59,14 +60,16 @@ class GetParkedCarsTest {
     @Test
     fun noParkedCars() {
         val json = JSONObject(noParked)
-        val parkedCars = NetworkManager.getParkedCarsFromResponse(json)
+        val networkManager = MockNetworkManager()
+        val parkedCars = networkManager.getParkedCarsFromResponse(json)
         assertEquals(listOf<ParkedCar>(), parkedCars)
     }
 
     @Test
     fun oneParkedCar() {
         val json = JSONObject(oneParked)
-        val parkedCars = NetworkManager.getParkedCarsFromResponse(json)
+        val networkManager = MockNetworkManager()
+        val parkedCars = networkManager.getParkedCarsFromResponse(json)
         val expected = mutableListOf<ParkedCar>()
         expected.add(ParkedCar("AAA111", "user1", "2017-06-18 15:44:09"))
         assertEquals(expected, parkedCars)
@@ -75,7 +78,8 @@ class GetParkedCarsTest {
     @Test
     fun allParked() {
         val json = JSONObject(allParked)
-        val parkedCars = NetworkManager.getParkedCarsFromResponse(json)
+        val networkManager = MockNetworkManager() //todo: testing network manager instead?
+        val parkedCars = networkManager.getParkedCarsFromResponse(json)
         val expected = mutableListOf<ParkedCar>()
         expected.add(ParkedCar("AAA111", "user1", "2017-06-18 15:44:00"))
         expected.add(ParkedCar("BBB222", "user2", "2017-06-18 15:44:10"))

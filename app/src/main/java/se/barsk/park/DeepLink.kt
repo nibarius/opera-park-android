@@ -25,7 +25,7 @@ class DeepLink(link: Uri) {
                     .scheme(SCHEME)
                     .authority(AUTHORITY)
                     .appendPath(PATH)
-                    .appendQueryParameter(PARAMETER_SERVER, StorageManager.getServer())
+                    .appendQueryParameter(PARAMETER_SERVER, ParkApp.storageManager.getServer())
             for ((regNo, owner) in cars) {
                 builder.appendQueryParameter(PARAMETER_REGNO, regNo)
                 builder.appendQueryParameter(PARAMETER_OWNER, owner)
