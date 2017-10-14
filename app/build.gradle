@@ -21,11 +21,13 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "isScreenshotBuild", "false"
         buildConfigField "boolean", "garageFull", "false"
+        buildConfigField "boolean", "releaseBuild", "false"
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "releaseBuild", "true"
         }
         screenshots_full {
             buildConfigField "boolean", "isScreenshotBuild", "true"

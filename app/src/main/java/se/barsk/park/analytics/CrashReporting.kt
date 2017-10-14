@@ -2,6 +2,7 @@ package se.barsk.park.analytics
 
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
+import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.storage.StorageManager
 
@@ -12,6 +13,7 @@ class CrashReporting {
     fun enableIfAllowed() {
         if (StorageManager.crashReportingEnabled()) {
             Fabric.with(ParkApp.context, Crashlytics())
+            Crashlytics.setBool("public_release", BuildConfig.releaseBuild)
         }
     }
 }
