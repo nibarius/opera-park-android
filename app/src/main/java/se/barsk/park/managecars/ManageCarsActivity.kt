@@ -2,6 +2,7 @@ package se.barsk.park.managecars
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
@@ -20,15 +21,10 @@ import se.barsk.park.datatypes.OwnCar
 
 
 class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener, CarCollectionStatusChangedListener {
-    override fun onCarCollectionStatusChange() = if (recyclerViewIsAnimating) {
-        delayedPlaceholderSwitch = true
-    } else {
-        showCarsPlaceholderIfNeeded()
-    }
+    override fun onCarCollectionStatusChange() = showCarsPlaceholderIfNeeded()
 
     // Called when the user clicks Save in the add/edit car dialog
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
-        recyclerViewIsAnimating = !showsPlaceholder()
         when (dialogType) {
             ManageCarDialog.DialogType.EDIT -> {
                 ParkApp.carCollection.updateCar(newCar)
@@ -43,8 +39,6 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private var actionMode: ActionMode? = null
-    private var recyclerViewIsAnimating = false
-    private var delayedPlaceholderSwitch = true
     private val adapter = SelectableCarsAdapter(ParkApp.carCollection.getCars(), {})
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
@@ -59,15 +53,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         setContentView(R.layout.activity_manage_cars)
 
         manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        manageCarsRecyclerView.itemAnimator = object : DefaultItemAnimator() {
-            override fun onAnimationFinished(viewHolder: RecyclerView.ViewHolder?) {
-                recyclerViewIsAnimating = false
-                if (delayedPlaceholderSwitch) {
-                    delayedPlaceholderSwitch = false
-                    showCarsPlaceholderIfNeeded()
-                }
-            }
-        }
+        manageCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         manageCarsRecyclerView.adapter = adapter
         val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView, object : RecyclerTouchListener.ClickListener {
             override fun onClick(view: View, position: Int) = if (actionMode != null) {
@@ -138,7 +124,6 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun deleteSelectedItems() {
-        recyclerViewIsAnimating = true
         val selected = adapter.selectedItemsIds
         (selected.size() - 1 downTo 0)
                 .map { selected.keyAt(it) }
@@ -163,13 +148,24 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private fun showAddDialog() = AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
 
     private fun showCarsPlaceholderIfNeeded() {
+        // This function is typically called just after the adapter have changed but before
+        // the recyclerview have started animating the changes. Post a message on the message
+        // queue to continue after the recycler view have started animations so we can detect
+        // if they are still going
+        Handler().post({ showCarsPlaceholderIfNeededAfterAnimation() })
+    }
+
+    private fun showCarsPlaceholderIfNeededAfterAnimation() {
+        if (manageCarsRecyclerView.isAnimating) {
+            // If the recyclerview is animating, try again a bit later
+            manageCarsRecyclerView.itemAnimator.isRunning { showCarsPlaceholderIfNeeded() }
+            return
+        }
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)
         val parkedCarsView = findViewById<View>(R.id.manage_cars_recyclerview)
         val empty = ParkApp.carCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
     }
-
-    private fun showsPlaceholder() = ParkApp.carCollection.getCars().isEmpty()
 
     private fun shareSelectedItems() {
         val selected = adapter.selectedItemsIds

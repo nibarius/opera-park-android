@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -39,16 +40,23 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         garage.updateStatus(applicationContext)
     }
 
+    // called when the garage status change (happens just after the update is ready in the success case)
     override fun onGarageStatusChange() {
         updateListOfParkedCars()
         updateGarageStatus()
     }
 
+    // called when the network request is done
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
         pullToRefreshView.isRefreshing = false
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
-        showParkedCarsPlaceholderIfNeeded()
+        if (!success) {
+            // On success the placeholder will be updated from the onGarageStatusChange() case
+            // if the request was successful and there were no change there is no need to
+            // update the placeholder.
+            showParkedCarsPlaceholderIfNeeded()
+        }
         if (errorMessage != null) {
             val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
             val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
@@ -77,8 +85,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private val garage: Garage = Garage()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
-    private var parkedCarsRecyclerViewIsAnimating = false
-    private var delayedGarageStatusChange = false
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
@@ -105,15 +111,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         setSupportActionBar(toolbar)
 
         parkedCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        parkedCarsRecyclerView.itemAnimator = object : DefaultItemAnimator() {
-            override fun onAnimationFinished(viewHolder: RecyclerView.ViewHolder?) {
-                parkedCarsRecyclerViewIsAnimating = false
-                if (delayedGarageStatusChange) {
-                    delayedGarageStatusChange = false
-                    updateGarageStatus()
-                }
-            }
-        }
+        parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
+        parkedCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.PARKED_CARS,
+                garage.parkedCars, { /*listener that does nothing */ })
 
         ownCarsRecyclerView.layoutManager =
                 if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
@@ -150,7 +150,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         } else {
             garage.updateStatus(applicationContext)
         }
-        updateGarageStatus()
         serverBeforePause = null
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
@@ -188,10 +187,29 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * placeholder.
      */
     private fun showParkedCarsPlaceholderIfNeeded() {
-        val viewSwitcher = findViewById<ViewSwitcher>(R.id.parked_cars_view_switcher)
+        // This function is typically called just after the adapter have changed but before
+        // the recyclerview have started animating the changes. Post a message on the message
+        // queue to continue after the recycler view have started animations so we can detect
+        // if they are still going
+        Handler().post({ showParkedCarsPlaceholderIfNeededAfterAnimations() })
+    }
+
+    /**
+     * Switches to/from a placeholder when the RecyclerView have finished it's animations.
+     * If the RecyclerView is replaced with a placeholder before the animation have finished
+     * the animation will continue from the same state when the RecyclerView becomes visible
+     * again.
+     */
+    private fun showParkedCarsPlaceholderIfNeededAfterAnimations() {
+        if (parkedCarsRecyclerView.isAnimating) {
+            // If the recyclerview is animating, try again once current animation has finished
+            parkedCarsRecyclerView.itemAnimator.isRunning { showParkedCarsPlaceholderIfNeeded() }
+            return
+        }
         if (parkingState.showsPlaceholder()) {
             setCorrectParkedCarsPlaceholder()
         }
+        val viewSwitcher = findViewById<ViewSwitcher>(R.id.parked_cars_view_switcher)
         showPlaceholderIfNeeded(viewSwitcher, pullToRefreshView, garage.isEmpty())
     }
 
@@ -307,34 +325,16 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateListOfParkedCars() {
-        parkedCarsRecyclerViewIsAnimating = !parkingState.showsPlaceholder()
-        parkedCarsRecyclerView.swapAdapter(
-                CarsAdapter(CarsAdapter.Type.PARKED_CARS, garage.parkedCars, { /*listener that does nothing */ }), false)
+        (parkedCarsRecyclerView.adapter as CarsAdapter).cars = garage.parkedCars
+        parkedCarsRecyclerView.adapter.notifyDataSetChanged()
     }
 
-    /**
-     * Updates the garage status (except the list of parked cars) if the RecyclerView is
-     * not currently animating. If it's animating it sets a flag that signals that the
-     * RecyclerView animator should trigger an update once the animation is ready.
-     *
-     * If the RecyclerView is replaced with a placeholder before the animation have finished
-     * the animation will continue from the same state when the RecyclerView becomes visible
-     * again.
-     */
     private fun updateGarageStatus() {
-        // Don't update the garage status while the RecyclerView is animating. The recycler
-        // view will call this function again once the animation is done.
-        // If the RecyclerView is replaced with a placeholder before the animation have finished
-        // the animation will continue from the same state when the RecyclerView becomes visible
-        // again.
-        if (parkedCarsRecyclerViewIsAnimating) {
-            delayedGarageStatusChange = true
-        } else {
-            updateParkingState()
-            updateToolbar(garage.spotsFree)
-            showParkedCarsPlaceholderIfNeeded()
-            ParkApp.carCollection.updateParkStatus(garage)
-        }
+        updateListOfParkedCars()
+        updateParkingState()
+        updateToolbar(garage.spotsFree)
+        showParkedCarsPlaceholderIfNeeded()
+        ParkApp.carCollection.updateParkStatus(garage)
     }
 
     private fun updateListOfOwnCars() = ownCarsRecyclerView.swapAdapter(
