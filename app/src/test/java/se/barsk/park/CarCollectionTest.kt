@@ -1,5 +1,6 @@
 package se.barsk.park
 
+import android.util.SparseBooleanArray
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.barsk.park.datatypes.*

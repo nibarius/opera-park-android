@@ -1,5 +1,6 @@
 package se.barsk.park.datatypes
 
+import android.util.SparseBooleanArray
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.isMocking
@@ -85,14 +86,19 @@ open class CarCollection {
     /**
      * Removes the car at the given index and persists the removal to persistent storage
      */
-    fun removeCarAt(index: Int) = removeCar(ownCars[index])
-
-    /**
-     * Removes the given car and persists the removal to persistent storage
-     */
-    private fun removeCar(ownCar: OwnCar) {
+    private fun removeCarAt(index: Int) {
+        val ownCar = ownCars[index]
         ownCars.remove(ownCar)
         persistRemoval(ownCar)
+    }
+
+    /**
+     * Remove all cars at the positions indicated by the given sparse boolean array.
+     */
+    fun removeCars(which: SparseBooleanArray) {
+        for (index in which.size() - 1 downTo 0) {
+            removeCarAt(which.keyAt(index))
+        }
         notifyListeners()
     }
 

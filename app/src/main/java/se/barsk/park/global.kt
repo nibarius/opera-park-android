@@ -24,7 +24,13 @@ fun isTesting(): Boolean = try {
     Class.forName("se.barsk.park.TestIndicator")
     true
 } catch (e: ClassNotFoundException) {
-    false
+    try {
+        Class.forName("se.barsk.park.InstrumentedTestIndicator")
+        true
+    }
+    catch (e: ClassNotFoundException) {
+        false
+    }
 }
 
 fun isMocking() = isTesting() || BuildConfig.isScreenshotBuild

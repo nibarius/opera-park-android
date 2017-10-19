@@ -124,10 +124,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun deleteSelectedItems() {
-        val selected = adapter.selectedItemsIds
-        (selected.size() - 1 downTo 0)
-                .map { selected.keyAt(it) }
-                .forEach { ParkApp.carCollection.removeCarAt(it) }
+        ParkApp.carCollection.removeCars(adapter.selectedItemsIds)
         adapter.cars = ParkApp.carCollection.getCars()
         adapter.notifyDataSetChanged()
         finishActionMode()
