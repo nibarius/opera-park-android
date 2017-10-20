@@ -28,7 +28,7 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
         isEnabled = false
     }
 
-    override fun showItem(car: Car, selected: Boolean) {
+    override fun showItem(car: Car, selected: Boolean, garageFull: Boolean) {
         car as OwnCar
         val park = if (car.parked) {
             context.getString(R.string.unpark_label)
@@ -44,9 +44,15 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
         if (car.parked) {
             setBackgroundPreservePadding(parkButton, R.drawable.bg_unpark_button)
             parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
+            parkButton.isEnabled = true
+        } else if (garageFull) {
+            setBackgroundPreservePadding(parkButton, R.drawable.bg_park_button_disabled)
+            parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorDisabled))
+            parkButton.isEnabled = false
         } else {
             setBackgroundPreservePadding(parkButton, R.drawable.bg_park_button)
             parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+            parkButton.isEnabled = true
         }
     }
 

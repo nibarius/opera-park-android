@@ -27,7 +27,7 @@ class ManageCarsListEntry(context: Context?) : RelativeLayout(context, null, R.a
         LayoutInflater.from(context).inflate(R.layout.manage_cars_entry, this, true)
     }
 
-    override fun showItem(car: Car, selected: Boolean) {
+    override fun showItem(car: Car, selected: Boolean, garageFull: Boolean) {
         car as OwnCar
         regNoView.text = context.getString(R.string.manage_cars_list_entry, car.regNo, car.owner)
 

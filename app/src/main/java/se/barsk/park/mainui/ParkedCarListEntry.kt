@@ -25,7 +25,7 @@ class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEn
         LayoutInflater.from(context).inflate(R.layout.parked_car_entry, this, true)
     }
 
-    override fun showItem(car: Car, selected: Boolean) {
+    override fun showItem(car: Car, selected: Boolean, garageFull: Boolean) {
         car as ParkedCar
 
         val firstLine = "${fixRegnoForDisplay(car.regNo)} - ${car.owner}"

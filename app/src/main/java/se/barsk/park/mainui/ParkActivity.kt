@@ -121,8 +121,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 else
                     LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        ownCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.OWN_CARS,
-                ParkApp.carCollection.getCars(), this::onOwnCarClicked)
+        ownCarsRecyclerView.adapter = OwnCarsAdapter(ParkApp.carCollection.getCars(), this::onOwnCarClicked)
 
         val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
         addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
@@ -325,8 +324,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateListOfParkedCars() {
-        (parkedCarsRecyclerView.adapter as CarsAdapter).cars = garage.parkedCars
-        parkedCarsRecyclerView.adapter.notifyDataSetChanged()
+        val adapter = parkedCarsRecyclerView.adapter as CarsAdapter
+        adapter.cars = garage.parkedCars
+        adapter.notifyDataSetChanged()
     }
 
     private fun updateGarageStatus() {
@@ -337,8 +337,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         ParkApp.carCollection.updateParkStatus(garage)
     }
 
-    private fun updateListOfOwnCars() = ownCarsRecyclerView.swapAdapter(
-            CarsAdapter(CarsAdapter.Type.OWN_CARS, ParkApp.carCollection.getCars(), this::onOwnCarClicked), false)
+    private fun updateListOfOwnCars() {
+        val adapter = ownCarsRecyclerView.adapter as OwnCarsAdapter
+        adapter.garageFull = garage.isFull()
+        adapter.cars = ParkApp.carCollection.getCars()
+        adapter.notifyDataSetChanged()
+    }
 
     private fun updateToolbar(freeSpots: Int) {
         val toolbarColor: Int

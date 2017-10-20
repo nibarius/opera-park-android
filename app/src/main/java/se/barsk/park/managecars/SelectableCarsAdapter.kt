@@ -1,5 +1,6 @@
 package se.barsk.park.managecars
 
+import android.support.v7.widget.RecyclerView
 import android.util.SparseBooleanArray
 import se.barsk.park.datatypes.Car
 import se.barsk.park.mainui.CarsAdapter
@@ -9,6 +10,10 @@ import se.barsk.park.mainui.CarsAdapter
  */
 class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
         CarsAdapter(Type.MANAGE_CARS, cars, listener) {
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
+            (holder.itemView as ManageCarsListEntry)
+                    .showItem(cars[position], selected = isSelected(position))
 
     var selectedItemsIds = SparseBooleanArray()
 
@@ -53,5 +58,5 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
 
     fun hasSelectedItems(): Boolean = selectedItemsIds.size() > 0
     fun numSelectedItems(): Int = selectedItemsIds.size()
-    override fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
+    private fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
 }

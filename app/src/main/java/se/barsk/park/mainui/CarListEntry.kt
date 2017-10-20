@@ -11,7 +11,7 @@ import se.barsk.park.datatypes.Car
  * An interface for all lists of cars (parked cars and own cars)
  */
 interface CarListEntry {
-    fun showItem(car: Car, selected: Boolean)
+    fun showItem(car: Car, selected: Boolean = false, garageFull: Boolean = false)
 
     fun setAvatarColor(car: Car, context: Context, view: View) =
             setAvatarColor(getColorForCar(car, context), context, view)
