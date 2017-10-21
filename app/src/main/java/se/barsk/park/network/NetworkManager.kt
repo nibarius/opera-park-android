@@ -29,7 +29,7 @@ open class NetworkManager {
          */
         fun getInstance(): NetworkManager {
             @Suppress("ConstantConditionIf")
-            return if (BuildConfig.isScreenshotBuild) {
+            return if (BuildConfig.isMockBuild) {
                 MockNetworkManager()
             } else {
                 NetworkManager()

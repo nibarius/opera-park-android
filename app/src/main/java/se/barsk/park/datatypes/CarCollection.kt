@@ -19,7 +19,7 @@ open class CarCollection {
          */
         fun getInstance(): CarCollection {
             @Suppress("ConstantConditionIf")
-            return if (BuildConfig.isScreenshotBuild) {
+            return if (BuildConfig.isMockBuild) {
                 MockCarCollection()
             } else {
                 CarCollection()

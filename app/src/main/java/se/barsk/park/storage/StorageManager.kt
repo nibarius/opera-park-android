@@ -14,7 +14,7 @@ open class StorageManager {
          */
         fun getInstance(): StorageManager {
             @Suppress("ConstantConditionIf")
-            return if (BuildConfig.isScreenshotBuild) {
+            return if (BuildConfig.isMockBuild) {
                 MockStorageManager()
             } else {
                 StorageManager()

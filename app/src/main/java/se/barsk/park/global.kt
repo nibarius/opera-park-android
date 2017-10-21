@@ -33,7 +33,7 @@ fun isTesting(): Boolean = try {
     }
 }
 
-fun isMocking() = isTesting() || BuildConfig.isScreenshotBuild
+fun isMocking() = isTesting() || BuildConfig.isMockBuild
 
 /**
  * Takes a ViewSwitcher that contains a list and a placeholder view, the list it holds

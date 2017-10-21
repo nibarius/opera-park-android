@@ -19,9 +19,9 @@ android {
         versionCode 3
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "boolean", "isScreenshotBuild", "false"
-        buildConfigField "boolean", "garageFull", "false"
+        buildConfigField "boolean", "isMockBuild", "false"
         buildConfigField "boolean", "releaseBuild", "false"
+        buildConfigField "int", "initialParkedCars", "0"
     }
     buildTypes {
         release {
@@ -29,19 +29,50 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "releaseBuild", "true"
         }
-        screenshots_full {
-            buildConfigField "boolean", "isScreenshotBuild", "true"
-            buildConfigField "boolean", "garageFull", "true"
+        mock_6 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "6"
             signingConfig signingConfigs.debug
             debuggable true
         }
-        screenshots {
-            buildConfigField "boolean", "isScreenshotBuild", "true"
-            buildConfigField "boolean", "garageFull", "false"
+        mock_5 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "5"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+        mock_4 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "4"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+        mock_3 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "3"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+        mock_2 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "2"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+        mock_1 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "1"
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+        mock_0 {
+            buildConfigField "boolean", "isMockBuild", "true"
+            buildConfigField "int", "initialParkedCars", "0"
             signingConfig signingConfigs.debug
             debuggable true
         }
     }
+
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
     }
