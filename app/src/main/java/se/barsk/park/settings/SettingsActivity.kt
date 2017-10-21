@@ -47,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            preferenceManager.sharedPreferencesName = getString(R.string.shared_prefs_file_name)
+            preferenceManager.sharedPreferencesName = ParkApp.getSharedPreferencesFileName()
             addPreferencesFromResource(R.xml.preferences)
         }
 

@@ -28,8 +28,7 @@ open class StorageManager {
     init {
         val context = ParkApp.context
         database = Database(context)
-        val prefsFile = context.getString(R.string.shared_prefs_file_name)
-        sharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences(prefsFile))
+        sharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences())
     }
 
     // Shared preferences interaction functions

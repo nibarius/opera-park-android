@@ -40,7 +40,13 @@ object ParkApp {
         isInitiated = true
     }
 
-    fun getSharedPreferences(prefsFile: String): SharedPreferences =
+    fun getSharedPreferences(prefsFile: String = getSharedPreferencesFileName()): SharedPreferences =
             context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+
+    fun getSharedPreferencesFileName(): String = if (isMocking()) {
+        "mock_prefs"
+    } else {
+        context.getString(R.string.shared_prefs_file_name)
+    }
 }
 
