@@ -149,6 +149,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         } else {
             garage.updateStatus(applicationContext)
         }
+        // when coming back to the activity the garage status must be updated to be in the correct
+        // state before we've gotten the first response from the server.
+        onGarageStatusChange()
         serverBeforePause = null
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
