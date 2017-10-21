@@ -170,7 +170,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         (0 until selected.size())
                 .map { selected.keyAt(it) }
                 .mapTo(cars) { ParkApp.carCollection.getCarAtPosition(it) }
-        val linkToShare = DeepLink.getDynamicLinkFor(cars)
+        val linkToShare = DeepLink.getDynamicLinkFor(cars, ParkApp.storageManager.getServer())
         val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
         startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle))
         ParkApp.analytics.logEvent(ShareCarEvent(selected.size()))

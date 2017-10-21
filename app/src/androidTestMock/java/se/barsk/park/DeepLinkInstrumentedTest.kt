@@ -10,40 +10,12 @@ import se.barsk.park.datatypes.OwnCar
 
 @RunWith(AndroidJUnit4::class)
 class DeepLinkInstrumentedTest {
-    @Test
-    fun createDeepLinkOnlyServerTest() {
-        val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F"
-        val deepLink = DeepLink(Uri.parse(url))
-        assertEquals(true, deepLink.isValid)
-        assertEquals("http://park.example.com/", deepLink.server)
-        assertEquals(0, deepLink.cars.size)
-    }
-
-    @Test
-    fun createDeepLinkOneCarTest() {
-        val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=user"
-        val deepLink = DeepLink(Uri.parse(url))
-        assertEquals(true, deepLink.isValid)
-        assertEquals("http://park.example.com/", deepLink.server)
-        assertEquals(1, deepLink.cars.size)
-        assertEquals("ABC 123", deepLink.cars[0].regNo)
-        assertEquals("user", deepLink.cars[0].owner)
-    }
-
-    @Test
-    fun createDeepLinkTwoCarsTest() {
-        val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=owner&r=DEF%20456&o=owner2"
-        val deepLink = DeepLink(Uri.parse(url))
-
-        testDeepLinkWithTwoCars(deepLink)
-        assertEquals("http://park.example.com/", deepLink.server)
-    }
 
     @Test
     fun getDynamicLinkForTest() {
         ParkApp.init(InstrumentationRegistry.getTargetContext())
         val cars = listOf(OwnCar("ABC 123", "owner"), OwnCar("DEF 456", "owner2"))
-        val dynamicLinkUri = Uri.parse(DeepLink.getDynamicLinkFor(cars))
+        val dynamicLinkUri = Uri.parse(DeepLink.getDynamicLinkFor(cars, "http://park.example.com"))
         assertEquals("share", dynamicLinkUri.getQueryParameter("utm_campaign"))
         assertEquals("in-app", dynamicLinkUri.getQueryParameter("utm_source"))
         assertEquals("qgy49.app.goo.gl", dynamicLinkUri.authority)

@@ -1,35 +1,30 @@
 package se.barsk.park
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.storage.Database
 
-@RunWith(AndroidJUnit4::class)
-class DatabaseInstrumentedTest {
+
+class DatabaseTest : RoboelectricTest() {
 
     private val databaseName = "test.db"
     private lateinit var db: Database
 
     @Before
     fun createDb() {
-        val context = InstrumentationRegistry.getTargetContext()
-        db = Database(context, databaseName)
+        db = Database(context(), databaseName)
     }
 
     @After
     fun deleteDb() {
-        val context = InstrumentationRegistry.getTargetContext()
-        context.deleteDatabase(databaseName)
+        context().deleteDatabase(databaseName)
     }
 
     @Test
-    fun emptyDatabaseTest() = assertEquals(true, db.fetchAllCars().isEmpty())
+    fun emptyDatabaseTest() = Assert.assertEquals(true, db.fetchAllCars().isEmpty())
 
     @Test
     fun insertCarTest() {
@@ -37,10 +32,10 @@ class DatabaseInstrumentedTest {
         db.insertOrReplace(OwnCar("car2", "user2"), 1)
         db.insertOrReplace(OwnCar("car3", "user3"), 2)
         val allCars = db.fetchAllCars()
-        assertEquals(3, allCars.size)
-        assertEquals("car1", allCars[0].regNo)
-        assertEquals("car2", allCars[1].regNo)
-        assertEquals("car3", allCars[2].regNo)
+        Assert.assertEquals(3, allCars.size)
+        Assert.assertEquals("car1", allCars[0].regNo)
+        Assert.assertEquals("car2", allCars[1].regNo)
+        Assert.assertEquals("car3", allCars[2].regNo)
     }
 
     @Test
@@ -50,8 +45,8 @@ class DatabaseInstrumentedTest {
         db.insertOrReplace(oldCar, 0)
         db.insertOrReplace(newCar, 0)
         val allCars = db.fetchAllCars()
-        assertEquals(1, allCars.size)
-        assertEquals(newCar, allCars[0])
+        Assert.assertEquals(1, allCars.size)
+        Assert.assertEquals(newCar, allCars[0])
     }
 
     @Test
@@ -64,10 +59,10 @@ class DatabaseInstrumentedTest {
         db.insertOrReplace(car3, 2)
         db.remove(removedCar)
         val allCars = db.fetchAllCars()
-        assertEquals(2, allCars.size)
-        assertEquals(true, allCars.contains(car1))
-        assertEquals(false, allCars.contains(removedCar))
-        assertEquals(car3, allCars[1])
+        Assert.assertEquals(2, allCars.size)
+        Assert.assertEquals(true, allCars.contains(car1))
+        Assert.assertEquals(false, allCars.contains(removedCar))
+        Assert.assertEquals(car3, allCars[1])
     }
 
     @Test
@@ -85,9 +80,9 @@ class DatabaseInstrumentedTest {
         db.remove(car3)
         db.insertOrReplace(car5, 2)
         val allCars = db.fetchAllCars()
-        assertEquals(3, allCars.size)
-        assertEquals(car1, allCars[0])
-        assertEquals(car4, allCars[1])
-        assertEquals(car5, allCars[2])
+        Assert.assertEquals(3, allCars.size)
+        Assert.assertEquals(car1, allCars[0])
+        Assert.assertEquals(car4, allCars[1])
+        Assert.assertEquals(car5, allCars[2])
     }
 }

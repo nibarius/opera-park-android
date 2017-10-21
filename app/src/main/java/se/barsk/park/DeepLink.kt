@@ -4,7 +4,6 @@ import android.net.Uri
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.storage.StorageManager
 
 /**
  * Class for handling handling incoming deep links and generating deep links
@@ -20,12 +19,12 @@ class DeepLink(link: Uri) {
         private const val PATH = ""
         private const val DYNAMIC_LINK_DOMAIN = "qgy49.app.goo.gl"
 
-        private fun getDeepLinkFor(cars: List<OwnCar>): Uri {
+        private fun getDeepLinkFor(cars: List<OwnCar>, server: String): Uri {
             val builder = Uri.Builder()
                     .scheme(SCHEME)
                     .authority(AUTHORITY)
                     .appendPath(PATH)
-                    .appendQueryParameter(PARAMETER_SERVER, ParkApp.storageManager.getServer())
+                    .appendQueryParameter(PARAMETER_SERVER, server)
             for ((regNo, owner) in cars) {
                 builder.appendQueryParameter(PARAMETER_REGNO, regNo)
                 builder.appendQueryParameter(PARAMETER_OWNER, owner)
@@ -33,8 +32,8 @@ class DeepLink(link: Uri) {
             return builder.build()
         }
 
-        fun getDynamicLinkFor(cars: List<OwnCar>): String {
-            val deepLink = getDeepLinkFor(cars)
+        fun getDynamicLinkFor(cars: List<OwnCar>, server: String): String {
+            val deepLink = getDeepLinkFor(cars, server)
             val dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
                     .setLink(deepLink)
                     .setDynamicLinkDomain(DYNAMIC_LINK_DOMAIN)
