@@ -16,9 +16,6 @@ class CarCollectionTest {
     private val carCollection = MockCarCollection()
 
     @Test
-    fun testTestDetection() = assertEquals(true, isTesting())
-
-    @Test
     fun testEmptyCarCollection() {
         carCollection.replaceContent(mutableListOf())
         assertEquals(true, carCollection.getCars().isEmpty())

@@ -1,9 +1,7 @@
 package se.barsk.park.datatypes
 
 import android.util.SparseBooleanArray
-import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
-import se.barsk.park.isMocking
 
 /**
  * A collection of all the cars the user owns. On initialization it reads
@@ -12,23 +10,8 @@ import se.barsk.park.isMocking
  */
 open class CarCollection {
 
-    companion object {
-        /**
-         * Returns an appropriate car collection depending on if it's a normal build
-         * or a special build for creating screenshots with static content.
-         */
-        fun getInstance(): CarCollection {
-            @Suppress("ConstantConditionIf")
-            return if (BuildConfig.isMockBuild) {
-                MockCarCollection()
-            } else {
-                CarCollection()
-            }
-        }
-    }
-
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
-    private val ownCars: MutableList<OwnCar> = readCarsFromStorage()
+    protected val ownCars: MutableList<OwnCar> = readCarsFromStorage()
 
     open protected fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
 
@@ -151,15 +134,4 @@ open class CarCollection {
      */
     fun getCarAtPosition(position: Int): OwnCar = ownCars[position]
 
-    /**
-     * Method intended to only be run by unit tests. Replaces the entire content
-     * of the car collection with the given list of cars. Used to bypass persistent
-     * storage
-     */
-    fun replaceContent(newCars: MutableList<OwnCar>) {
-        if (isMocking()) {
-            ownCars.clear()
-            ownCars.addAll(newCars)
-        }
-    }
 }

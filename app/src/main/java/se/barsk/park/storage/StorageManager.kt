@@ -1,26 +1,10 @@
 package se.barsk.park.storage
 
-import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
-import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
 
 open class StorageManager {
-    companion object {
-        /**
-         * Returns an appropriate storage manager depending on if it's a normal build
-         * or a special build for creating screenshots with static content.
-         */
-        fun getInstance(): StorageManager {
-            @Suppress("ConstantConditionIf")
-            return if (BuildConfig.isMockBuild) {
-                MockStorageManager()
-            } else {
-                StorageManager()
-            }
-        }
-    }
 
     private val sharedPrefs: SharedPrefs
     private val database: Database

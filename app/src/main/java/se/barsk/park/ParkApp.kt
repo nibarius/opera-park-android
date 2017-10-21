@@ -29,13 +29,13 @@ object ParkApp {
             return
         }
         this.context = context.applicationContext
-        storageManager = StorageManager.getInstance()
+        storageManager = Injection.provideStorageManager()
         crashlytics = CrashReporting()
         crashlytics.enableIfAllowed()
         JodaTimeAndroid.init(this.context)
         analytics = Analytics()
-        networkManager = NetworkManager.getInstance()
-        carCollection = CarCollection.getInstance()
+        networkManager = Injection.provideNetworkManager()
+        carCollection = Injection.provideCarCollection()
 
         isInitiated = true
     }
@@ -43,10 +43,6 @@ object ParkApp {
     fun getSharedPreferences(prefsFile: String = getSharedPreferencesFileName()): SharedPreferences =
             context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
 
-    fun getSharedPreferencesFileName(): String = if (isMocking()) {
-        "mock_prefs"
-    } else {
-        context.getString(R.string.shared_prefs_file_name)
-    }
+    fun getSharedPreferencesFileName(): String = Injection.provideSharedPreferencesFileName(context)
 }
 

@@ -7,7 +7,6 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
-import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
@@ -22,19 +21,6 @@ open class NetworkManager {
         private const val STATUS = "status"
         private const val PARK = "park"
         private const val UNPARK = "unpark"
-
-        /**
-         * Returns an appropriate car collection depending on if it's a normal build
-         * or a special build for creating screenshots with static content.
-         */
-        fun getInstance(): NetworkManager {
-            @Suppress("ConstantConditionIf")
-            return if (BuildConfig.isMockBuild) {
-                MockNetworkManager()
-            } else {
-                NetworkManager()
-            }
-        }
     }
 
     /**

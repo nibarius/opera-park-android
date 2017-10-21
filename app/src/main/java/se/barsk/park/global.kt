@@ -18,24 +18,6 @@ inline fun consume(f: () -> Unit): Boolean {
 }
 
 /**
- * Method used to see if the app is currently running as a unit test.
- */
-fun isTesting(): Boolean = try {
-    Class.forName("se.barsk.park.TestIndicator")
-    true
-} catch (e: ClassNotFoundException) {
-    try {
-        Class.forName("se.barsk.park.InstrumentedTestIndicator")
-        true
-    }
-    catch (e: ClassNotFoundException) {
-        false
-    }
-}
-
-fun isMocking() = isTesting() || BuildConfig.isMockBuild
-
-/**
  * Takes a ViewSwitcher that contains a list and a placeholder view, the list it holds
  * and a boolean saying if the list is empty. Given this it ensures that the placeholder
  * is shown if the list is empty and that the list is shown otherwise.

@@ -13,4 +13,14 @@ class MockCarCollection : CarCollection() {
 
     override fun persistRemoval(ownCar: OwnCar) = Unit
     override fun persistUpdate(ownCar: OwnCar, position: Int) = Unit
+
+    /**
+     * Method intended to only be run by unit tests. Replaces the entire content
+     * of the car collection with the given list of cars. Used to bypass persistent
+     * storage
+     */
+    fun replaceContent(newCars: MutableList<OwnCar>) {
+        ownCars.clear()
+        ownCars.addAll(newCars)
+    }
 }

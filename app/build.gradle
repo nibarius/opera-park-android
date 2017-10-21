@@ -73,6 +73,24 @@ android {
         }
     }
 
+    productFlavors {
+        mock {
+            applicationIdSuffix = ".mock"
+        }
+        prod {}
+    }
+
+    // Remove mockRelease and prodMock_* as it's not needed.
+    android.variantFilter { variant ->
+        if(variant.buildType.name == 'release'
+                && variant.getFlavors().get(0).name == 'mock') {
+            variant.setIgnore(true);
+        } else if (variant.buildType.name.startsWith("mock")
+                && variant.getFlavors().get(0).name == "prod") {
+            variant.setIgnore(true)
+        }
+    }
+
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
     }
