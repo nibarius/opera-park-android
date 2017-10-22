@@ -19,7 +19,6 @@ android {
         versionCode 4
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "boolean", "isMockBuild", "false"
         buildConfigField "boolean", "releaseBuild", "false"
         buildConfigField "int", "initialParkedCars", "0"
     }
@@ -30,43 +29,36 @@ android {
             buildConfigField "boolean", "releaseBuild", "true"
         }
         mock_6 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "6"
             signingConfig signingConfigs.debug
             debuggable true
         }
         mock_5 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "5"
             signingConfig signingConfigs.debug
             debuggable true
         }
         mock_4 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "4"
             signingConfig signingConfigs.debug
             debuggable true
         }
         mock_3 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "3"
             signingConfig signingConfigs.debug
             debuggable true
         }
         mock_2 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "2"
             signingConfig signingConfigs.debug
             debuggable true
         }
         mock_1 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "1"
             signingConfig signingConfigs.debug
             debuggable true
         }
         mock_0 {
-            buildConfigField "boolean", "isMockBuild", "true"
             buildConfigField "int", "initialParkedCars", "0"
             signingConfig signingConfigs.debug
             debuggable true
