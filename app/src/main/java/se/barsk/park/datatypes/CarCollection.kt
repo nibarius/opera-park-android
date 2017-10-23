@@ -11,7 +11,7 @@ import se.barsk.park.ParkApp
 open class CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
-    protected val ownCars: MutableList<OwnCar> = readCarsFromStorage()
+    protected val ownCars: MutableList<OwnCar> by lazy { readCarsFromStorage() }
 
     open protected fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
 
