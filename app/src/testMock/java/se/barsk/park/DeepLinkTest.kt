@@ -1,8 +1,10 @@
 package se.barsk.park
 
 import android.net.Uri
+import com.google.firebase.FirebaseApp
 import org.junit.Assert
 import org.junit.Test
+import se.barsk.park.datatypes.OwnCar
 
 
 class DeepLinkTest : RoboelectricTest() {
@@ -33,6 +35,20 @@ class DeepLinkTest : RoboelectricTest() {
 
         testDeepLinkWithTwoCars(deepLink)
         Assert.assertEquals("http://park.example.com/", deepLink.server)
+    }
+
+    @Test
+    fun getDynamicLinkForTest() {
+        FirebaseApp.initializeApp(context())
+        val cars = listOf(OwnCar("ABC 123", "owner"), OwnCar("DEF 456", "owner2"))
+        val dynamicLinkUri = Uri.parse(DeepLink.getDynamicLinkFor(cars, "http://park.example.com"))
+        Assert.assertEquals("share", dynamicLinkUri.getQueryParameter("utm_campaign"))
+        Assert.assertEquals("in-app", dynamicLinkUri.getQueryParameter("utm_source"))
+        Assert.assertEquals("qgy49.app.goo.gl", dynamicLinkUri.authority)
+        val deepLinkUri = Uri.parse(dynamicLinkUri.getQueryParameter("link"))
+        Assert.assertEquals("opera-park.appspot.com", deepLinkUri.authority)
+        val deepLink = DeepLink(deepLinkUri)
+        testDeepLinkWithTwoCars(deepLink)
     }
 
     private fun testDeepLinkWithTwoCars(deepLink: DeepLink) {

@@ -1,26 +1,21 @@
 package se.barsk.park
 
 import android.content.Context
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
 import org.junit.Assert
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import se.barsk.park.storage.SharedPrefs
 import java.lang.reflect.Modifier
 
-@RunWith(AndroidJUnit4::class)
-class SharedPreferencesInstrumentedTest {
 
+class SharedPreferencesTest : RoboelectricTest() {
     /**
      * Test that there are no duplicate keys in SharedPrefs.keys since that would mean
      * different things are written to the same key in SharedPreferences.
      */
     @Test
     fun uniqueKeysTest() {
-        val appContext = InstrumentationRegistry.getTargetContext()
+        val context = context()
         val keys: MutableList<String> = mutableListOf()
         // based on https://stackoverflow.com/a/17607449/1730966
         R.string::class.java.declaredFields
@@ -28,7 +23,7 @@ class SharedPreferencesInstrumentedTest {
                 .forEach {
                     try {
                         if (it.name.startsWith("key_")) {
-                            val keyName = appContext.getString(it.getInt(null))
+                            val keyName = context.getString(it.getInt(null))
                             Assert.assertEquals("Multiple instances of key '$keyName'", false, keys.contains(keyName))
                             keys.add(keyName)
                         }
@@ -44,8 +39,7 @@ class SharedPreferencesInstrumentedTest {
 
     @Before
     fun clearSharedPrefs() {
-        val context = InstrumentationRegistry.getTargetContext()
-        context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE).edit().clear().apply()
+        context().getSharedPreferences(prefsFile, Context.MODE_PRIVATE).edit().clear().apply()
     }
 
     /**
@@ -54,7 +48,7 @@ class SharedPreferencesInstrumentedTest {
      */
     @Test
     fun sharedPrefsFirstInstallTest() {
-        val context = InstrumentationRegistry.getTargetContext()
+        val context = context()
         val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         Assert.assertFalse(sharedPreferences.contains(context.getString(R.string.key_first_version_code)))
         Assert.assertFalse(sharedPreferences.contains(context.getString(R.string.key_first_version_name)))
@@ -71,7 +65,7 @@ class SharedPreferencesInstrumentedTest {
      */
     @Test
     fun sharedPrefsUpgradeTest() {
-        val context = InstrumentationRegistry.getTargetContext()
+        val context = context()
         val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString(context.getString(R.string.key_first_version_code), "0")
@@ -90,11 +84,11 @@ class SharedPreferencesInstrumentedTest {
      */
     @Test
     fun defaultsTest() {
-        val context = InstrumentationRegistry.getTargetContext()
+        val context = context()
         val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val sharedPrefs = SharedPrefs(context, sharedPreferences)
-        assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.crashReportingEnabled())
-        assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.statsEnabled())
-        assertEquals(context.getString(R.string.default_refresh_interval).toLong(), sharedPrefs.getAutomaticUpdateInterval())
+        Assert.assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.crashReportingEnabled())
+        Assert.assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.statsEnabled())
+        Assert.assertEquals(context.getString(R.string.default_refresh_interval).toLong(), sharedPrefs.getAutomaticUpdateInterval())
     }
 }
