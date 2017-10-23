@@ -8,7 +8,7 @@ import se.barsk.park.storage.SharedPrefs
 import java.lang.reflect.Modifier
 
 
-class SharedPreferencesTest : RoboelectricTest() {
+class SharedPreferencesTest : RobolectricTest() {
     /**
      * Test that there are no duplicate keys in SharedPrefs.keys since that would mean
      * different things are written to the same key in SharedPreferences.

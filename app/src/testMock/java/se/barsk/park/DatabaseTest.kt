@@ -8,7 +8,7 @@ import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.storage.Database
 
 
-class DatabaseTest : RoboelectricTest() {
+class DatabaseTest : RobolectricTest() {
 
     private val databaseName = "test.db"
     private lateinit var db: Database

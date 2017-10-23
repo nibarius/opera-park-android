@@ -10,9 +10,9 @@ import java.io.File
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class,
-        application = RoboelectricTest.ApplicationStub::class,
+        application = RobolectricTest.ApplicationStub::class,
         sdk = intArrayOf(21))
-abstract class RoboelectricTest {
+abstract class RobolectricTest {
     fun context(): Context = RuntimeEnvironment.application
 
     fun cacheDir(): File = context().cacheDir

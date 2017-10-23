@@ -9,7 +9,7 @@ import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 
-class CarCollectionTest : RoboelectricTest() {
+class CarCollectionTest : RobolectricTest() {
     private val fullGarage = Garage(listOf(
             ParkedCar("zzz999", "owner", "1 hour ago"),
             ParkedCar("yyy888", "owner2", "1 hour ago"),

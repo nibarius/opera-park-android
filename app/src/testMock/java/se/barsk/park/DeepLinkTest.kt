@@ -7,7 +7,7 @@ import org.junit.Test
 import se.barsk.park.datatypes.OwnCar
 
 
-class DeepLinkTest : RoboelectricTest() {
+class DeepLinkTest : RobolectricTest() {
     @Test
     fun createDeepLinkOnlyServerTest() {
         val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F"
