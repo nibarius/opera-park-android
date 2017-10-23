@@ -39,7 +39,9 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private var actionMode: ActionMode? = null
-    private val adapter = SelectableCarsAdapter(ParkApp.carCollection.getCars(), {})
+    private val adapter: SelectableCarsAdapter by lazy {
+        SelectableCarsAdapter(ParkApp.carCollection.getCars(), {})
+    }
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
     }
