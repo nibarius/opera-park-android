@@ -1,13 +1,14 @@
 package se.barsk.park
 
+import android.annotation.SuppressLint
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
+import org.amshove.kluent.*
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.robolectric.Robolectric
@@ -37,16 +38,16 @@ class ManageCarsActivityTest : RobolectricTest() {
     @Test
     fun fabIsVisibleTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        assertEquals(View.VISIBLE, fab.visibility)
+        fab.visibility shouldBe View.VISIBLE
     }
 
     @Test
     fun carListShownWithCarsTest() {
         val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
-        assertEquals(false, ParkApp.carCollection.getCars().isEmpty())
-        assertEquals(View.VISIBLE, manageCarsRecyclerView.visibility)
-        assertEquals(View.GONE, placeholderView.visibility)
+        ParkApp.carCollection.getCars().shouldNotBeEmpty()
+        manageCarsRecyclerView.visibility shouldBe View.VISIBLE
+        placeholderView.visibility shouldBe View.GONE
     }
 
     @Test
@@ -54,16 +55,16 @@ class ManageCarsActivityTest : RobolectricTest() {
         (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
         val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
-        assertEquals(true, ParkApp.carCollection.getCars().isEmpty())
-        assertEquals(View.GONE, manageCarsRecyclerView.visibility)
-        assertEquals(View.VISIBLE, placeholderView.visibility)
+        ParkApp.carCollection.getCars().shouldBeEmpty()
+        manageCarsRecyclerView.visibility shouldBe View.GONE
+        placeholderView.visibility shouldBe View.VISIBLE
     }
 
     @Test
     fun hideFabWhenClickingItTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         fab.performClick()
-        assertEquals(View.GONE, fab.visibility)
+        fab.visibility shouldBe View.GONE
     }
 
     @Test
@@ -71,8 +72,8 @@ class ManageCarsActivityTest : RobolectricTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         fab.performClick()
         val dialog = activity.supportFragmentManager.findFragmentByTag("addCar")
-        assertNotNull(dialog)
-        dialog as AddCarDialog
+        dialog.shouldNotBeNull()
+        dialog shouldBeInstanceOf AddCarDialog::class
     }
 
     @Test
@@ -80,9 +81,31 @@ class ManageCarsActivityTest : RobolectricTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         fab.performClick()
         val dialog = activity.supportFragmentManager.findFragmentByTag("addCar")
+        dialog.shouldNotBeNull()
         dialog as AddCarDialog
-        assertNotNull(dialog)
         (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE).performClick()
-        assertEquals(View.VISIBLE, fab.visibility)
+        fab.visibility shouldBe View.VISIBLE
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Test
+    fun disabledAddButtonInCreateDialogTest() {
+        val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
+        fab.performClick()
+        val dialog = activity.supportFragmentManager.findFragmentByTag("addCar")
+        dialog as AddCarDialog
+        val button = (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+        button.isEnabled.shouldBeFalse()
+        val regnoView = dialog.dialog.findViewById<EditText>(R.id.regno)
+        val userView = dialog.dialog.findViewById<EditText>(R.id.owner)
+        regnoView.shouldNotBeNull()
+        userView.shouldNotBeNull()
+        regnoView.setText("regno")
+        button.isEnabled.shouldBeFalse()
+        regnoView.setText("")
+        userView.setText("user")
+        button.isEnabled.shouldBeFalse()
+        regnoView.setText("regno")
+        button.isEnabled.shouldBeTrue()
     }
 }

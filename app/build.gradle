@@ -115,6 +115,7 @@ dependencies {
     testCompile 'org.json:json:20140107'
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile "org.robolectric:robolectric:3.4.2"
+    testCompile 'org.amshove.kluent:kluent-android:1.30'
 }
 repositories {
     mavenCentral()
