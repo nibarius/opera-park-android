@@ -15,7 +15,7 @@ open class CarCollection {
 
     open protected fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
 
-    private fun notifyListeners() {
+    protected fun notifyListeners() {
         for (listener in listeners) {
             listener.onCarCollectionStatusChange()
         }

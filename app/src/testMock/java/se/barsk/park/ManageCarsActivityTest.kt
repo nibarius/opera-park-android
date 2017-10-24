@@ -31,6 +31,7 @@ class ManageCarsActivityTest : RobolectricTest() {
     fun tearDown() {
         // Destroy activity after every test
         controller.pause().stop().destroy()
+        ParkApp.carCollection = MockCarCollection()
     }
 
     @Test
@@ -50,8 +51,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun placeholderShownWithNoCarsTest() {
-        ParkApp.carCollection = MockCarCollection(0)
-        val activity = Robolectric.buildActivity(ManageCarsActivity::class.java).create().start().resume().visible().get()
+        (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
         val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
         assertEquals(true, ParkApp.carCollection.getCars().isEmpty())

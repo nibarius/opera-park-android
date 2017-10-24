@@ -25,5 +25,6 @@ class MockCarCollection(var numCars: Int = 2) : CarCollection() {
     fun replaceContent(newCars: MutableList<OwnCar>) {
         ownCars.clear()
         ownCars.addAll(newCars)
+        notifyListeners()
     }
 }
