@@ -1,4 +1,7 @@
-package se.barsk.park.datatypes
+package se.barsk.park.carcollection
+
+import se.barsk.park.datatypes.CarCollection
+import se.barsk.park.datatypes.OwnCar
 
 /**
  * A mock implementation of the CarCollection with a hard coded list of cars to

@@ -5,7 +5,7 @@ import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.barsk.park.datatypes.Garage
-import se.barsk.park.datatypes.MockCarCollection
+import se.barsk.park.carcollection.MockCarCollection
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 

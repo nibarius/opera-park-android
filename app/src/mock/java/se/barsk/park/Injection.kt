@@ -1,7 +1,7 @@
 package se.barsk.park
 
 import android.content.Context
-import se.barsk.park.datatypes.MockCarCollection
+import se.barsk.park.carcollection.MockCarCollection
 import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.storage.MockStorageManager
 
