@@ -38,7 +38,7 @@ class ManageCarsActivityTest : RobolectricTest() {
     @Test
     fun fabIsVisibleTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.visibility shouldBe View.VISIBLE
+        fab.visibility shouldEqual View.VISIBLE
     }
 
     @Test
@@ -46,8 +46,8 @@ class ManageCarsActivityTest : RobolectricTest() {
         val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
         ParkApp.carCollection.getCars().shouldNotBeEmpty()
-        manageCarsRecyclerView.visibility shouldBe View.VISIBLE
-        placeholderView.visibility shouldBe View.GONE
+        manageCarsRecyclerView.visibility shouldEqual View.VISIBLE
+        placeholderView.visibility shouldEqual View.GONE
     }
 
     @Test
@@ -56,15 +56,15 @@ class ManageCarsActivityTest : RobolectricTest() {
         val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
         ParkApp.carCollection.getCars().shouldBeEmpty()
-        manageCarsRecyclerView.visibility shouldBe View.GONE
-        placeholderView.visibility shouldBe View.VISIBLE
+        manageCarsRecyclerView.visibility shouldEqual View.GONE
+        placeholderView.visibility shouldEqual View.VISIBLE
     }
 
     @Test
     fun hideFabWhenClickingItTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         fab.performClick()
-        fab.visibility shouldBe View.GONE
+        fab.visibility shouldEqual View.GONE
     }
 
     @Test
@@ -84,7 +84,7 @@ class ManageCarsActivityTest : RobolectricTest() {
         dialog.shouldNotBeNull()
         dialog as AddCarDialog
         (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE).performClick()
-        fab.visibility shouldBe View.VISIBLE
+        fab.visibility shouldEqual View.VISIBLE
     }
 
     @SuppressLint("SetTextI18n")
@@ -108,4 +108,38 @@ class ManageCarsActivityTest : RobolectricTest() {
         regnoView.setText("regno")
         button.isEnabled.shouldBeTrue()
     }
+
+    @Test
+    fun chooseMenuEntryTest() {
+        val shadowActivity = Shadows.shadowOf(activity)
+        shadowActivity.clickMenuItem(R.id.manage_cars_menu_manage_mode)
+        val actionMode = activity.getActionMode()
+        actionMode.shouldNotBeNull()
+        actionMode?.title shouldBe activity.getString(R.string.action_mode_title)
+
+        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
+                .adapter as SelectableCarsAdapter
+        adapter.numSelectedItems() shouldEqual 0
+    }
+
+    @Test
+    fun selectAllMenuEntryTest() {
+        val shadowActivity = Shadows.shadowOf(activity)
+        shadowActivity.clickMenuItem(R.id.manage_cars_menu_select_all)
+        val actionMode = activity.getActionMode()
+        actionMode.shouldNotBeNull()
+
+        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
+                .adapter as SelectableCarsAdapter
+        actionMode?.title shouldEqual adapter.itemCount.toString()
+        adapter.numSelectedItems() shouldEqual adapter.itemCount
+    }
+
+    /** Tests that would be nice to have:
+     * 1. Clicking on recyclerview items with without selection mode
+     * 2. Clicking on recyclerview items in selection mode
+     * 3. FAB is hidden after entering selection mode (fab gets hidden after
+     *    the action mode have finished. Not sure how to wait with asserting until it's gone.
+     */
+
 }
