@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.ViewSwitcher
 import se.barsk.park.*
 import se.barsk.park.analytics.ShareCarEvent
+import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
 
@@ -187,10 +188,10 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
 
     private fun shareSelectedItems() {
         val selected = adapter.selectedItemsIds
-        val cars: MutableList<OwnCar> = mutableListOf()
+        val cars: MutableList<Car> = mutableListOf()
         (0 until selected.size())
                 .map { selected.keyAt(it) }
-                .mapTo(cars) { adapter.ownCars[it] }
+                .mapTo(cars) { adapter.cars[it] }
         val linkToShare = DeepLink.getDynamicLinkFor(cars, ParkApp.storageManager.getServer())
         val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
         startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle))
