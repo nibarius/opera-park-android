@@ -21,7 +21,10 @@ import se.barsk.park.datatypes.OwnCar
 
 
 class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener, CarCollectionStatusChangedListener {
-    override fun onCarCollectionStatusChange() = showCarsPlaceholderIfNeeded()
+    override fun onCarCollectionStatusChange() {
+        showCarsPlaceholderIfNeeded()
+        updateOptionsMenuItems()
+    }
 
     // Called when the user clicks Save in the add/edit car dialog
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
@@ -39,6 +42,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private var actionMode: ActionMode? = null
+    fun getActionMode() = actionMode // Only used to access actionMode in tests.
     private val adapter: SelectableCarsAdapter by lazy {
         SelectableCarsAdapter(ParkApp.carCollection.getCars(), {})
     }
@@ -48,6 +52,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private val fab: FloatingActionButton by lazy {
         findViewById<FloatingActionButton>(R.id.manage_cards_fab)
     }
+    private lateinit var optionsMenu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,15 +91,31 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        optionsMenu = menu
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.manage_cars_menu, menu)
-        return true
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        updateOptionsMenuItems()
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.manage_cars_menu_manage_mode -> consume { startActionModeWithoutSelection() }
         R.id.manage_cars_menu_select_all -> consume { selectAllItems() }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun updateOptionsMenuItems() {
+        val enabled = ParkApp.carCollection.getCars().isNotEmpty()
+        val selectAll = optionsMenu.findItem(R.id.manage_cars_menu_select_all)
+        selectAll.isVisible = enabled
+        selectAll.isEnabled = enabled
+        val manage = optionsMenu.findItem(R.id.manage_cars_menu_manage_mode)
+        manage.isVisible = enabled
+        manage.isEnabled = enabled
     }
 
     // Called when an item is selected in the list of cars

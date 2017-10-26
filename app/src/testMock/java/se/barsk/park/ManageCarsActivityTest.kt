@@ -12,10 +12,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.robolectric.Robolectric
+import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import se.barsk.park.carcollection.MockCarCollection
 import se.barsk.park.managecars.AddCarDialog
 import se.barsk.park.managecars.ManageCarsActivity
+import se.barsk.park.managecars.SelectableCarsAdapter
 
 
 class ManageCarsActivityTest : RobolectricTest() {
@@ -58,6 +60,16 @@ class ManageCarsActivityTest : RobolectricTest() {
         ParkApp.carCollection.getCars().shouldBeEmpty()
         manageCarsRecyclerView.visibility shouldEqual View.GONE
         placeholderView.visibility shouldEqual View.VISIBLE
+    }
+
+    @Test
+    fun menuIsGoneWithNoCarsTest() {
+        (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
+        val menu = Shadows.shadowOf(activity).optionsMenu
+        val selectAll = menu.findItem(R.id.manage_cars_menu_select_all)
+        val choose = menu.findItem(R.id.manage_cars_menu_manage_mode)
+        selectAll.isVisible.shouldBeFalse()
+        choose.isVisible.shouldBeFalse()
     }
 
     @Test
