@@ -3,12 +3,13 @@ package se.barsk.park.managecars
 import android.support.v7.widget.RecyclerView
 import android.util.SparseBooleanArray
 import se.barsk.park.datatypes.Car
+import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.mainui.CarsAdapter
 
 /**
- * Adapter for a selectable list of cars
+ * Adapter for a selectable list of own cars
  */
-class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
+class SelectableCarsAdapter(cars: List<OwnCar>, listener: (Car) -> Unit) :
         CarsAdapter(Type.MANAGE_CARS, cars, listener) {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
@@ -16,6 +17,12 @@ class SelectableCarsAdapter(cars: List<Car>, listener: (Car) -> Unit) :
                     .showItem(cars[position], selected = isSelected(position))
 
     var selectedItemsIds = SparseBooleanArray()
+    @Suppress("UNCHECKED_CAST")
+    var ownCars: List<OwnCar>
+        get() = cars as List<OwnCar>
+        set(value) {
+            cars = value
+        }
 
     fun toggleSelection(position: Int) {
         if (isSelected(position)) {
