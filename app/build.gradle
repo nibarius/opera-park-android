@@ -11,7 +11,7 @@ android {
     def minorVersion = 2
 
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "se.barsk.park"
         minSdkVersion 21
@@ -65,11 +65,15 @@ android {
         }
     }
 
+    flavorDimensions "build"
     productFlavors {
         mock {
             applicationIdSuffix = ".mock"
+            dimension "build"
         }
-        prod {}
+        prod {
+            dimension "build"
+        }
     }
 
     // Remove mockRelease and prodMock_* as it's not needed.
