@@ -14,6 +14,7 @@ class DynamicLinkFailedEvent(exception: String) : AnalyticsEvent {
     override val parameters: Bundle = Bundle()
 
     init {
-        parameters.putString(Param.EXCEPTION, exception.substring(0, 100))
+        parameters.putString(Param.EXCEPTION,
+                exception.substring(0, minOf(100, exception.length)))
     }
 }
