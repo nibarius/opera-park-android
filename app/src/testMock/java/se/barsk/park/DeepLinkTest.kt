@@ -2,8 +2,8 @@ package se.barsk.park
 
 import android.net.Uri
 import com.google.firebase.FirebaseApp
+import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldEqual
-import org.junit.Assert
 import org.junit.Test
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.OwnCar
@@ -14,20 +14,20 @@ class DeepLinkTest : RobolectricTest() {
     fun createDeepLinkOnlyServerTest() {
         val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F"
         val deepLink = DeepLink(Uri.parse(url))
-        Assert.assertEquals(true, deepLink.isValid)
-        Assert.assertEquals("http://park.example.com/", deepLink.server)
-        Assert.assertEquals(0, deepLink.cars.size)
+        deepLink.isValid.shouldBeTrue()
+        deepLink.server shouldEqual "http://park.example.com/"
+        deepLink.cars.size shouldEqual 0
     }
 
     @Test
     fun createDeepLinkOneCarTest() {
         val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=user"
         val deepLink = DeepLink(Uri.parse(url))
-        Assert.assertEquals(true, deepLink.isValid)
-        Assert.assertEquals("http://park.example.com/", deepLink.server)
-        Assert.assertEquals(1, deepLink.cars.size)
-        Assert.assertEquals("ABC 123", deepLink.cars[0].regNo)
-        Assert.assertEquals("user", deepLink.cars[0].owner)
+        deepLink.isValid.shouldBeTrue()
+        deepLink.server shouldEqual "http://park.example.com/"
+        deepLink.cars.size shouldEqual 1
+        deepLink.cars[0].regNo shouldEqual "ABC 123"
+        deepLink.cars[0].owner shouldEqual "user"
     }
 
     @Test
@@ -36,7 +36,7 @@ class DeepLinkTest : RobolectricTest() {
         val deepLink = DeepLink(Uri.parse(url))
 
         testDeepLinkWithTwoCars(deepLink)
-        Assert.assertEquals("http://park.example.com/", deepLink.server)
+        deepLink.server shouldEqual "http://park.example.com/"
     }
 
     @Test
@@ -44,22 +44,22 @@ class DeepLinkTest : RobolectricTest() {
         FirebaseApp.initializeApp(context())
         val cars = listOf(OwnCar("ABC 123", "owner"), OwnCar("DEF 456", "owner2"))
         val dynamicLinkUri = Uri.parse(DeepLink.getDynamicLinkFor(cars, "http://park.example.com"))
-        Assert.assertEquals("share", dynamicLinkUri.getQueryParameter("utm_campaign"))
-        Assert.assertEquals("in-app", dynamicLinkUri.getQueryParameter("utm_source"))
-        Assert.assertEquals("qgy49.app.goo.gl", dynamicLinkUri.authority)
+        dynamicLinkUri.getQueryParameter("utm_campaign") shouldEqual "share"
+        dynamicLinkUri.getQueryParameter("utm_source") shouldEqual "in-app"
+        dynamicLinkUri.authority shouldEqual "qgy49.app.goo.gl"
         val deepLinkUri = Uri.parse(dynamicLinkUri.getQueryParameter("link"))
-        Assert.assertEquals("opera-park.appspot.com", deepLinkUri.authority)
+        deepLinkUri.authority shouldEqual "opera-park.appspot.com"
         val deepLink = DeepLink(deepLinkUri)
         testDeepLinkWithTwoCars(deepLink)
     }
 
     private fun testDeepLinkWithTwoCars(deepLink: DeepLink) {
-        Assert.assertEquals(true, deepLink.isValid)
-        Assert.assertEquals(2, deepLink.cars.size)
-        Assert.assertEquals("ABC 123", deepLink.cars[0].regNo)
-        Assert.assertEquals("owner", deepLink.cars[0].owner)
-        Assert.assertEquals("DEF 456", deepLink.cars[1].regNo)
-        Assert.assertEquals("owner2", deepLink.cars[1].owner)
+        deepLink.isValid.shouldBeTrue()
+        deepLink.cars.size shouldEqual 2
+        deepLink.cars[0].regNo shouldEqual "ABC 123"
+        deepLink.cars[0].owner shouldEqual "owner"
+        deepLink.cars[1].regNo shouldEqual "DEF 456"
+        deepLink.cars[1].owner shouldEqual "owner2"
     }
 
     @Test
