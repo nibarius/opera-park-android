@@ -1,6 +1,7 @@
 package se.barsk.park
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
@@ -145,6 +146,23 @@ class ManageCarsActivityTest : RobolectricTest() {
                 .adapter as SelectableCarsAdapter
         actionMode?.title shouldEqual adapter.itemCount.toString()
         adapter.numSelectedItems() shouldEqual adapter.itemCount
+    }
+
+    @Test
+    fun startWithIntentTest() {
+        val intent = Intent(context(), ManageCarsActivity::class.java)
+        intent.putExtra(INTENT_EXTRA_ADD_CAR, true)
+        val intentController = Robolectric.buildActivity(ManageCarsActivity::class.java, intent)
+        val intentActivity = intentController.create().start().resume().visible().get()
+
+        val fab = intentActivity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
+        fab.visibility shouldEqual View.GONE
+
+        val dialog = intentActivity.supportFragmentManager.findFragmentByTag("addCar")
+        dialog.shouldNotBeNull()
+        dialog shouldBeInstanceOf AddCarDialog::class
+
+        intentController.pause().stop().destroy()
     }
 
     /** Tests that would be nice to have:
