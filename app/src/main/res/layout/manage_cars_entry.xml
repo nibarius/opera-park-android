@@ -34,7 +34,7 @@
             android:background="@drawable/circle_drawable"
             android:gravity="center"
             android:padding="8dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:srcCompat="@drawable/ic_check_24dp"
             tools:ignore="ContentDescription"/>
 
