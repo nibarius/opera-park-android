@@ -12,6 +12,7 @@ android {
 
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
+    testOptions.unitTests.includeAndroidResources true
     defaultConfig {
         applicationId "se.barsk.park"
         minSdkVersion 21
@@ -118,7 +119,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.json:json:20140107'
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testCompile "org.robolectric:robolectric:3.4.2"
+    testCompile "org.robolectric:robolectric:3.5"
     testCompile 'org.amshove.kluent:kluent-android:1.30'
 }
 repositories {
