@@ -65,5 +65,6 @@ class SelectableCarsAdapter(cars: List<OwnCar>, listener: (Car) -> Unit) :
 
     fun hasSelectedItems(): Boolean = selectedItemsIds.size() > 0
     fun numSelectedItems(): Int = selectedItemsIds.size()
-    private fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
+    // exposed to be accessible from unit tests
+    fun isSelected(position: Int): Boolean = selectedItemsIds[position, false]
 }

@@ -17,6 +17,7 @@ import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import se.barsk.park.carcollection.MockCarCollection
 import se.barsk.park.managecars.AddCarDialog
+import se.barsk.park.managecars.EditCarDialog
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.managecars.SelectableCarsAdapter
 
@@ -165,11 +166,52 @@ class ManageCarsActivityTest : RobolectricTest() {
         intentController.pause().stop().destroy()
     }
 
-    /** Tests that would be nice to have:
-     * 1. Clicking on recyclerview items with without selection mode
-     * 2. Clicking on recyclerview items in selection mode
-     * 3. FAB is hidden after entering selection mode (fab gets hidden after
-     *    the action mode have finished. Not sure how to wait with asserting until it's gone.
-     */
+    @Test
+    fun clickOnListEntryTest() {
+        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview).adapter
+        adapter as SelectableCarsAdapter
+        adapter.itemCount shouldBeGreaterThan 0
+        activity.recyclerOnClick(0)
 
+        val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
+        fab.visibility shouldEqual View.GONE
+
+        val dialog = activity.supportFragmentManager.findFragmentByTag("editCar")
+        dialog.shouldNotBeNull()
+        dialog shouldBeInstanceOf EditCarDialog::class
+        dialog as EditCarDialog
+        val regnoView = dialog.dialog.findViewById<EditText>(R.id.regno)
+        val userView = dialog.dialog.findViewById<EditText>(R.id.owner)
+        regnoView.text.toString() shouldEqual adapter.cars[0].regNo
+        userView.text.toString() shouldEqual adapter.cars[0].owner
+    }
+
+    @Test
+    fun longClickOnListEntryTest() {
+        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview).adapter
+        adapter as SelectableCarsAdapter
+        adapter.itemCount shouldBeGreaterThan 0
+        activity.recyclerOnLongClick(0)
+        adapter.numSelectedItems() shouldBe 1
+        adapter.isSelected(0).shouldBeTrue()
+        activity.getActionMode().shouldNotBeNull()
+    }
+
+    @Test
+    fun clickInActionModeTest() {
+        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview).adapter
+        adapter as SelectableCarsAdapter
+        adapter.itemCount shouldBeGreaterThan 1
+        activity.recyclerOnLongClick(0)
+        activity.recyclerOnClick(1)
+        adapter.isSelected(0).shouldBeTrue()
+        adapter.isSelected(1).shouldBeTrue()
+        activity.recyclerOnClick(0)
+        adapter.isSelected(0).shouldBeFalse()
+        activity.recyclerOnClick(1)
+        activity.getActionMode().shouldBeNull()
+
+        val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
+        fab.visibility shouldEqual View.VISIBLE
+    }
 }

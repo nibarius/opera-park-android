@@ -55,6 +55,17 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
     private lateinit var optionsMenu: Menu
 
+    // Exposing the onClick and onLongClick functions to be able to use them in unit tests.
+    fun recyclerOnLongClick(position: Int) = onListItemSelect(position)
+
+    fun recyclerOnClick(position: Int) = if (actionMode != null) {
+        // Select item in action mode
+        onListItemSelect(position)
+    } else {
+        // Edit item when not in action mode
+        showEditDialog(adapter.ownCars[position].id)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ParkApp.init(this)
@@ -63,17 +74,11 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         manageCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         manageCarsRecyclerView.adapter = adapter
-        val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView, object : RecyclerTouchListener.ClickListener {
-            override fun onClick(view: View, position: Int) = if (actionMode != null) {
-                // Select item in action mode
-                onListItemSelect(position)
-            } else {
-                // Edit item when not in action mode
-                showEditDialog(adapter.ownCars[position].id)
-            }
-
-            override fun onLongClick(view: View, position: Int) = onListItemSelect(position)
-        })
+        val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView,
+                object : RecyclerTouchListener.ClickListener {
+                    override fun onClick(view: View, position: Int) = recyclerOnClick(position)
+                    override fun onLongClick(view: View, position: Int) = recyclerOnLongClick(position)
+                })
         manageCarsRecyclerView.addOnItemTouchListener(touchListener)
 
         fab.setOnClickListener { _ -> showAddDialog() }
