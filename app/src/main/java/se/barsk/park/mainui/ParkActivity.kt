@@ -42,7 +42,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     // called when the garage status change (happens just after the update is ready in the success case)
     override fun onGarageStatusChange() {
-        updateListOfParkedCars()
         updateGarageStatus()
     }
 
