@@ -8,10 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.google.firebase.FirebaseApp
-import org.amshove.kluent.shouldBeEmpty
-import org.amshove.kluent.shouldBeTrue
-import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldNotBeEmpty
+import org.amshove.kluent.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -22,6 +19,7 @@ import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.carcollection.MockCarCollection
 import se.barsk.park.mainui.ParkActivity
 import se.barsk.park.managecars.ManageCarsActivity
+import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.settings.SettingsActivity
 
 
@@ -41,6 +39,7 @@ class ParkActivityTest : RobolectricTest() {
         // Destroy activity after every test
         controller.pause().stop().destroy()
         ParkApp.carCollection = MockCarCollection()
+        ParkApp.networkManager = MockNetworkManager()
     }
 
     @Test
@@ -97,16 +96,15 @@ class ParkActivityTest : RobolectricTest() {
     }
 
 
-    // Todo: running both landscape and portrait test fails, runnin just either is fine.
-    /*@Test
+    @Test
     @org.robolectric.annotation.Config(qualifiers = "land")
-    fun parkedCarsListWithServerAndEmptyGarageLandscapeTest() = parkedCarsListWithServerAndEmptyGarageTest()*/
+    fun parkedCarsListHasServerEmptyLandscapeTest() = parkedCarsListHasServerEmptyTest()
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "port")
-    fun parkedCarsListWithServerAndEmptyGaragePortraitTest() = parkedCarsListWithServerAndEmptyGarageTest()
+    fun parkedCarsListHasServerEmptyPortraitTest() = parkedCarsListHasServerEmptyTest()
 
-    private fun parkedCarsListWithServerAndEmptyGarageTest() {
+    private fun parkedCarsListHasServerEmptyTest() {
         // First there is a placeholder with an a progress spinner
         val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
         val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
@@ -127,8 +125,44 @@ class ParkActivityTest : RobolectricTest() {
         setServerButton.visibility shouldEqual View.GONE
     }
 
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkedCarsListHasServerNotEmptyLandscapeTest() = parkedCarsListHasServerNotEmptyTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkedCarsListHasServerNotEmptyPortraitTest() = parkedCarsListHasServerNotEmptyTest()
+
+    private fun parkedCarsListHasServerNotEmptyTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(3)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // First there is a placeholder with an a progress spinner
+        val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
+        val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
+        val textView = activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
+        val setServerButton = activity.findViewById<Button>(R.id.no_park_server_placeholder_button)
+        placeholderView.visibility shouldEqual View.VISIBLE
+        loadingSpinner.visibility shouldEqual View.VISIBLE
+        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
+        setServerButton.visibility shouldEqual View.GONE
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        placeholderView.visibility shouldEqual View.GONE
+        val recyclerView = activity.findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
+        recyclerView.visibility shouldEqual View.VISIBLE
+        activity.supportActionBar?.title shouldNotEqual activity.getString(R.string.app_name)
+
+        controller.pause().stop().destroy()
+    }
+
+
     // Tests to add:
-    //  - parkedCarsListWithServerAndNotEmptyGarageTest
     //  - parkedCarsListWithoutServerAndEmptyGarageTest
     //  - parkedCarsListWithoutServerAndNotEmptyGarageTest
     //  - unable to connect, retry button test
