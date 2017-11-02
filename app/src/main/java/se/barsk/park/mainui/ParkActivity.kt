@@ -241,7 +241,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
                 parkServerButton.setOnClickListener { _ ->
+                    ParkApp.networkManager.resetState()
                     garage.updateStatus(applicationContext)
+                    updateParkingState()
                     setCorrectParkedCarsPlaceholder()
                 }
             }
