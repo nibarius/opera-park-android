@@ -87,13 +87,13 @@ class ParkActivityTest : RobolectricTest() {
         val ownCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.own_cars_recycler_view)
         val placeholderView = activity.findViewById<LinearLayout>(R.id.own_cars_placeholder)
         ParkApp.carCollection.getCars().shouldNotBeEmpty()
-        ownCarsRecyclerView.visibility shouldEqual View.VISIBLE
-        placeholderView.visibility shouldEqual View.GONE
+        ownCarsRecyclerView.shouldBeVisible()
+        placeholderView.shouldBeGone()
 
         (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
         ParkApp.carCollection.getCars().shouldBeEmpty()
-        ownCarsRecyclerView.visibility shouldEqual View.GONE
-        placeholderView.visibility shouldEqual View.VISIBLE
+        ownCarsRecyclerView.shouldBeGone()
+        placeholderView.shouldBeVisible()
     }
 
 
@@ -107,23 +107,13 @@ class ParkActivityTest : RobolectricTest() {
 
     private fun parkedCarsListHasServerEmptyTest() {
         // First there is a placeholder with an a progress spinner
-        val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
-        val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
-        val textView = activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
-        val setServerButton = activity.findViewById<Button>(R.id.no_park_server_placeholder_button)
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.VISIBLE
-        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        loadingPlaceholderShown(activity)
 
         // wait until we've gotten a response from the "server"
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         // After loading data the garage is empty and the empty placeholder is shown
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.GONE
-        textView.text.toString() shouldEqual activity.getString(R.string.parked_cars_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        emptyGaragePlaceholderShown(activity)
     }
 
     @Test
@@ -141,23 +131,13 @@ class ParkActivityTest : RobolectricTest() {
         val activity = controller.create().start().resume().visible().get()
 
         // First there is a placeholder with an a progress spinner
-        val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
-        val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
-        val textView = activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
-        val setServerButton = activity.findViewById<Button>(R.id.no_park_server_placeholder_button)
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.VISIBLE
-        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        loadingPlaceholderShown(activity)
 
         // wait until we've gotten a response from the "server"
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         // After loading data the garage have cars and the list of cars is shown
-        placeholderView.visibility shouldEqual View.GONE
-        val recyclerView = activity.findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
-        recyclerView.visibility shouldEqual View.VISIBLE
-        activity.supportActionBar?.title shouldNotEqual activity.getString(R.string.app_name)
+        listOfParkedCarsShown(activity)
 
         controller.pause().stop().destroy()
     }
@@ -172,14 +152,7 @@ class ParkActivityTest : RobolectricTest() {
 
     private fun parkedCarsListNoConnectionEmptyTest() {
         // First there is a placeholder with an a progress spinner
-        val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
-        val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
-        val textView = activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
-        val setServerButton = activity.findViewById<Button>(R.id.no_park_server_placeholder_button)
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.VISIBLE
-        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        loadingPlaceholderShown(activity)
 
         (ParkApp.networkManager as MockNetworkManager).hasConnection = false
 
@@ -187,33 +160,23 @@ class ParkActivityTest : RobolectricTest() {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         // Then there is a connection error placeholder
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.GONE
-        textView.text.toString() shouldEqual activity.getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
-        setServerButton.visibility shouldEqual View.VISIBLE
-        setServerButton.text.toString() shouldEqual activity.getString(R.string.unable_to_connect_placeholder_button)
+        connectionErrorPlaceholderShown(activity)
 
         (ParkApp.networkManager as MockNetworkManager).hasConnection = true
-        setServerButton.performClick()
+        activity.findViewById<Button>(R.id.no_park_server_placeholder_button).performClick()
 
         ShadowLooper.pauseMainLooper();
         Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS);
         ShadowLooper.unPauseMainLooper();
 
         // There should now be a placeholder with a spinner
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.VISIBLE
-        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        loadingPlaceholderShown(activity)
 
         // wait until we've gotten a response from the "server"
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         // After loading data the garage is empty and the empty placeholder is shown
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.GONE
-        textView.text.toString() shouldEqual activity.getString(R.string.parked_cars_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        emptyGaragePlaceholderShown(activity)
     }
 
     @Test
@@ -231,14 +194,7 @@ class ParkActivityTest : RobolectricTest() {
         val activity = controller.create().start().resume().visible().get()
 
         // First there is a placeholder with an a progress spinner
-        val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
-        val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
-        val textView = activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
-        val setServerButton = activity.findViewById<Button>(R.id.no_park_server_placeholder_button)
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.VISIBLE
-        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        loadingPlaceholderShown(activity)
 
         (ParkApp.networkManager as MockNetworkManager).hasConnection = false
 
@@ -246,37 +202,67 @@ class ParkActivityTest : RobolectricTest() {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         // Then there is a connection error placeholder
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.GONE
-        textView.text.toString() shouldEqual activity.getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
-        setServerButton.visibility shouldEqual View.VISIBLE
-        setServerButton.text.toString() shouldEqual activity.getString(R.string.unable_to_connect_placeholder_button)
+        connectionErrorPlaceholderShown(activity)
 
         (ParkApp.networkManager as MockNetworkManager).hasConnection = true
-        setServerButton.performClick()
+        activity.findViewById<Button>(R.id.no_park_server_placeholder_button).performClick()
 
         ShadowLooper.pauseMainLooper();
         Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS);
         ShadowLooper.unPauseMainLooper();
 
         // There should now be a placeholder with a spinner
-        placeholderView.visibility shouldEqual View.VISIBLE
-        loadingSpinner.visibility shouldEqual View.VISIBLE
-        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
-        setServerButton.visibility shouldEqual View.GONE
+        loadingPlaceholderShown(activity)
 
         // wait until we've gotten a response from the "server"
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         // After loading data the garage have cars and the list of cars is shown
-        placeholderView.visibility shouldEqual View.GONE
-        val recyclerView = activity.findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
-        recyclerView.visibility shouldEqual View.VISIBLE
-        activity.supportActionBar?.title shouldNotEqual activity.getString(R.string.app_name)
+        listOfParkedCarsShown(activity)
 
         controller.pause().stop().destroy()
     }
     // Tests to add:
     //  - parkedCarsListWithoutServerAndEmptyGarageTest
     //  - parkedCarsListWithoutServerAndNotEmptyGarageTest
+
+    private fun loadingPlaceholderShown(activity: ParkActivity) {
+        val placeholderView = activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder)
+        val loadingSpinner = activity.findViewById<ProgressBar>(R.id.loading_spinner)
+        val textView = activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
+        val setServerButton = activity.findViewById<Button>(R.id.no_park_server_placeholder_button)
+        placeholderView.shouldBeVisible()
+        loadingSpinner.shouldBeVisible()
+        textView.text.toString() shouldEqual activity.getString(R.string.updating_status_placeholder)
+        setServerButton.shouldBeGone()
+    }
+
+    private fun emptyGaragePlaceholderShown(activity: ParkActivity) {
+        activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder).shouldBeVisible()
+        activity.findViewById<ProgressBar>(R.id.loading_spinner).shouldBeGone()
+        activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view).text.toString() shouldEqual activity.getString(R.string.parked_cars_placeholder)
+        activity.findViewById<Button>(R.id.no_park_server_placeholder_button).shouldBeGone()
+    }
+
+    private fun listOfParkedCarsShown(activity: ParkActivity) {
+        activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder).shouldBeGone()
+        activity.findViewById<RecyclerView>(R.id.parked_cars_recycler_view).shouldBeVisible()
+        activity.supportActionBar?.title shouldNotEqual activity.getString(R.string.app_name)
+    }
+
+    private fun connectionErrorPlaceholderShown(activity: ParkActivity) {
+        activity.findViewById<LinearLayout>(R.id.parked_cars_placeholder).shouldBeVisible()
+        activity.findViewById<ProgressBar>(R.id.loading_spinner).shouldBeGone()
+        activity.findViewById<TextView>(R.id.parked_cars_placeholder_text_view).text.toString() shouldEqual activity.getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
+        activity.findViewById<Button>(R.id.no_park_server_placeholder_button).shouldBeVisible()
+        activity.findViewById<Button>(R.id.no_park_server_placeholder_button).text.toString() shouldEqual activity.getString(R.string.unable_to_connect_placeholder_button)
+    }
+
+    private fun View.shouldBeGone() {
+        this.visibility shouldEqual View.GONE
+    }
+    private fun View.shouldBeVisible() {
+        this.visibility shouldEqual View.VISIBLE
+    }
 }
+
