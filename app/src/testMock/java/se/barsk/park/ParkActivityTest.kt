@@ -215,6 +215,36 @@ class ParkActivityTest : RobolectricTest() {
 
         controller.pause().stop().destroy()
     }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkedCarsListResumeNotEmptyLandscapeTest() = parkedCarsListResumeNotEmptyTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkedCarsListResumeNotEmptyPortraitTest() = parkedCarsListResumeNotEmptyTest()
+
+    private fun parkedCarsListResumeNotEmptyTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(3)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // First there is a placeholder with an a progress spinner
+        loadingPlaceholderShown(activity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        controller.pause().resume().visible()
+
+        listOfParkedCarsShown(activity)
+
+        controller.pause().stop().destroy()
+    }
     // Tests to add:
     //  - parkedCarsListWithoutServerAndEmptyGarageTest
     //  - parkedCarsListWithoutServerAndNotEmptyGarageTest
