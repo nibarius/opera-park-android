@@ -52,7 +52,7 @@ open class NetworkManager {
         state = State.FIRST_RESPONSE_NOT_RECEIVED
     }
 
-    open protected fun readServerFromStorage() = ParkApp.storageManager.getServer()
+    protected fun readServerFromStorage() = ParkApp.storageManager.getServer()
 
     /**
      * Makes a http request to the park server to check the current status.

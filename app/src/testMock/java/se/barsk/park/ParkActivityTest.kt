@@ -1,9 +1,11 @@
 package se.barsk.park
 
 import android.content.Intent
+import android.support.v7.app.AlertDialog
 import android.view.View
 import com.google.firebase.FirebaseApp
 import kotlinx.android.synthetic.main.content_park.*
+import kotlinx.android.synthetic.main.specify_server_dialog.*
 import org.amshove.kluent.*
 import org.junit.After
 import org.junit.Before
@@ -14,6 +16,7 @@ import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.carcollection.MockCarCollection
 import se.barsk.park.mainui.ParkActivity
+import se.barsk.park.mainui.SpecifyServerDialog
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.settings.SettingsActivity
@@ -245,9 +248,91 @@ class ParkActivityTest : RobolectricTest() {
 
         controller.pause().stop().destroy()
     }
-    // Tests to add:
-    //  - parkedCarsListWithoutServerAndEmptyGarageTest
-    //  - parkedCarsListWithoutServerAndNotEmptyGarageTest
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkedCarsListNoServerEmptyLandscapeTest() = parkedCarsListNoServerEmptyTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkedCarsListNoServerEmptyPortraitTest() = parkedCarsListNoServerEmptyTest()
+
+    private fun parkedCarsListNoServerEmptyTest() {
+        ParkApp.storageManager.setServer("")
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // First there is a placeholder with an a progress spinner
+        noServerPlaceholderShown(activity)
+
+        activity.no_park_server_placeholder_button.performClick()
+
+        val dialog = activity.supportFragmentManager.findFragmentByTag("specifyServer")
+        dialog.shouldNotBeNull()
+        dialog shouldBeInstanceOf SpecifyServerDialog::class
+        dialog as SpecifyServerDialog
+        dialog.dialog.server_url_input.setText("http://park.example.com/")
+        (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).performClick()
+
+
+        ShadowLooper.pauseMainLooper();
+        Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS);
+        ShadowLooper.unPauseMainLooper()
+
+        // There should now be a placeholder with a spinner
+        loadingPlaceholderShown(activity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        emptyGaragePlaceholderShown(activity)
+        controller.pause().stop().destroy()
+
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkedCarsListNoServerNotEmptyLandscapeTest() = parkedCarsListNoServerNotEmptyTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkedCarsListNoServerNotEmptyPortraitTest() = parkedCarsListNoServerNotEmptyTest()
+
+    private fun parkedCarsListNoServerNotEmptyTest() {
+        ParkApp.storageManager.setServer("")
+        ParkApp.networkManager = MockNetworkManager(3)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // First there is a placeholder with an a progress spinner
+        noServerPlaceholderShown(activity)
+
+        activity.no_park_server_placeholder_button.performClick()
+
+        val dialog = activity.supportFragmentManager.findFragmentByTag("specifyServer")
+        dialog.shouldNotBeNull()
+        dialog shouldBeInstanceOf SpecifyServerDialog::class
+        dialog as SpecifyServerDialog
+        dialog.dialog.server_url_input.setText("http://park.example.com/")
+        (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).performClick()
+
+
+        ShadowLooper.pauseMainLooper();
+        Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS);
+        ShadowLooper.unPauseMainLooper()
+
+        // There should now be a placeholder with a spinner
+        loadingPlaceholderShown(activity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+        controller.pause().stop().destroy()
+
+    }
 
     private fun loadingPlaceholderShown(activity: ParkActivity) {
         activity.parked_cars_placeholder.shouldBeVisible()
@@ -274,12 +359,21 @@ class ParkActivityTest : RobolectricTest() {
     private fun connectionErrorPlaceholderShown(activity: ParkActivity) {
         activity.parked_cars_placeholder.shouldBeVisible()
         activity.loading_spinner.shouldBeGone()
-        activity.no_park_server_placeholder_button.text.toString()
         activity.no_park_server_placeholder_button.shouldBeVisible()
         activity.parked_cars_placeholder_text_view.text.toString() shouldEqual
                 activity.getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
         activity.no_park_server_placeholder_button.text.toString() shouldEqual
                 activity.getString(R.string.unable_to_connect_placeholder_button)
+    }
+
+    private fun noServerPlaceholderShown(activity: ParkActivity) {
+        activity.parked_cars_placeholder.shouldBeVisible()
+        activity.loading_spinner.shouldBeGone()
+        activity.no_park_server_placeholder_button.shouldBeVisible()
+        activity.parked_cars_placeholder_text_view.text.toString() shouldEqual
+                activity.getString(R.string.no_server_placeholder_text, ParkApp.storageManager.getServer())
+        activity.no_park_server_placeholder_button.text.toString() shouldEqual
+                activity.getString(R.string.no_server_placeholder_button)
     }
 
     private fun View.shouldBeGone() {

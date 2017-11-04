@@ -6,10 +6,10 @@ import se.barsk.park.datatypes.OwnCar
  * A mock implementation of the storage manager that doesn't persist anything to storage.
  */
 class MockStorageManager : StorageManager() {
-    private var server = ""
+    private var server = "http://park.example.com/"
 
     // Shared preferences interaction functions
-    override fun hasServer() = true
+    override fun hasServer() = server.isNotEmpty()
 
     override fun getServer() = server
     override fun setServer(server: String) {
