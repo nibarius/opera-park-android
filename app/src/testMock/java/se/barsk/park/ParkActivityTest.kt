@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import com.google.firebase.FirebaseApp
 import kotlinx.android.synthetic.main.content_park.*
+import kotlinx.android.synthetic.main.own_car_entry.view.*
 import kotlinx.android.synthetic.main.specify_server_dialog.*
 import org.amshove.kluent.*
 import org.junit.After
@@ -15,6 +16,7 @@ import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.carcollection.MockCarCollection
+import se.barsk.park.mainui.OwnCarListEntry
 import se.barsk.park.mainui.ParkActivity
 import se.barsk.park.mainui.SpecifyServerDialog
 import se.barsk.park.managecars.ManageCarsActivity
@@ -334,6 +336,92 @@ class ParkActivityTest : RobolectricTest() {
 
     }
 
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkCarsLandscapeTest() = parkCarsTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkCarsPortraitTest() = parkCarsTest()
+
+    private fun parkCarsTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(5)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        val car1 = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(0).itemView
+        val car2 = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1).itemView
+        car1 as OwnCarListEntry
+        car2 as OwnCarListEntry
+
+        carIsNotParked(car1)
+        carIsNotParked(car2)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        // Park a car
+        car1.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsParked(car1)
+        carIsNotParkable(car2)
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+
+        // Unpark it again
+        car1.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsNotParked(car1)
+        carIsNotParked(car2)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        controller.pause().stop().destroy()
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkCarsEmptyLandscapeTest() = parkCarsEmptyTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkCarsEmptyPortraitTest() = parkCarsEmptyTest()
+
+    private fun parkCarsEmptyTest() {
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // After loading data the garage have cars and the list of cars is shown
+        emptyGaragePlaceholderShown(activity)
+
+        val car1 = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(0).itemView
+        val car2 = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1).itemView
+        car1 as OwnCarListEntry
+        car2 as OwnCarListEntry
+
+        carIsNotParked(car1)
+        carIsNotParked(car2)
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
+
+        // Park a car
+        car1.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsParked(car1)
+        carIsNotParked(car2)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 5, 5)
+        listOfParkedCarsShown(activity)
+
+        // Unpark it again
+        car1.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsNotParked(car1)
+        carIsNotParked(car2)
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
+        emptyGaragePlaceholderShown(activity)
+    }
+
     private fun loadingPlaceholderShown(activity: ParkActivity) {
         activity.parked_cars_placeholder.shouldBeVisible()
         activity.loading_spinner.shouldBeVisible()
@@ -374,6 +462,24 @@ class ParkActivityTest : RobolectricTest() {
                 activity.getString(R.string.no_server_placeholder_text, ParkApp.storageManager.getServer())
         activity.no_park_server_placeholder_button.text.toString() shouldEqual
                 activity.getString(R.string.no_server_placeholder_button)
+    }
+
+    private fun carIsNotParked(car: OwnCarListEntry) {
+        val button = car.park_button
+        button.isEnabled.shouldBeTrue()
+        button.text.shouldStartWith(context().getString(R.string.park_label).toUpperCase())
+    }
+
+    private fun carIsParked(car: OwnCarListEntry) {
+        val button = car.park_button
+        button.isEnabled.shouldBeTrue()
+        button.text.shouldStartWith(context().getString(R.string.unpark_label).toUpperCase())
+    }
+
+    private fun carIsNotParkable(car: OwnCarListEntry) {
+        val button = car.park_button
+        button.isEnabled.shouldBeFalse()
+        button.text.shouldStartWith(context().getString(R.string.park_label).toUpperCase())
     }
 
     private fun View.shouldBeGone() {

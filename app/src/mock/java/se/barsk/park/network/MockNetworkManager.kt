@@ -19,8 +19,8 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
                 ParkedCar("CRF 461", "Erik", "2017-10-01 08:16:55"),
                 ParkedCar("WNF 766", "Rikard", "2017-10-01 08:21:06"),
                 ParkedCar("AGF 487", "Niklas", "2017-10-01 08:29:53"),
-                ParkedCar("ALP 110", "Margaretha", "2017-10-29 08:38:14"),
-                ParkedCar("MLB 942", "Per", "2017-10-01 09:01:33"))
+                ParkedCar("MLB 942", "Per", "2017-10-01 09:01:33"),
+                ParkedCar("ALP 110", "Margaretha", "2017-10-29 08:38:14")                )
                 .subList(0, initialParkedCars).toMutableList()
     }
     private val networkDelay: Long = 300
