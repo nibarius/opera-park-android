@@ -2,4 +2,5 @@
 <resources>
     <dimen name="own_cars_padding_bottom">16dp</dimen>
     <dimen name="own_cars_layout_width">@dimen/custom_match_parent</dimen>
+    <dimen name="toolbar_placeholder_height">48dp</dimen>
 </resources>

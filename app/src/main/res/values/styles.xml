@@ -47,4 +47,26 @@
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
+    <!-- Splash screen styles -->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/colorGray50</item>
+        <item name="android:windowTitleSize">@dimen/toolbar_placeholder_height</item>
+        <item name="android:windowTitleStyle">@style/CustomWindowTitle</item>
+        <item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
+        <item name="android:windowNoTitle">false</item>
+
+        <!-- app branding color for the app bar -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+    <!-- Changes the background color of the title bar -->
+    <style name="CustomWindowTitleBackground">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <!-- Set the theme for the window title -->
+    <style name="CustomWindowTitle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:paddingStart">16dp</item>
+    </style>
+
 </resources>
