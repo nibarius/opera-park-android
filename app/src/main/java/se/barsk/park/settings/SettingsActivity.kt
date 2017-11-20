@@ -15,8 +15,8 @@ import se.barsk.park.R
  */
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         ParkApp.init(this)
+        super.onCreate(savedInstanceState)
     }
 
     // https://stackoverflow.com/questions/26509180/no-actionbar-in-preferenceactivity-after-upgrade-to-support-library-v21

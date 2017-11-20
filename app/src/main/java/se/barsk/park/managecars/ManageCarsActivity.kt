@@ -67,8 +67,8 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         ParkApp.init(this)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_cars)
 
         manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)

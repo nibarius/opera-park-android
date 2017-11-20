@@ -103,8 +103,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private lateinit var automaticUpdateTask: RepeatableTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         ParkApp.init(this)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_park)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
