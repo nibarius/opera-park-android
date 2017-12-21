@@ -65,5 +65,11 @@
     <string name="failed_to_unpark">Failed to unpark %s</string>
     <string name="fail_reason_unknown_data">The server returned unknown data</string>
     <string name="fail_reason_unknown_error">Unknown error</string>
+    <string name="parking_free_notif_channel_name">Parking availability</string>
+    <string name="parking_free_notif_channel_description">Get notifications when the parking is no longer full</string>
+
+    <!-- Notifications -->
+    <string name="free_spots_notification_title">There are %s free spots!</string>
+    <string name="free_spots_notification_body">Move your car while you can</string>
 
 </resources>

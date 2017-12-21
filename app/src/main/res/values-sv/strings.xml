@@ -63,4 +63,6 @@
     <string name="fail_reason_unknown_error">Okänt fel</string>
     <string name="dialog_button_ok">OK</string>
     <string name="refresh_interval">Automatisk uppdatering</string>
+    <string name="parking_free_notif_channel_name">Lediga platser</string>
+    <string name="parking_free_notif_channel_description">Få notifieringar när det blir en ledig plats i garaget</string>
 </resources>

@@ -1,6 +1,7 @@
 package se.barsk.park.network
 
 import android.content.Context
+import android.util.Log
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.android.extension.responseJson
@@ -11,6 +12,7 @@ import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.fcm.FcmManager
 
 /**
  * The network manager is used to make requests to the parking server.
@@ -178,4 +180,28 @@ open class NetworkManager {
      */
     open fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
             doAction(context, car, Action.UNPARK, resultReadyListener)
+
+    fun addToWaitList(context: Context, token: String?) {
+        val pushToken = FcmManager(context).getToken()
+        val endpoint = "https://opera-park.appspot.com/api/v1/waitList"
+        val username = token ?: ""
+        val body = "{\"pushToken\": \"$pushToken\"}"
+        Fuel.post(endpoint)
+                .authenticate(username, "")
+                .header(mapOf("Content-Type" to "application/json"))
+                .body(body).response { request, response, result ->
+                    Log.e("barsk", "request: " + request.toString())
+                    Log.e("barsk", "result: " + response.toString())
+        }
+    }
+
+    fun removeFromWaitList(token: String?) {
+        val endpoint = "https://opera-park.appspot.com/api/v1/waitList"
+        val username = token ?: ""
+        Fuel.delete(endpoint).authenticate(username, "")
+                .response {request, response, result ->
+                    Log.e("barsk", "request: " + request.toString())
+                    Log.e("barsk", "response: " + response.toString())
+                }
+    }
 }

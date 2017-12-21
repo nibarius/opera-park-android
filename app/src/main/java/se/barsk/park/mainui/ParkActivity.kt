@@ -15,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,6 +28,7 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
+import se.barsk.park.fcm.FcmManager
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
@@ -130,7 +132,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
+        signInHandler = SignInHandler(applicationContext)
+
     }
+
+    private lateinit var signInHandler: SignInHandler
 
     override fun onResume() {
         super.onResume()
@@ -155,6 +161,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
         getDynamicLink()
+        signInHandler.silentSignIn(this)
+        Log.e("barsk", "fcm token: " + FcmManager(applicationContext).getToken())
     }
 
     override fun onPause() {
@@ -162,6 +170,23 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         serverBeforePause = ParkApp.storageManager.getServer()
         automaticUpdateTask.stop()
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == SignInHandler.REQUEST_CODE_SIGN_IN) {
+            signInHandler.onSignInResult(data)
+            updateSignInText()
+        }
+    }
+
+    private lateinit var optionsMenu: Menu
+    private fun updateSignInText() {
+        optionsMenu.findItem(R.id.menu_sign_in).title = signInHandler.getPersonName()
+    }
+
 
     private fun automaticUpdate() {
         // Only try to update if we can communicate with the server and there is no update
@@ -264,6 +289,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 throw RuntimeException("No need for a placeholder")
             }
         }
+        Log.e("barsk", "Setting placeholder with text: " + text)
         textView.text = text
         textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, top, null, null)
     }
@@ -289,14 +315,19 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        optionsMenu = menu
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main_menu, menu)
+        updateSignInText()
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
+        R.id.menu_sign_in -> consume { signIn() }
+        R.id.menu_add_waitlist -> consume { addToWaitList() }
+        R.id.menu_remove_waitlist -> consume { removeFromWaitList() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -314,6 +345,26 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun navigateToManageCars() {
         val intent = Intent(this, ManageCarsActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun signIn() {
+        if (signInHandler.isSignedIn()) {
+            signInHandler.signOut()
+            updateSignInText()
+        } else {
+            signInHandler.signIn(this)
+        }
+    }
+
+    private fun addToWaitList() {
+        //Todo: if calling this too fast on startup there might not be a token and it will fail
+        // if there is no token the call should be delayed until there is one, or time out
+        // with an error after a while
+        ParkApp.networkManager.addToWaitList(applicationContext, signInHandler.token)
+    }
+
+    private fun removeFromWaitList() {
+        ParkApp.networkManager.removeFromWaitList(signInHandler.token)
     }
 
     private fun onOwnCarClicked(car: Car) {
