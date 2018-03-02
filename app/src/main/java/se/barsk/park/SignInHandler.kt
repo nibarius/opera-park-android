@@ -62,6 +62,7 @@ class SignInHandler(val context: Context) {
         client.signOut()
         lastSignedInAccount = null
         token = null
+        ParkApp.theUser.signedIn = false //todo: a listener instead of global access to the user?
     }
 
     fun revokeAccess() {
@@ -81,6 +82,7 @@ class SignInHandler(val context: Context) {
             val account = completedTask.getResult(ApiException::class.java)
             lastSignedInAccount = account
             token = account.idToken
+            ParkApp.theUser.signedIn = true //todo: a listener instead of global access to the user?
         } catch (e: ApiException) {
             // If the user is not signed in (silent sign in) or the sign in fails we end up here.
             // The ApiException status code indicates the detailed failure reason.

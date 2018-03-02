@@ -361,10 +361,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         // if there is no token the call should be delayed until there is one, or time out
         // with an error after a while
         ParkApp.networkManager.addToWaitList(applicationContext, signInHandler.token)
+        ParkApp.theUser.isOnWaitList = true //todo: do this when getting response from server
     }
 
     private fun removeFromWaitList() {
         ParkApp.networkManager.removeFromWaitList(signInHandler.token)
+        ParkApp.theUser.isOnWaitList = false //todo: do this when getting response from server
     }
 
     private fun onOwnCarClicked(car: Car) {
@@ -373,6 +375,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             garage.unparkCar(applicationContext, car)
         } else if (!garage.isFull()) {
             garage.parkCar(applicationContext, car)
+        } else if (!ParkApp.theUser.isOnWaitList) {
+            // wait list or log in
+            addToWaitList()
+        } else if (ParkApp.theUser.isOnWaitList) {
+            removeFromWaitList()
         } else {
             return
         }

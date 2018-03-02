@@ -1,18 +1,14 @@
 package se.barsk.park.fcm
 
-import android.os.Build
-import com.google.firebase.iid.FirebaseInstanceId
-import se.barsk.park.ParkApp
-import android.content.Context.NOTIFICATION_SERVICE
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
-import android.text.format.Time
+import com.google.firebase.iid.FirebaseInstanceId
 import se.barsk.park.R
 import se.barsk.park.mainui.ParkActivity
 
@@ -40,7 +36,7 @@ class FcmManager(val context: Context) {
                 .setContentTitle(title)
                 .setContentText(text)
                 .setAutoCancel(true)
-                .setTimeoutAfter(3*60*60*1000)
+                .setTimeoutAfter(3 * 60 * 60 * 1000)
         // Creates an explicit intent for an Activity in your app
         val resultIntent = Intent(context, ParkActivity::class.java)
 

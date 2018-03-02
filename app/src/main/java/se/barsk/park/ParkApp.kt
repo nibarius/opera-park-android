@@ -6,6 +6,7 @@ import net.danlew.android.joda.JodaTimeAndroid
 import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
+import se.barsk.park.datatypes.User
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.storage.StorageManager
 
@@ -13,7 +14,7 @@ import se.barsk.park.storage.StorageManager
 /**
  * Singleton that can be used to get the application context and other global resources
  * from anywhere. Any potential entry point for the app (for example Activity.onCreate)
- * must call ParkApp.ini(context) as soon as possible.
+ * must call ParkApp.init(context) as soon as possible.
  */
 object ParkApp {
     private var isInitiated = false
@@ -23,6 +24,7 @@ object ParkApp {
     lateinit var carCollection: CarCollection
     lateinit var networkManager: NetworkManager
     lateinit var storageManager: StorageManager
+    lateinit var theUser: User
 
     fun init(context: Context) {
         if (isInitiated) {
@@ -36,6 +38,7 @@ object ParkApp {
         analytics = Analytics()
         networkManager = Injection.provideNetworkManager()
         carCollection = Injection.provideCarCollection()
+        theUser = User()
 
         isInitiated = true
     }

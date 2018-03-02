@@ -65,4 +65,8 @@
     <string name="refresh_interval">Automatisk uppdatering</string>
     <string name="parking_free_notif_channel_name">Lediga platser</string>
     <string name="parking_free_notif_channel_description">Få notifieringar när det blir en ledig plats i garaget</string>
+    <string name="wait_label">Vänta</string>
+    <string name="stop_waiting_label">Sluta vänta</string>
+    <string name="free_spots_notification_title">Det finns %s lediga platser</string>
+    <string name="free_spots_notification_body">Flytta bilen medan du kan</string>
 </resources>

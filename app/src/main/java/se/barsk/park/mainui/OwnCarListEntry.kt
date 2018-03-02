@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.RelativeLayout
+import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
@@ -32,8 +33,12 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
         car as OwnCar
         val park = if (car.parked) {
             context.getString(R.string.unpark_label)
-        } else {
+        } else if (!garageFull){
             context.getString(R.string.park_label)
+        } else if (ParkApp.theUser.isOnWaitList) {
+            context.getString(R.string.stop_waiting_label)
+        } else {
+            context.getString(R.string.wait_label)
         }
         val firstLen = park.length
         val spannable = SpannableString("${park.toUpperCase()}\n${car.regNo}")
@@ -41,18 +46,22 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
         parkButton.text = spannable
         parkButton.setOnClickListener { listener?.invoke(car) }
 
-        if (car.parked) {
-            setBackgroundPreservePadding(parkButton, R.drawable.bg_unpark_button)
-            parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
-            parkButton.isEnabled = true
-        } else if (garageFull) {
-            setBackgroundPreservePadding(parkButton, R.drawable.bg_park_button_disabled)
-            parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorDisabled))
-            parkButton.isEnabled = false
-        } else {
-            setBackgroundPreservePadding(parkButton, R.drawable.bg_park_button)
-            parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-            parkButton.isEnabled = true
+        when {
+            car.parked -> {
+                setBackgroundPreservePadding(parkButton, R.drawable.bg_unpark_button)
+                parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
+                parkButton.isEnabled = true
+            }
+            garageFull -> {
+                setBackgroundPreservePadding(parkButton, R.drawable.bg_wait_button)
+                parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorOrange600))
+                parkButton.isEnabled = true
+            }
+            else -> {
+                setBackgroundPreservePadding(parkButton, R.drawable.bg_park_button)
+                parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                parkButton.isEnabled = true
+            }
         }
     }
 
