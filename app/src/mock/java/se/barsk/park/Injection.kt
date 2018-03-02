@@ -8,6 +8,6 @@ import se.barsk.park.storage.MockStorageManager
 object Injection {
     fun provideNetworkManager() = MockNetworkManager()
     fun provideCarCollection() = MockCarCollection()
-    fun provideStorageManager() = MockStorageManager()
+    fun provideStorageManager(context: Context) = MockStorageManager(context)
     fun provideSharedPreferencesFileName(context: Context) = "mock_prefs"
 }

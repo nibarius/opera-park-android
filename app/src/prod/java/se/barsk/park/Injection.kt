@@ -8,6 +8,6 @@ import se.barsk.park.storage.StorageManager
 object Injection {
     fun provideNetworkManager() = NetworkManager()
     fun provideCarCollection() = CarCollection()
-    fun provideStorageManager() = StorageManager()
+    fun provideStorageManager(context: Context) = StorageManager(context)
     fun provideSharedPreferencesFileName(context: Context) = context.getString(R.string.shared_prefs_file_name)
 }

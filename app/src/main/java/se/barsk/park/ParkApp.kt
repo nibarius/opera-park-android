@@ -12,15 +12,14 @@ import se.barsk.park.storage.StorageManager
 
 
 /**
- * Singleton that can be used to get the application context and other global resources
- * from anywhere. Any potential entry point for the app (for example Activity.onCreate)
+ * Singleton that can be used to get various global resources from anywhere.
+ * Any potential entry point for the app (for example Activity.onCreate)
  * must call ParkApp.init(context) as soon as possible.
  */
 object ParkApp {
     private var isInitiated = false
-    lateinit var context: Context
     lateinit var analytics: Analytics
-    lateinit private var crashlytics: CrashReporting
+    private lateinit var crashlytics: CrashReporting
     lateinit var carCollection: CarCollection
     lateinit var networkManager: NetworkManager
     lateinit var storageManager: StorageManager
@@ -30,12 +29,12 @@ object ParkApp {
         if (isInitiated) {
             return
         }
-        this.context = context.applicationContext
-        storageManager = Injection.provideStorageManager()
+        val appContext = context.applicationContext
+        storageManager = Injection.provideStorageManager(context)
         crashlytics = CrashReporting()
-        crashlytics.enableIfAllowed()
-        JodaTimeAndroid.init(this.context)
-        analytics = Analytics()
+        crashlytics.enableIfAllowed(appContext)
+        JodaTimeAndroid.init(appContext)
+        analytics = Analytics(appContext)
         networkManager = Injection.provideNetworkManager()
         carCollection = Injection.provideCarCollection()
         theUser = User()
@@ -43,9 +42,12 @@ object ParkApp {
         isInitiated = true
     }
 
-    fun getSharedPreferences(prefsFile: String = getSharedPreferencesFileName()): SharedPreferences =
-            context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+    fun getSharedPreferences(context: Context): SharedPreferences {
+        val prefsFile: String = getSharedPreferencesFileName(context)
+        return context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+    }
 
-    fun getSharedPreferencesFileName(): String = Injection.provideSharedPreferencesFileName(context)
+    fun getSharedPreferencesFileName(context: Context): String =
+            Injection.provideSharedPreferencesFileName(context)
 }
 

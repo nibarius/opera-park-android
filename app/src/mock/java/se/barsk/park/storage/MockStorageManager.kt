@@ -1,11 +1,12 @@
 package se.barsk.park.storage
 
+import android.content.Context
 import se.barsk.park.datatypes.OwnCar
 
 /**
  * A mock implementation of the storage manager that doesn't persist anything to storage.
  */
-class MockStorageManager : StorageManager() {
+class MockStorageManager(context: Context) : StorageManager(context) {
     private var server = "http://park.example.com/"
 
     // Shared preferences interaction functions
