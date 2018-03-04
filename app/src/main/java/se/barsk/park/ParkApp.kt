@@ -42,6 +42,12 @@ object ParkApp {
         isInitiated = true
     }
 
+    /**
+     * Returns true if the app is running (has been initiated). Useful to know when
+     * receiving push notifications.
+     */
+    fun isRunning() = isInitiated
+
     fun getSharedPreferences(context: Context): SharedPreferences {
         val prefsFile: String = getSharedPreferencesFileName(context)
         return context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)

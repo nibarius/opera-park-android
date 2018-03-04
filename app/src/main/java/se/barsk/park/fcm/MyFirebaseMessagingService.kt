@@ -1,10 +1,14 @@
 package se.barsk.park.fcm
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONException
 import org.json.JSONObject
+import se.barsk.park.ParkApp
 import se.barsk.park.R
 
 
@@ -14,18 +18,43 @@ import se.barsk.park.R
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.data.isNotEmpty()) {
-            //todo: make server push notification type for future proofing
-            val obj = JSONObject(remoteMessage.data)
-            Log.e("JSON_OBJECT", obj.toString())
-            val data = String(Base64.decode(remoteMessage.data["type_data"], Base64.DEFAULT)) //todo: don't crash on null
-            val freeSpots = JSONObject(data)["free"]
-            if (freeSpots == null) {
-                //report event to firebase
+            Log.e("JSON_OBJECT", JSONObject(remoteMessage.data).toString())  //todo: remove logging
+            val type = remoteMessage.data["type"]
+            val rawData = remoteMessage.data["type_data"]
+            if (type == null || rawData == null) {
+                //todo: report to firebase
                 return
             }
-            val title = applicationContext.getString(R.string.free_spots_notification_title, freeSpots)
-            val body = applicationContext.getString(R.string.free_spots_notification_body)
-            FcmManager(applicationContext).makeNotification(title, body)
+            try {
+                val data = JSONObject(String(Base64.decode(rawData, Base64.DEFAULT)))
+                when (type) {
+                    "not_full" -> {  //todo: call it available instead
+                        spaceAvailableNotification(data)
+                    }
+                    else -> {
+                        //todo: report unknown notification to firebase
+                    }
+                }
+            } catch (e: JSONException) {
+                //todo: report to firebase. json decoding failed
+            } catch (e: IllegalArgumentException) {
+                //Todo: report to firebase. base64 decoding failed
+            }
+        }
+    }
+
+    private fun spaceAvailableNotification(data: JSONObject) {
+        val freeSpots = data["free"]
+        if (freeSpots == null || freeSpots == "0") {
+            //todo: report event to firebase
+            return
+        }
+        val title = applicationContext.getString(R.string.free_spots_notification_title, freeSpots)
+        val body = applicationContext.getString(R.string.free_spots_notification_body)
+        FcmManager(applicationContext).makeNotification(title, body)
+        if (ParkApp.isRunning()) {
+            // Update local wait list state (on the UI thread) if the app is running
+            Handler(Looper.getMainLooper()).post { ParkApp.theUser.isOnWaitList = false }
         }
     }
 

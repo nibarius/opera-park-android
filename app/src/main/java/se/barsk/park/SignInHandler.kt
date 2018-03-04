@@ -58,7 +58,10 @@ class SignInHandler(val context: Context) {
     }
 
     fun signOut() {
-        // todo: remove from wait list if on the wait list.
+        if (ParkApp.theUser.isOnWaitList) { //todo: no global access?
+            ParkApp.theUser.removeFromWaitList(context, null, token!!) //todo: handle null in token, don't send null containerView.
+        }
+
         client.signOut()
         lastSignedInAccount = null
         token = null

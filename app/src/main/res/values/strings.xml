@@ -69,6 +69,8 @@
     <string name="fail_reason_unknown_error">Unknown error</string>
     <string name="parking_free_notif_channel_name">Parking availability</string>
     <string name="parking_free_notif_channel_description">Get notifications when the parking is no longer full</string>
+    <string name="wait_list_registration_failed">Failed to register on the wait list</string>
+    <string name="wait_list_unregistration_failed">Failed to unregister from the wait list</string>
 
     <!-- Notifications -->
     <string name="free_spots_notification_title">There are %s free spots!</string>

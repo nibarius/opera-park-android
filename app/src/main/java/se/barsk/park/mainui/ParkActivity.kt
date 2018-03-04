@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -36,7 +35,8 @@ import se.barsk.park.utils.TimeUtils
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
-        CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
+        CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener,
+        UserChangedListener {
     override fun parkServerChanged() {
         garage.clear()
         garage.updateStatus(applicationContext)
@@ -59,16 +59,17 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             showParkedCarsPlaceholderIfNeeded()
         }
         if (errorMessage != null) {
-            val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
-            val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
-            textView.maxLines = 5
-            snackbar.show()
+            ErrorMessage(containerView).show(errorMessage)
         }
     }
 
     override fun onCarCollectionStatusChange() {
         updateListOfOwnCars()
         showOwnCarsPlaceholderIfNeeded()
+    }
+
+    override fun onUserChanged() {
+        updateListOfOwnCars()
     }
 
     private enum class ParkingState {
@@ -131,6 +132,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
+        ParkApp.theUser.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
         signInHandler = SignInHandler(applicationContext)
 
@@ -326,8 +328,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
         R.id.menu_sign_in -> consume { signIn() }
-        R.id.menu_add_waitlist -> consume { addToWaitList() }
-        R.id.menu_remove_waitlist -> consume { removeFromWaitList() }
+        R.id.menu_add_waitlist -> consume {
+            ParkApp.theUser.addToWaitList(applicationContext, containerView, signInHandler.token!!) // todo: handle null token
+        }
+        R.id.menu_remove_waitlist -> consume {
+            ParkApp.theUser.removeFromWaitList(applicationContext, containerView, signInHandler.token!!) //todo: handle null token
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -356,32 +362,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
-    private fun addToWaitList() {
-        //Todo: if calling this too fast on startup there might not be a token and it will fail
-        // if there is no token the call should be delayed until there is one, or time out
-        // with an error after a while
-        ParkApp.networkManager.addToWaitList(applicationContext, signInHandler.token)
-        ParkApp.theUser.isOnWaitList = true //todo: do this when getting response from server
-    }
-
-    private fun removeFromWaitList() {
-        ParkApp.networkManager.removeFromWaitList(signInHandler.token)
-        ParkApp.theUser.isOnWaitList = false //todo: do this when getting response from server
-    }
 
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
-        if (garage.isParked(car)) {
-            garage.unparkCar(applicationContext, car)
-        } else if (!garage.isFull()) {
-            garage.parkCar(applicationContext, car)
-        } else if (!ParkApp.theUser.isOnWaitList) {
-            // wait list or log in
-            addToWaitList()
-        } else if (ParkApp.theUser.isOnWaitList) {
-            removeFromWaitList()
-        } else {
-            return
+        when {
+            garage.isParked(car) -> garage.unparkCar(applicationContext, car)
+            !garage.isFull() -> garage.parkCar(applicationContext, car)
+            ParkApp.theUser.isOnWaitList -> ParkApp.theUser.removeFromWaitList(applicationContext, containerView, signInHandler.token!!) //todo: handle null, no global access to user
+            else -> // todo: wait list or log in
+                ParkApp.theUser.addToWaitList(applicationContext, containerView, signInHandler.token!!) //todo: handle null
         }
     }
 

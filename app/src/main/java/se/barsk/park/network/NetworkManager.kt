@@ -1,7 +1,6 @@
 package se.barsk.park.network
 
 import android.content.Context
-import android.util.Log
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.android.core.Json
 import com.github.kittinunf.fuel.android.extension.responseJson
@@ -181,27 +180,53 @@ open class NetworkManager {
     open fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
             doAction(context, car, Action.UNPARK, resultReadyListener)
 
-    fun addToWaitList(context: Context, token: String?) {
-        val pushToken = FcmManager(context).getToken()
-        val endpoint = "https://opera-park.appspot.com/api/v1/waitList"
-        val username = token ?: ""
+    /**
+     * Makes a request to the Opark backend to register on the wait list.
+     * @param context the context to use to get resources for error messages
+     * @param token the IdToken used to authenticate the user
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    fun addToWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
+        val pushToken = FcmManager(context).getToken() // Todo, should it access the FcmManager?
         val body = "{\"pushToken\": \"$pushToken\"}"
-        Fuel.post(endpoint)
-                .authenticate(username, "")
+        Fuel.post(Backend.waitListEndpoint) //todo: need to include app version (code?) in requests
+                .authenticate(token, "")
                 .header(mapOf("Content-Type" to "application/json"))
-                .body(body).response { request, response, result ->
-                    Log.e("barsk", "request: " + request.toString())
-                    Log.e("barsk", "result: " + response.toString())
-        }
+                .body(body).response { r, response, result ->
+                    when (result) {
+                        is com.github.kittinunf.result.Result.Success -> {
+                            resultReadyListener(Result.AddedToWaitList())
+                        }
+                        is com.github.kittinunf.result.Result.Failure -> {
+                            val errorMessage = context.getString(R.string.wait_list_registration_failed)
+                            val msg = "$errorMessage\n" +
+                                    "${response.statusCode}: ${response.responseMessage}"
+                            resultReadyListener(Result.Fail(null, msg))
+                        }
+                    }
+                }
     }
 
-    fun removeFromWaitList(token: String?) {
-        val endpoint = "https://opera-park.appspot.com/api/v1/waitList"
-        val username = token ?: ""
-        Fuel.delete(endpoint).authenticate(username, "")
-                .response {request, response, result ->
-                    Log.e("barsk", "request: " + request.toString())
-                    Log.e("barsk", "response: " + response.toString())
+    /**
+     * Makes a request to the Opark backend to remove the user from the wait list.
+     * @param context the context to use to get resources for error messages
+     * @param token the IdToken used to authenticate the user
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
+        Fuel.delete(Backend.waitListEndpoint).authenticate(token, "")
+                .response { _, response, result ->
+                    when (result) {
+                        is com.github.kittinunf.result.Result.Success -> {
+                            resultReadyListener(Result.RemovedFromWaitList())
+                        }
+                        is com.github.kittinunf.result.Result.Failure -> {
+                            val errorMessage = context.getString(R.string.wait_list_unregistration_failed)
+                            val msg = "$errorMessage\n" +
+                                    "${response.statusCode}: ${response.responseMessage}"
+                            resultReadyListener(Result.Fail(null, msg))
+                        }
+                    }
                 }
     }
 }

@@ -69,4 +69,6 @@
     <string name="stop_waiting_label">Sluta vänta</string>
     <string name="free_spots_notification_title">Det finns %s lediga platser</string>
     <string name="free_spots_notification_body">Flytta bilen medan du kan</string>
+    <string name="wait_list_registration_failed">Misslyckades att registrera på väntelistan</string>
+    <string name="wait_list_unregistration_failed">Misslyckades att avregistrera från väntelistan</string>
 </resources>
