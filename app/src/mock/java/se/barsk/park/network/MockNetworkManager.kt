@@ -11,7 +11,7 @@ import se.barsk.park.datatypes.ParkedCar
  * A mock implementation of the network manager that does not talk to the network
  * and instead uses hard coded well defined content instead.
  */
-class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initialParkedCars) : NetworkManager() {
+class MockNetworkManager(context: Context, private val initialParkedCars: Int = BuildConfig.initialParkedCars) : NetworkManager(context) {
 
     private val parkedCars by lazy {
         listOf(

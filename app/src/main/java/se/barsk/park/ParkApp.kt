@@ -30,12 +30,12 @@ object ParkApp {
             return
         }
         val appContext = context.applicationContext
-        storageManager = Injection.provideStorageManager(context)
+        storageManager = Injection.provideStorageManager(appContext)
         crashlytics = CrashReporting()
         crashlytics.enableIfAllowed(appContext)
         JodaTimeAndroid.init(appContext)
         analytics = Analytics(appContext)
-        networkManager = Injection.provideNetworkManager()
+        networkManager = Injection.provideNetworkManager(appContext)
         carCollection = Injection.provideCarCollection()
         theUser = User()
 
