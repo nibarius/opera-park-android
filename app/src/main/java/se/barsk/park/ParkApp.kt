@@ -37,7 +37,7 @@ object ParkApp {
         analytics = Analytics(appContext)
         networkManager = Injection.provideNetworkManager(appContext)
         carCollection = Injection.provideCarCollection()
-        theUser = User()
+        theUser = User(appContext)
 
         isInitiated = true
     }

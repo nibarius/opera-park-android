@@ -36,7 +36,12 @@ import se.barsk.park.utils.TimeUtils
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener,
-        UserChangedListener {
+        MustSignInDialog.MustSignInDialogListener {
+
+    override fun onSignInDialogPositiveClick() {
+        user.signIn(this) { user.addToWaitList(this, containerView) }
+    }
+
     override fun parkServerChanged() {
         garage.clear()
         garage.updateStatus(applicationContext)
@@ -68,10 +73,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         showOwnCarsPlaceholderIfNeeded()
     }
 
-    override fun onUserChanged() {
-        updateListOfOwnCars()
-    }
-
     private enum class ParkingState {
         NO_SERVER,
         WAITING_ON_RESPONSE,
@@ -89,6 +90,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
+    private val user: User by lazy { ParkApp.theUser }
+    private val userListener = UserChangeListener()
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
         findViewById<SwipeRefreshLayout>(R.id.parked_cars_pull_to_refresh)
     }
@@ -132,13 +135,18 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
-        ParkApp.theUser.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
-        signInHandler = SignInHandler(applicationContext)
-
     }
 
-    private lateinit var signInHandler: SignInHandler
+    override fun onStart() {
+        super.onStart()
+        user.addListener(userListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        user.removeListener(userListener)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -163,7 +171,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
         getDynamicLink()
-        signInHandler.silentSignIn(this)
+        user.silentSignIn(this)
         Log.e("barsk", "fcm token: " + FcmManager(applicationContext).getToken())
     }
 
@@ -179,14 +187,18 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == SignInHandler.REQUEST_CODE_SIGN_IN) {
-            signInHandler.onSignInResult(data)
-            updateSignInText()
+            user.onSignInResult(data)
         }
     }
 
-    private lateinit var optionsMenu: Menu
+    private var optionsMenu: Menu? = null
     private fun updateSignInText() {
-        optionsMenu.findItem(R.id.menu_sign_in).title = signInHandler.getPersonName()
+        val title = if (user.isSignedIn) {
+            getString(R.string.sign_out_menu_entry, user.accountName)
+        } else {
+            getString(R.string.sign_in_menu_entry)
+        }
+        optionsMenu?.findItem(R.id.menu_sign_in)?.title = title
     }
 
 
@@ -327,13 +339,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
-        R.id.menu_sign_in -> consume { signIn() }
-        R.id.menu_add_waitlist -> consume {
-            ParkApp.theUser.addToWaitList(applicationContext, containerView, signInHandler.token!!) // todo: handle null token
-        }
-        R.id.menu_remove_waitlist -> consume {
-            ParkApp.theUser.removeFromWaitList(applicationContext, containerView, signInHandler.token!!) //todo: handle null token
-        }
+        R.id.menu_sign_in -> consume { signInOrOut() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -353,24 +359,25 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         startActivity(intent)
     }
 
-    private fun signIn() {
-        if (signInHandler.isSignedIn()) {
-            signInHandler.signOut()
-            updateSignInText()
+    private fun signInOrOut() {
+        if (user.isSignedIn) {
+            user.signOut(this)
         } else {
-            signInHandler.signIn(this)
+            user.signIn(this)
         }
     }
-
 
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
         when {
             garage.isParked(car) -> garage.unparkCar(applicationContext, car)
             !garage.isFull() -> garage.parkCar(applicationContext, car)
-            ParkApp.theUser.isOnWaitList -> ParkApp.theUser.removeFromWaitList(applicationContext, containerView, signInHandler.token!!) //todo: handle null, no global access to user
-            else -> // todo: wait list or log in
-                ParkApp.theUser.addToWaitList(applicationContext, containerView, signInHandler.token!!) //todo: handle null
+            user.isOnWaitList -> user.removeFromWaitList(this, containerView) //todo: on wait list but not signed in?
+            user.isSignedIn -> user.addToWaitList(this, containerView)
+            else -> {
+                // Garage is full, but the user is not signed in.
+                MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")
+            }
         }
     }
 
@@ -438,6 +445,16 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 .getDynamicLink(intent)
                 .addOnSuccessListener(this, listener)
                 .addOnFailureListener(this, listener)
+    }
+
+    inner class UserChangeListener : User.ChangeListener {
+        override fun onWaitListStatusChanged() = updateListOfOwnCars()
+        override fun onSignInStatusChanged() = updateSignInText()
+        override fun onSignInFailed(statusCode: Int) {
+            val message = SignInHandler.getMessageForStatusCode(applicationContext, statusCode)
+            ErrorMessage(containerView).show(getString(R.string.sign_in_failed, message))
+            //todo: report to firebase
+        }
     }
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {

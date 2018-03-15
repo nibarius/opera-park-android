@@ -46,6 +46,13 @@
     <string name="park_label">Park</string>
     <string name="wait_label">Wait</string>
     <string name="stop_waiting_label">Stop waiting</string>
+    <string name="sign_in_menu_entry">Sign in</string>
+    <string name="sign_out_menu_entry">Sign out (%s)</string>
+    <string name="sign_in_failed">Failed to sign in:\n%s</string>
+
+    <!-- Sign in handler -->
+    <string name="sign_in_network_error">A network error occurred</string>
+    <string name="sign_in_unknown_error">An unknown error occurred (status code %d)</string>
 
     <!-- Settings activity -->
     <string name="settings_activity_title">Settings</string>
@@ -75,5 +82,10 @@
     <!-- Notifications -->
     <string name="free_spots_notification_title">There are %s free spots!</string>
     <string name="free_spots_notification_body">Move your car while you can</string>
+
+    <!-- Sign in dialog -->
+    <string name="sign_in_dialog_message">Sign in to Opark to get a notification when the garage frees up.</string>
+    <string name="sign_in_dialog_title">Sign in?</string>
+    <string name="sign_in_dialog_positive_button">Sign in</string>
 
 </resources>

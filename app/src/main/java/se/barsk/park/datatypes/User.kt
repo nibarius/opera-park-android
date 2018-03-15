@@ -1,8 +1,11 @@
 package se.barsk.park.datatypes
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import se.barsk.park.ParkApp
+import se.barsk.park.SignInHandler
 import se.barsk.park.mainui.ErrorMessage
 import se.barsk.park.network.Result
 import kotlin.properties.Delegates
@@ -10,24 +13,95 @@ import kotlin.properties.Delegates
 /**
  * The representation of the user of the app.
  */
-class User(signedIn: Boolean = false, isOnWaitList: Boolean = false) {
-    var signedIn: Boolean by Delegates.observable(signedIn) { _, _, _ -> notifyListeners() }
-    var isOnWaitList: Boolean by Delegates.observable(isOnWaitList) { _, _, _ -> notifyListeners() }
-
-    fun addListener(listener: UserChangedListener) = listeners.add(listener)
-
-    fun addToWaitList(appContext: Context, containerView: View? = null, token: String) {
-        WaitList(appContext, containerView).add(token)
+class User(context: Context) {
+    interface ChangeListener {
+        fun onSignInStatusChanged()
+        /**
+         * Called whenever the sign in process fails in an erroneous way.
+         * It is not called when it fails due to user canceling the sign in dialog.
+         */
+        fun onSignInFailed(statusCode: Int)
+        fun onWaitListStatusChanged()
     }
 
-    fun removeFromWaitList(appContext: Context, containerView: View? = null, token: String) {
-        WaitList(appContext, containerView).remove(token)
+    private val signInHandler = SignInHandler(context, SignInListener())
+    private var listeners: MutableList<ChangeListener> = mutableListOf()
+
+    val accountName: String
+        get() = signInHandler.getAccountName()
+
+    var isSignedIn: Boolean by Delegates.observable(signInHandler.isSignedIn()) { _, _, _ ->
+        listeners.forEach { it.onSignInStatusChanged() }
+    }
+    var isOnWaitList: Boolean by Delegates.observable(false) { _, _, _ ->
+        listeners.forEach { it.onWaitListStatusChanged() }
     }
 
-    private var listeners: MutableList<UserChangedListener> = mutableListOf()
-    private fun notifyListeners() {
-        for (listener in listeners) {
-            listener.onUserChanged()
+    fun addListener(listener: ChangeListener) = listeners.add(listener)
+    fun removeListener(listener: ChangeListener) = listeners.remove(listener)
+
+    fun addToWaitList(activity: Activity, containerView: View? = null) {
+        signInHandler.doWithFreshToken(activity) { freshToken ->
+            WaitList(activity.applicationContext, containerView).add(freshToken)
+        }
+    }
+
+    fun removeFromWaitList(activity: Activity, containerView: View? = null) {
+        signInHandler.doWithFreshToken(activity) { freshToken ->
+            WaitList(activity.applicationContext, containerView).remove(freshToken)
+        }
+    }
+
+    /**
+     * Tries to sign in the user silently asynchronously. On completion the
+     * onSuccess function is called and if there is any change in sign in status
+     * the registered listener is notified.
+     *
+     * @param activity If onStop is called on the given activity the login will be aborted
+     * @param onSuccess function to run once the login has finished successfully
+     */
+    fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)? = null) {
+        signInHandler.silentSignIn(activity, onSuccess)
+    }
+
+    /**
+     * Signs in the user to the app showing the necessary sign in UI. On completion the
+     * onSuccess function is called and if there is any change in sign in status
+     * the registered listener is notified.
+     *
+     * @param activity If onStop is called on the given activity the login will be aborted
+     * @param onSuccess function to run once the login has finished successfully
+     */
+    fun signIn(activity: Activity, onSuccess: (() -> Unit)? = null) {
+        signInHandler.signIn(activity, onSuccess)
+    }
+
+    fun signOut(activity: Activity) {
+        if (isOnWaitList) {
+            removeFromWaitList(activity, null)
+            //todo: ignore error and just don't show notifications when signed out. or something better?
+        }
+        signInHandler.signOut()
+    }
+
+    /**
+     * Function that should be called by the ParkActivity when the sign in result is ready.
+     */
+    fun onSignInResult(data: Intent) {
+        signInHandler.onSignInResult(data)
+    }
+
+    inner class SignInListener : SignInHandler.StatusChangedListener {
+        override fun onSignedIn() {
+            isSignedIn = true
+        }
+
+        override fun onSignedOut() {
+            isSignedIn = false
+        }
+
+        override fun onSignInFailed(statusCode: Int) {
+            listeners.forEach { it.onSignInFailed(statusCode) }
         }
     }
 
@@ -38,9 +112,6 @@ class User(signedIn: Boolean = false, isOnWaitList: Boolean = false) {
     private inner class WaitList(private val appContext: Context, private val containerView: View? = null) {
 
         fun add(token: String) {
-            //Todo: if calling this too fast on startup there might not be a token and it will fail
-            // if there is no token the call should be delayed until there is one, or time out
-            // with an error after a while
             ParkApp.networkManager.addToWaitList(appContext, token, this::onWaitListResultReady)
         }
 
@@ -57,7 +128,7 @@ class User(signedIn: Boolean = false, isOnWaitList: Boolean = false) {
             }
             is Result.Fail -> {
                 if (containerView != null) {
-                    ErrorMessage(containerView).show(result.message)
+                    ErrorMessage(containerView).show(result.message) //todo: possible to use listener or similar to get rid of container view?
                 } else {
                     // No view to show the error message, just ignore it.
                 }

@@ -16,15 +16,4 @@
         android:title="Sign in"
         app:showAsAction="collapseActionView">
     </item>
-
-    <item
-        android:id="@+id/menu_add_waitlist"
-        android:title="Add to wait list"
-        app:showAsAction="collapseActionView">
-    </item>
-    <item
-        android:id="@+id/menu_remove_waitlist"
-        android:title="Remove from wait list"
-        app:showAsAction="collapseActionView">
-    </item>
 </menu>
