@@ -8,6 +8,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONException
 import org.json.JSONObject
+import se.barsk.park.Injection
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 
@@ -44,6 +45,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun spaceAvailableNotification(data: JSONObject) {
+        val storageManager = Injection.provideStorageManager(applicationContext)
+        if (!storageManager.onWaitList()) {
+            // If we're not on the wait list but still get a notification discard it.
+            // This may happen if the user signs out without internet connection while
+            // on the wait list. If this happens we just ignore the notification.
+            return
+        }
+
+
         val freeSpots = data["free"]
         if (freeSpots == null || freeSpots == "0") {
             //todo: report event to firebase
@@ -55,6 +65,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (ParkApp.isRunning()) {
             // Update local wait list state (on the UI thread) if the app is running
             Handler(Looper.getMainLooper()).post { ParkApp.theUser.isOnWaitList = false }
+        } else {
+            // If the app is not running, update the persistent value instead so we have
+            // the correct state when the app is started the next time.
+            storageManager.setOnWaitList(false)
         }
     }
 

@@ -18,10 +18,12 @@
     <string name="key_first_version_name" translatable="false">fvn</string>
     <string name="key_current_version_code" translatable="false">cvc</string>
     <string name="key_previous_version_code" translatable="false">pvc</string>
+    <string name="key_on_wait_list" translatable="false">owl</string>
 
     <!-- Default values -->
     <string name="the_empty_string" translatable="false"/>
     <string name="default_usage_statistics" translatable="false">true</string>
     <string name="default_refresh_interval" translatable="false">10</string>
+    <string name="default_on_wait_list" translatable="false">false</string>
 
 </resources>

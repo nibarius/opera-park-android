@@ -33,7 +33,12 @@ class User(context: Context) {
     var isSignedIn: Boolean by Delegates.observable(signInHandler.isSignedIn()) { _, _, _ ->
         listeners.forEach { it.onSignInStatusChanged() }
     }
-    var isOnWaitList: Boolean by Delegates.observable(false) { _, _, _ ->
+
+    // Initialize from persistent storage and persist changes to have correct state without
+    // talking to the backend.
+    var isOnWaitList: Boolean by Delegates.observable(ParkApp.storageManager.onWaitList()) {
+        _, _, newValue ->
+        ParkApp.storageManager.setOnWaitList(newValue)
         listeners.forEach { it.onWaitListStatusChanged() }
     }
 
@@ -77,9 +82,18 @@ class User(context: Context) {
     }
 
     fun signOut(activity: Activity) {
-        if (isOnWaitList) {
-            removeFromWaitList(activity, null)
-            //todo: ignore error and just don't show notifications when signed out. or something better?
+        val token = signInHandler.token
+        if (isOnWaitList && token != null) {
+            // If on the wait list, do a one shot attempt at removing from the wait list
+            // with the previously cached token. Getting an up to date token would cause a
+            // silent log in which there is no point in doing when trying to log out.
+            // It's not critical if the un-registering fails since we will ignore
+            // push notifications received when logged out.
+            WaitList(activity.applicationContext, null).remove(token)
+
+            // Set local state to false regardless if the request to the server succeeded or not,
+            // when the user is logged out the user is not on the wait list.
+            isOnWaitList = false
         }
         signInHandler.signOut()
     }

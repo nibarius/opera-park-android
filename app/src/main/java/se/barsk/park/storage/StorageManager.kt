@@ -20,6 +20,9 @@ open class StorageManager(context: Context) {
     open fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
     open fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
 
+    fun onWaitList(): Boolean = sharedPrefs.onWaitList()
+    fun setOnWaitList(onWaitList: Boolean) = sharedPrefs.setOnWaitList(onWaitList)
+
     // Database interaction functions
     open fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
 
