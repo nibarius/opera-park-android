@@ -3,10 +3,8 @@ package se.barsk.park.datatypes
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.view.View
 import se.barsk.park.ParkApp
 import se.barsk.park.SignInHandler
-import se.barsk.park.mainui.ErrorMessage
 import se.barsk.park.network.Result
 import kotlin.properties.Delegates
 
@@ -21,7 +19,9 @@ class User(context: Context) {
          * It is not called when it fails due to user canceling the sign in dialog.
          */
         fun onSignInFailed(statusCode: Int)
+
         fun onWaitListStatusChanged()
+        fun onWaitListFailed(message: String)
     }
 
     private val signInHandler = SignInHandler(context, SignInListener())
@@ -36,8 +36,7 @@ class User(context: Context) {
 
     // Initialize from persistent storage and persist changes to have correct state without
     // talking to the backend.
-    var isOnWaitList: Boolean by Delegates.observable(ParkApp.storageManager.onWaitList()) {
-        _, _, newValue ->
+    var isOnWaitList: Boolean by Delegates.observable(ParkApp.storageManager.onWaitList()) { _, _, newValue ->
         ParkApp.storageManager.setOnWaitList(newValue)
         listeners.forEach { it.onWaitListStatusChanged() }
     }
@@ -45,15 +44,15 @@ class User(context: Context) {
     fun addListener(listener: ChangeListener) = listeners.add(listener)
     fun removeListener(listener: ChangeListener) = listeners.remove(listener)
 
-    fun addToWaitList(activity: Activity, containerView: View? = null) {
+    fun addToWaitList(activity: Activity) {
         signInHandler.doWithFreshToken(activity) { freshToken ->
-            WaitList(activity.applicationContext, containerView).add(freshToken)
+            WaitList(activity.applicationContext).add(freshToken)
         }
     }
 
-    fun removeFromWaitList(activity: Activity, containerView: View? = null) {
+    fun removeFromWaitList(activity: Activity) {
         signInHandler.doWithFreshToken(activity) { freshToken ->
-            WaitList(activity.applicationContext, containerView).remove(freshToken)
+            WaitList(activity.applicationContext).remove(freshToken)
         }
     }
 
@@ -89,7 +88,7 @@ class User(context: Context) {
             // silent log in which there is no point in doing when trying to log out.
             // It's not critical if the un-registering fails since we will ignore
             // push notifications received when logged out.
-            WaitList(activity.applicationContext, null).remove(token)
+            WaitList(activity.applicationContext).remove(token)
 
             // Set local state to false regardless if the request to the server succeeded or not,
             // when the user is logged out the user is not on the wait list.
@@ -123,7 +122,7 @@ class User(context: Context) {
      * Class for handling the wait list that users can sign up to in order
      * to get notifications when the garage becomes available.
      */
-    private inner class WaitList(private val appContext: Context, private val containerView: View? = null) {
+    private inner class WaitList(private val appContext: Context) {
 
         fun add(token: String) {
             ParkApp.networkManager.addToWaitList(appContext, token, this::onWaitListResultReady)
@@ -141,11 +140,7 @@ class User(context: Context) {
                 this@User.isOnWaitList = false
             }
             is Result.Fail -> {
-                if (containerView != null) {
-                    ErrorMessage(containerView).show(result.message) //todo: possible to use listener or similar to get rid of container view?
-                } else {
-                    // No view to show the error message, just ignore it.
-                }
+                listeners.forEach { it.onWaitListFailed(result.message) }
             }
             else -> {
                 throw RuntimeException("Unexpected result type returned by wait list")

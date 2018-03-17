@@ -39,7 +39,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         MustSignInDialog.MustSignInDialogListener {
 
     override fun onSignInDialogPositiveClick() {
-        user.signIn(this) { user.addToWaitList(this, containerView) }
+        user.signIn(this) { user.addToWaitList(this) }
     }
 
     override fun parkServerChanged() {
@@ -372,10 +372,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         when {
             garage.isParked(car) -> garage.unparkCar(applicationContext, car)
             !garage.isFull() -> garage.parkCar(applicationContext, car)
-            user.isOnWaitList -> user.removeFromWaitList(this, containerView) //todo: on wait list but not signed in?
-            user.isSignedIn -> user.addToWaitList(this, containerView)
+            user.isOnWaitList -> user.removeFromWaitList(this)
+            user.isSignedIn -> user.addToWaitList(this)
             else -> {
-                // Garage is full, but the user is not signed in.
+                // Garage is full, but the user is not signed in: show dialog for signing in.
                 MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")
             }
         }
@@ -449,6 +449,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     inner class UserChangeListener : User.ChangeListener {
         override fun onWaitListStatusChanged() = updateListOfOwnCars()
+        override fun onWaitListFailed(message: String) = ErrorMessage(containerView).show(message)
         override fun onSignInStatusChanged() = updateSignInText()
         override fun onSignInFailed(statusCode: Int) {
             val message = SignInHandler.getMessageForStatusCode(applicationContext, statusCode)
