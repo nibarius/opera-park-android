@@ -69,8 +69,8 @@
     <string name="dialog_button_ok">OK</string>
     <string name="refresh_interval">Automatisk uppdatering</string>
     <string name="parking_free_notif_channel_name">Lediga platser</string>
-    <string name="parking_free_notif_channel_description">Få notifieringar när det blir en ledig plats i garaget</string>
-    <string name="wait_list_registration_failed">Misslyckades att registrera på väntelistan</string>
+    <string name="parking_free_notif_channel_description">Få aviseringar när det blir en ledit i garaget</string>
+    <string name="wait_list_registration_failed">Misslyckades att registrera i väntelistan</string>
     <string name="wait_list_unregistration_failed">Misslyckades att avregistrera från väntelistan</string>
 
     <!-- Notifications -->
