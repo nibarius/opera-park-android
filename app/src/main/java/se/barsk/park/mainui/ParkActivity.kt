@@ -24,10 +24,11 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
+import com.google.firebase.iid.FirebaseInstanceId
 import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
-import se.barsk.park.fcm.FcmManager
+import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
@@ -136,6 +137,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
+        NotificationsManager().createNotificationChannels(applicationContext)
     }
 
     override fun onStart() {
@@ -172,7 +174,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         automaticUpdateTask.start()
         getDynamicLink()
         user.silentSignIn(this)
-        Log.e("barsk", "fcm token: " + FcmManager(applicationContext).getToken())
     }
 
     override fun onPause() {

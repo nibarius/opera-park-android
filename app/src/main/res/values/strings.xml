@@ -74,14 +74,15 @@
     <string name="failed_to_unpark">Failed to unpark %s</string>
     <string name="fail_reason_unknown_data">The server returned unknown data</string>
     <string name="fail_reason_unknown_error">Unknown error</string>
-    <string name="parking_free_notif_channel_name">Parking availability</string>
-    <string name="parking_free_notif_channel_description">Get notifications when the parking is no longer full</string>
+    <string name="parking_available_notif_channel_name">Parking availability</string>
+    <string name="parking_available_notif_channel_description">Get notifications when the parking becomes available</string>
     <string name="wait_list_registration_failed">Failed to register on the wait list</string>
     <string name="wait_list_unregistration_failed">Failed to unregister from the wait list</string>
 
     <!-- Notifications -->
     <string name="free_spots_notification_title">There are %s free spots!</string>
     <string name="free_spots_notification_body">Move your car while you can</string>
+    <string name="can_not_get_fcm_token">Unable to get the FCM token</string>
 
     <!-- Sign in dialog -->
     <string name="sign_in_dialog_message">Sign in to Opark to get a notification when the garage frees up.</string>

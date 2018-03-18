@@ -42,13 +42,13 @@
             android:label="@string/settings_activity_title"
             android:launchMode="singleTask"/>
         <service
-            android:name=".fcm.MyFirebaseMessagingService">
+            android:name=".fcm.ParkFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
         <service
-            android:name=".fcm.MyFirebaseInstanceIDService">
+            android:name=".fcm.ParkFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

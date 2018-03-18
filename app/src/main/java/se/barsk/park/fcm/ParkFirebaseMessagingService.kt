@@ -1,22 +1,17 @@
 package se.barsk.park.fcm
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONException
 import org.json.JSONObject
-import se.barsk.park.Injection
-import se.barsk.park.ParkApp
-import se.barsk.park.R
 
 
 /**
  * Service for handling incoming FCM messages.
  */
-class MyFirebaseMessagingService : FirebaseMessagingService() {
+class ParkFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.data.isNotEmpty()) {
             Log.e("JSON_OBJECT", JSONObject(remoteMessage.data).toString())  //todo: remove logging
@@ -30,7 +25,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 val data = JSONObject(String(Base64.decode(rawData, Base64.DEFAULT)))
                 when (type) {
                     "not_full" -> {  //todo: call it available instead
-                        spaceAvailableNotification(data)
+                        SpaceAvailableNotification(applicationContext, data).show()
                     }
                     else -> {
                         //todo: report unknown notification to firebase
@@ -43,35 +38,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
     }
-
-    private fun spaceAvailableNotification(data: JSONObject) {
-        val storageManager = Injection.provideStorageManager(applicationContext)
-        if (!storageManager.onWaitList()) {
-            // If we're not on the wait list but still get a notification discard it.
-            // This may happen if the user signs out without internet connection while
-            // on the wait list. If this happens we just ignore the notification.
-            return
-        }
-
-
-        val freeSpots = data["free"]
-        if (freeSpots == null || freeSpots == "0") {
-            //todo: report event to firebase
-            return
-        }
-        val title = applicationContext.getString(R.string.free_spots_notification_title, freeSpots)
-        val body = applicationContext.getString(R.string.free_spots_notification_body)
-        FcmManager(applicationContext).makeNotification(title, body)
-        if (ParkApp.isRunning()) {
-            // Update local wait list state (on the UI thread) if the app is running
-            Handler(Looper.getMainLooper()).post { ParkApp.theUser.isOnWaitList = false }
-        } else {
-            // If the app is not running, update the persistent value instead so we have
-            // the correct state when the app is started the next time.
-            storageManager.setOnWaitList(false)
-        }
-    }
-
 
     /* TODO: check for google play
 Apps that rely on the Play Services SDK should always check the device for a compatible Google Play services APK before accessing Google Play services features. It is recommended to do this in two places: in the main activity's onCreate() method, and in its onResume() method. The check in onCreate() ensures that the app can't be used without a successful check. The check in onResume() ensures that if the user returns to the running app through some other means, such as through the back button, the check is still performed.

@@ -5,38 +5,29 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
-import com.google.firebase.iid.FirebaseInstanceId
+import org.json.JSONObject
 import se.barsk.park.R
 import se.barsk.park.mainui.ParkActivity
 
-
 /**
- * Created by niklas on 2017-11-25.
+ * Base class for notifications.
  */
-class FcmManager(val context: Context) {
-    /**
-     * Get the current FCM token. This method returns null if the token has not yet been generated.
-     */
-    fun getToken(): String? = FirebaseInstanceId.getInstance().token
+abstract class Notification(protected val context: Context, protected val data: JSONObject) {
 
-    init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ParkingFreeNotificationChannel(context).create()
-        }
-    }
+    protected abstract val id: String
+    protected abstract val timeout: Long
+    abstract fun show()
 
-    fun makeNotification(title: String, text: String) {
-
-        val mBuilder = NotificationCompat.Builder(context, ParkingFreeNotificationChannel.ID)
+    protected fun makeNotification(title: String, text: String) {
+        val mBuilder = NotificationCompat.Builder(context, id)
                 .setSmallIcon(R.mipmap.notif_icon)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setContentTitle(title)
                 .setContentText(text)
                 .setAutoCancel(true)
-                .setTimeoutAfter(3 * 60 * 60 * 1000)
+                .setTimeoutAfter(timeout)
         // Creates an explicit intent for an Activity in your app
         val resultIntent = Intent(context, ParkActivity::class.java)
 

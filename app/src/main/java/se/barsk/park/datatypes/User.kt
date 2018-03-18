@@ -3,8 +3,11 @@ package se.barsk.park.datatypes
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
+import se.barsk.park.R
 import se.barsk.park.SignInHandler
+import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.network.Result
 import kotlin.properties.Delegates
 
@@ -45,8 +48,23 @@ class User(context: Context) {
     fun removeListener(listener: ChangeListener) = listeners.remove(listener)
 
     fun addToWaitList(activity: Activity) {
+        val context = activity.applicationContext
+        val pushToken = NotificationsManager().pushToken
+        if (pushToken == null) {
+            if (BuildConfig.DEBUG) {
+                assert(false) { "Push token is unexpectedly null" }
+            }
+            // pushToken should never be null. It's expected that it has been generated
+            // very shortly after first install. If it happens for some reason, show a
+            // message to the user and report to firebase.
+            listeners.forEach {
+                it.onWaitListFailed(context.getString(R.string.can_not_get_fcm_token))
+            }
+            // todo: report to firebase
+            return
+        }
         signInHandler.doWithFreshToken(activity) { freshToken ->
-            WaitList(activity.applicationContext).add(freshToken)
+            WaitList(activity.applicationContext).add(freshToken, pushToken)
         }
     }
 
@@ -124,12 +142,12 @@ class User(context: Context) {
      */
     private inner class WaitList(private val appContext: Context) {
 
-        fun add(token: String) {
-            ParkApp.networkManager.addToWaitList(appContext, token, this::onWaitListResultReady)
+        fun add(idToken: String, pushToken: String) {
+            ParkApp.networkManager.addToWaitList(appContext, idToken, pushToken, this::onWaitListResultReady)
         }
 
-        fun remove(token: String) {
-            ParkApp.networkManager.removeFromWaitList(appContext, token, this::onWaitListResultReady)
+        fun remove(idToken: String) {
+            ParkApp.networkManager.removeFromWaitList(appContext, idToken, this::onWaitListResultReady)
         }
 
         private fun onWaitListResultReady(result: Result) = when (result) {

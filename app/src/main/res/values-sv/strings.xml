@@ -68,14 +68,15 @@
     <string name="fail_reason_unknown_error">Okänt fel</string>
     <string name="dialog_button_ok">OK</string>
     <string name="refresh_interval">Automatisk uppdatering</string>
-    <string name="parking_free_notif_channel_name">Lediga platser</string>
-    <string name="parking_free_notif_channel_description">Få aviseringar när det blir en ledit i garaget</string>
+    <string name="parking_available_notif_channel_name">Lediga platser</string>
+    <string name="parking_available_notif_channel_description">Få aviseringar när det blir ledigt i garaget</string>
     <string name="wait_list_registration_failed">Misslyckades att registrera i väntelistan</string>
     <string name="wait_list_unregistration_failed">Misslyckades att avregistrera från väntelistan</string>
 
     <!-- Notifications -->
     <string name="free_spots_notification_title">Det finns %s lediga platser</string>
     <string name="free_spots_notification_body">Flytta bilen medan du kan</string>
+    <string name="can_not_get_fcm_token">Misslyckades med att hämta en FCM token</string>
 
     <!-- Sign in handler -->
     <string name="sign_in_network_error">Ett nätverksproblem uppstod</string>

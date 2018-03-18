@@ -12,7 +12,6 @@ import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
-import se.barsk.park.fcm.FcmManager
 
 /**
  * The network manager is used to make requests to the parking server.
@@ -192,8 +191,7 @@ open class NetworkManager(context: Context) {
      * @param token the IdToken used to authenticate the user
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun addToWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
-        val pushToken = FcmManager(context).getToken() // Todo, should it access the FcmManager?
+    fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
         val body = "{\"pushToken\": \"$pushToken\"}"
         Fuel.post(Backend.waitListEndpoint)
                 .authenticate(token, "")
