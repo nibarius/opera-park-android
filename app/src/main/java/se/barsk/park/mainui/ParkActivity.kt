@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
-import com.google.firebase.iid.FirebaseInstanceId
 import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.*
@@ -65,7 +64,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             showParkedCarsPlaceholderIfNeeded()
         }
         if (errorMessage != null) {
-            ErrorMessage(containerView).show(errorMessage)
+            ErrorHandler.showMessage(containerView, errorMessage)
         }
     }
 
@@ -450,12 +449,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     inner class UserChangeListener : User.ChangeListener {
         override fun onWaitListStatusChanged() = updateListOfOwnCars()
-        override fun onWaitListFailed(message: String) = ErrorMessage(containerView).show(message)
+        override fun onWaitListFailed(message: String) = ErrorHandler.showMessage(containerView, message)
         override fun onSignInStatusChanged() = updateSignInText()
         override fun onSignInFailed(statusCode: Int) {
             val message = SignInHandler.getMessageForStatusCode(applicationContext, statusCode)
-            ErrorMessage(containerView).show(getString(R.string.sign_in_failed, message))
-            //todo: report to firebase
+            ErrorHandler.showMessage(containerView, getString(R.string.sign_in_failed, message))
+            if (statusCode != com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR) {
+                ErrorHandler.raiseException("Failed to sign in: $message")
+            }
         }
     }
 

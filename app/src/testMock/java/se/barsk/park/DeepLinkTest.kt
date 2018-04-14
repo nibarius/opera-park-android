@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp
 import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldEqual
 import org.junit.Test
+import se.barsk.park.analytics.AnalyticsEvent
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.datatypes.OwnCar
 
@@ -67,8 +68,8 @@ class DeepLinkTest : RobolectricTest() {
         val shortException = "short exception"
         val longException = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
         val event = DynamicLinkFailedEvent(shortException)
-        event.parameters[DynamicLinkFailedEvent.Param.EXCEPTION] shouldEqual shortException
+        event.parameters[AnalyticsEvent.Param.EXCEPTION] shouldEqual shortException
         val event2 = DynamicLinkFailedEvent(longException)
-        event2.parameters[DynamicLinkFailedEvent.Param.EXCEPTION] shouldEqual longException.substring(0, 100)
+        event2.parameters[AnalyticsEvent.Param.EXCEPTION] shouldEqual longException.substring(0, 100)
     }
 }

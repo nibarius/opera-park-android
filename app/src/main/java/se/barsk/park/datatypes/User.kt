@@ -3,7 +3,7 @@ package se.barsk.park.datatypes
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import se.barsk.park.BuildConfig
+import se.barsk.park.ErrorHandler
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.SignInHandler
@@ -51,16 +51,13 @@ class User(context: Context) {
         val context = activity.applicationContext
         val pushToken = NotificationsManager().pushToken
         if (pushToken == null) {
-            if (BuildConfig.DEBUG) {
-                assert(false) { "Push token is unexpectedly null" }
-            }
             // pushToken should never be null. It's expected that it has been generated
             // very shortly after first install. If it happens for some reason, show a
             // message to the user and report to firebase.
             listeners.forEach {
                 it.onWaitListFailed(context.getString(R.string.can_not_get_fcm_token))
             }
-            // todo: report to firebase
+            ErrorHandler.raiseException("addToWaitList failed, token is null")
             return
         }
         signInHandler.doWithFreshToken(activity) { freshToken ->

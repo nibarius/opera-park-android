@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONException
 import org.json.JSONObject
+import se.barsk.park.ErrorHandler
 
 
 /**
@@ -18,7 +19,14 @@ class ParkFirebaseMessagingService : FirebaseMessagingService() {
             val type = remoteMessage.data["type"]
             val rawData = remoteMessage.data["type_data"]
             if (type == null || rawData == null) {
-                //todo: report to firebase
+                var msg = "Invalid FCM push"
+                if (type == null) {
+                    msg += ", type is null"
+                }
+                if (rawData == null) {
+                    msg += ", type_data is null"
+                }
+                ErrorHandler.raiseException(msg)
                 return
             }
             try {
@@ -27,14 +35,14 @@ class ParkFirebaseMessagingService : FirebaseMessagingService() {
                     "not_full" -> {  //todo: call it available instead
                         SpaceAvailableNotification(applicationContext, data).show()
                     }
-                    else -> {
-                        //todo: report unknown notification to firebase
+                    else -> { //Todo, does the server have everything it needs to not push messages not supported by the client?
+                        ErrorHandler.raiseException("Invalid FCM push, unknown type: $type")
                     }
                 }
             } catch (e: JSONException) {
-                //todo: report to firebase. json decoding failed
+                ErrorHandler.raiseException("Invalid FCM push, json decoding failed", e)
             } catch (e: IllegalArgumentException) {
-                //Todo: report to firebase. base64 decoding failed
+                ErrorHandler.raiseException("Invalid FCM push, base64 decoding failed", e)
             }
         }
     }

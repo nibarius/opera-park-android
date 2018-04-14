@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import org.json.JSONObject
+import se.barsk.park.ErrorHandler
 import se.barsk.park.Injection
 import se.barsk.park.ParkApp
 import se.barsk.park.R
@@ -23,12 +24,14 @@ class SpaceAvailableNotification(context: Context, data: JSONObject) : Notificat
 
     init {
         valid = when (freeSpots) {
-            null ->
-                //todo: report event to firebase, notificaiton with invalid data
+            null -> {
+                ErrorHandler.raiseException("Invalid space available notification, free parameter missing")
                 false
-            "0" ->
-                //todo: report event to firebase, notification sent for full garage
+            }
+            "0" -> {
+                ErrorHandler.raiseException("Invalid space available notification, 0 spaces free")
                 false
+            }
             else ->
                 true
         }
