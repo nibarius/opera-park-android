@@ -16,7 +16,7 @@ import se.barsk.park.datatypes.ParkedCar
 /**
  * The network manager is used to make requests to the parking server.
  */
-open class NetworkManager(context: Context) {
+open class NetworkManager {
 
     companion object {
         private const val STATUS = "status"
@@ -24,7 +24,7 @@ open class NetworkManager(context: Context) {
         private const val UNPARK = "unpark"
     }
 
-    private val userAgent = "${context.getString(R.string.app_name)}/${BuildConfig.VERSION_NAME}"
+    private val userAgent = "Opark/${BuildConfig.VERSION_NAME}"
 
     /**
      * Describes the state of the NetworkManager. This can be used to decide which
