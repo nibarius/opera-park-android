@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.Task
 /**
  * Handler for signing in to the app.
  */
-class SignInHandler(context: Context, private val listener: StatusChangedListener) {
+open class SignInHandler(context: Context, protected val listener: StatusChangedListener) {
     interface StatusChangedListener {
         fun onSignedIn()
         fun onSignedOut()
@@ -49,8 +49,8 @@ class SignInHandler(context: Context, private val listener: StatusChangedListene
         client = GoogleSignIn.getClient(context, gso)
     }
 
-    fun isSignedIn() = lastSignedInAccount != null
-    fun getAccountName(): String = lastSignedInAccount?.email ?: ""
+    open fun isSignedIn() = lastSignedInAccount != null
+    open fun getAccountName(): String = lastSignedInAccount?.email ?: ""
 
     /**
      * Tries to sign in the user. If the user is already signed in and the idToken is
@@ -61,7 +61,7 @@ class SignInHandler(context: Context, private val listener: StatusChangedListene
      * @param activity If onStop is called on the given activity the login will be aborted
      * @param onSuccess function to run once the login has finished successfully
      */
-    fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)?) {
+    open fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)?) {
         check(onSuccess == null || onSignInSuccessCallback == null) {
             "onSignInSuccessCallback is not null"
         }
@@ -72,12 +72,12 @@ class SignInHandler(context: Context, private val listener: StatusChangedListene
     }
 
     private var onSignInSuccessCallback: (() -> Unit)? = null
-    fun signIn(activity: Activity, onSuccess: (() -> Unit)?) {
+    open fun signIn(activity: Activity, onSuccess: (() -> Unit)?) {
         onSignInSuccessCallback = onSuccess
         activity.startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
     }
 
-    fun signOut() {
+    open fun signOut() {
         client.signOut()
         lastSignedInAccount = null
         token = null

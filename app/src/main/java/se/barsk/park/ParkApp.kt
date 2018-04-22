@@ -35,7 +35,7 @@ object ParkApp {
         crashlytics.enableIfAllowed(appContext)
         JodaTimeAndroid.init(appContext)
         analytics = Analytics(appContext)
-        networkManager = Injection.provideNetworkManager(appContext)
+        networkManager = Injection.provideNetworkManager()
         carCollection = Injection.provideCarCollection()
         theUser = User(appContext)
 

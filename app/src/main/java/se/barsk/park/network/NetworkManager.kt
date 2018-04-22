@@ -191,7 +191,7 @@ open class NetworkManager {
      * @param token the IdToken used to authenticate the user
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
+    open fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
         val body = "{\"pushToken\": \"$pushToken\"}"
         Fuel.post(Backend.waitListEndpoint)
                 .authenticate(token, "")
@@ -217,7 +217,7 @@ open class NetworkManager {
      * @param token the IdToken used to authenticate the user
      * @param resultReadyListener callback function to be called when the result is ready
      */
-    fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
+    open fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
         Fuel.delete(Backend.waitListEndpoint)
                 .authenticate(token, "")
                 .header(mapOf("User-Agent" to userAgent))

@@ -63,6 +63,14 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         Handler().postDelayed({ removeIfExists(car, resultReadyListener) }, networkDelay)
     }
 
+    override fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
+        Handler().postDelayed({ resultReadyListener(Result.AddedToWaitList()) }, networkDelay)
+    }
+
+    override fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
+        Handler().postDelayed({ resultReadyListener(Result.RemovedFromWaitList()) }, networkDelay)
+    }
+
     private fun addIfNotExist(ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
         if (!hasConnection) {
             return

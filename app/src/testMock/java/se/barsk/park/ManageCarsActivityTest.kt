@@ -15,7 +15,7 @@ import org.junit.Test
 import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
-import se.barsk.park.carcollection.MockCarCollection
+import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.managecars.AddCarDialog
 import se.barsk.park.managecars.EditCarDialog
 import se.barsk.park.managecars.ManageCarsActivity

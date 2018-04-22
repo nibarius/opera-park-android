@@ -3,11 +3,7 @@ package se.barsk.park.datatypes
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import se.barsk.park.ErrorHandler
-import se.barsk.park.ParkApp
-import se.barsk.park.R
-import se.barsk.park.SignInHandler
-import se.barsk.park.fcm.NotificationsManager
+import se.barsk.park.*
 import se.barsk.park.network.Result
 import kotlin.properties.Delegates
 
@@ -27,7 +23,7 @@ class User(context: Context) {
         fun onWaitListFailed(message: String)
     }
 
-    private val signInHandler = SignInHandler(context, SignInListener())
+    private val signInHandler = Injection.provideSignInHandler(context, SignInListener())
     private var listeners: MutableList<ChangeListener> = mutableListOf()
 
     val accountName: String
@@ -49,7 +45,7 @@ class User(context: Context) {
 
     fun addToWaitList(activity: Activity) {
         val context = activity.applicationContext
-        val pushToken = NotificationsManager().pushToken
+        val pushToken = Injection.provideNotificationsManager().pushToken
         if (pushToken == null) {
             // pushToken should never be null. It's expected that it has been generated
             // very shortly after first install. If it happens for some reason, show a

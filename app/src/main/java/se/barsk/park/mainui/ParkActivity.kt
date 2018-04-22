@@ -303,7 +303,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 throw RuntimeException("No need for a placeholder")
             }
         }
-        Log.e("barsk", "Setting placeholder with text: " + text)
+        Log.e("barsk", "Setting placeholder with text: " + text) //todo: remove before release
         textView.text = text
         textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, top, null, null)
     }
