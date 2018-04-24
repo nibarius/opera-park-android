@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 
@@ -58,10 +59,19 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
      * has expired it will refresh the token asynchronously. If the user is not signed
      * in handleSignInResult will fail with GoogleSignInStatusCodes.SIGN_IN_REQUIRED.
      *
+     * Only tries to sign in if a new enough version of Google play services is installed.
+     *
      * @param activity If onStop is called on the given activity the login will be aborted
      * @param onSuccess function to run once the login has finished successfully
      */
     open fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)?) {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity) !=
+                com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
+            // If Google play services doesn't exist we know the attempt will fail
+            // so don't do anything in that case
+            return
+        }
+
         check(onSuccess == null || onSignInSuccessCallback == null) {
             "onSignInSuccessCallback is not null"
         }
@@ -72,9 +82,17 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
     }
 
     private var onSignInSuccessCallback: (() -> Unit)? = null
+
     open fun signIn(activity: Activity, onSuccess: (() -> Unit)?) {
-        onSignInSuccessCallback = onSuccess
-        activity.startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
+        val availability = GoogleApiAvailability.getInstance()
+        val statusCode = availability.isGooglePlayServicesAvailable(activity)
+        // Have the system show an error dialog if Google play services isn't installed
+        val errorDialogShown = availability.showErrorDialogFragment(activity, statusCode, 0)
+        if (!errorDialogShown) {
+            // Only try to sign in if Google play services is installed.
+            onSignInSuccessCallback = onSuccess
+            activity.startActivityForResult(client.signInIntent, REQUEST_CODE_SIGN_IN)
+        }
     }
 
     open fun signOut() {

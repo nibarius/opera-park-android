@@ -72,6 +72,8 @@ class User(context: Context) {
      * onSuccess function is called and if there is any change in sign in status
      * the registered listener is notified.
      *
+     * Only tries to sign in if a new enough version of Google play services is installed.
+     *
      * @param activity If onStop is called on the given activity the login will be aborted
      * @param onSuccess function to run once the login has finished successfully
      */
@@ -83,6 +85,9 @@ class User(context: Context) {
      * Signs in the user to the app showing the necessary sign in UI. On completion the
      * onSuccess function is called and if there is any change in sign in status
      * the registered listener is notified.
+     *
+     * If Google play services is not installed an error dialog will be shown instead
+     * of signing in.
      *
      * @param activity If onStop is called on the given activity the login will be aborted
      * @param onSuccess function to run once the login has finished successfully

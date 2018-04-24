@@ -14,12 +14,12 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -439,6 +439,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
 
     private fun getDynamicLink() {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) !=
+                com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
+            // If there is no Google play services on the device, then there is no
+            // dynamic link either
+            return
+        }
         val listener = DynamicLinkListener()
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(intent)
