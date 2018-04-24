@@ -27,8 +27,6 @@ fun showPlaceholderIfNeeded(viewSwitcher: ViewSwitcher, listView: View?, empty: 
     val listShown = viewSwitcher.currentView == listView
     val placeholderShown = !listShown
     if ((empty && listShown) || (!empty && placeholderShown)) {
-        Log.e("barsk", "Switching view. Placeholder shown before switch: " + placeholderShown)
-        Log.e("barsk", "listView: " + listView)
         viewSwitcher.showNext()
     }
 }

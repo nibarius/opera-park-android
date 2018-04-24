@@ -15,7 +15,6 @@ import se.barsk.park.ErrorHandler
 class ParkFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.data.isNotEmpty()) {
-            Log.e("JSON_OBJECT", JSONObject(remoteMessage.data).toString())  //todo: remove logging
             val type = remoteMessage.data["type"]
             val rawData = remoteMessage.data["type_data"]
             if (type == null || rawData == null) {
@@ -32,10 +31,10 @@ class ParkFirebaseMessagingService : FirebaseMessagingService() {
             try {
                 val data = JSONObject(String(Base64.decode(rawData, Base64.DEFAULT)))
                 when (type) {
-                    "not_full" -> {  //todo: call it available instead
+                    "available" -> {
                         SpaceAvailableNotification(applicationContext, data).show()
                     }
-                    else -> { //Todo, does the server have everything it needs to not push messages not supported by the client?
+                    else -> {
                         ErrorHandler.raiseException("Invalid FCM push, unknown type: $type")
                     }
                 }
