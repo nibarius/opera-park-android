@@ -122,7 +122,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.json:json:20140107'
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testCompile "org.robolectric:robolectric:3.5"
+    testCompile "org.robolectric:robolectric:3.8"
+    testCompile "org.robolectric:shadows-supportv4:3.8"
     testCompile 'org.amshove.kluent:kluent-android:1.30'
 }
 repositories {

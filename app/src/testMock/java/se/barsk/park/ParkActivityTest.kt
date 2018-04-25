@@ -15,6 +15,7 @@ import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowLooper
+import org.robolectric.shadows.support.v4.ShadowSwipeRefreshLayout
 import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.mainui.MustSignInDialog
 import se.barsk.park.mainui.OwnCarListEntry
@@ -494,6 +495,52 @@ class ParkActivityTest : RobolectricTest() {
         carIsNotParked(car2)
         activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
         emptyGaragePlaceholderShown(activity)
+    }
+
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun updateOwnCarsListOnServerStateChangeLandscapeTest() = updateOwnCarsListOnServerStateChangeTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun updateOwnCarsListOnServerStateChangePortraitTest() = updateOwnCarsListOnServerStateChangeTest()
+
+    private fun updateOwnCarsListOnServerStateChangeTest() {
+        // Create a new activity just for this test with a special network manager
+        val almostFull = MockNetworkManager(5)
+        val full = MockNetworkManager(6)
+        ParkApp.networkManager = almostFull
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        val car = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1).itemView
+        car as OwnCarListEntry
+
+        carIsNotParked(car)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        // Refresh list of parked cars from server, now the garage is full
+        ParkApp.networkManager = full
+        val pullToRefreshView = Shadows.shadowOf(activity.parked_cars_pull_to_refresh) as ShadowSwipeRefreshLayout
+        pullToRefreshView.onRefreshListener.onRefresh()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carCanBePutOnWaitList(car)
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+
+        // Refresh list of parked cars from server, there is one spot free again
+        ParkApp.networkManager = almostFull
+        pullToRefreshView.onRefreshListener.onRefresh()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsNotParked(car)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        controller.pause().stop().destroy()
     }
 
     private fun loadingPlaceholderShown(activity: ParkActivity) {
