@@ -83,7 +83,7 @@
     <string name="sign_in_unknown_error">Ett okänt fel inträffade (statuskod %d)</string>
 
     <!-- Sign in dialog -->
-    <string name="sign_in_dialog_message">Logga in för att få en notis när det blir ledigt i garaget.</string>
+    <string name="sign_in_dialog_message">Logga in för att få en notis när garaget blir ledigt.</string>
     <string name="sign_in_dialog_title">Logga in?</string>
     <string name="sign_in_dialog_positive_button">Logga in</string>
 </resources>
