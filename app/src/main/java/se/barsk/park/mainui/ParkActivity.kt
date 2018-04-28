@@ -26,6 +26,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
+import se.barsk.park.analytics.ParkActionEvent
 import se.barsk.park.datatypes.*
 import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.managecars.ManageCarsActivity
@@ -370,10 +371,22 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
         when {
-            garage.isParked(car) -> garage.unparkCar(applicationContext, car)
-            !garage.isFull() -> garage.parkCar(applicationContext, car)
-            user.isOnWaitList -> user.removeFromWaitList(this)
-            user.isSignedIn -> user.addToWaitList(this)
+            garage.isParked(car) -> {
+                garage.unparkCar(applicationContext, car)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Unpark()))
+            }
+            !garage.isFull() -> {
+                garage.parkCar(applicationContext, car)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Park()))
+            }
+            user.isOnWaitList -> {
+                user.removeFromWaitList(this)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.StopWaiting()))
+            }
+            user.isSignedIn -> {
+                user.addToWaitList(this)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Wait()))
+            }
             else -> {
                 // Garage is full, but the user is not signed in: show dialog for signing in.
                 MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")

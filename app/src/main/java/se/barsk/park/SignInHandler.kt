@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import se.barsk.park.analytics.UserProperties
 
 // Google documentation for sign-in: https://developers.google.com/identity/sign-in/android/start
 // Also useful: https://stackoverflow.com/questions/38737021/how-to-refresh-id-token-after-it-expires-when-integrating-google-sign-in-on-andr
@@ -100,6 +101,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         lastSignedInAccount = null
         token = null
         listener.onSignedOut()
+        ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueNo)
     }
 
     fun revokeAccess() {
@@ -130,6 +132,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
             lastSignedInAccount = account
             token = account.idToken
             listener.onSignedIn()
+            ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueYes)
             // Do the success callback as a new message so the sign in process can finish completely
             val callback = onSignInSuccessCallback
             if (callback != null) {

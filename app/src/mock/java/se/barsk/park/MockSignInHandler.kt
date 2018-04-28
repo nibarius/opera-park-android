@@ -2,6 +2,7 @@ package se.barsk.park
 
 import android.app.Activity
 import android.content.Context
+import se.barsk.park.analytics.UserProperties
 
 /**
  * Mock implementation of the sign in handler
@@ -18,12 +19,13 @@ class MockSignInHandler(context: Context, listener: StatusChangedListener) : Sig
         token = "token"
         listener.onSignedIn()
         onSuccess?.invoke()
+        ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueYes)
     }
 
     override fun signOut() {
         token = null
         listener.onSignedOut()
-
+        ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueNo)
     }
 
     override fun isSignedIn() = token != null

@@ -9,9 +9,10 @@ import android.os.Bundle
  */
 abstract class AnalyticsEvent {
     object Param {
-        const val MESSAGE = "message"
+        const val ACTION = "action"
         const val EXCEPTION = "exception"
         const val CARS_SHARED = "cars_shared"
+        const val MESSAGE = "message"
     }
 
     val parameters: Bundle = Bundle()
