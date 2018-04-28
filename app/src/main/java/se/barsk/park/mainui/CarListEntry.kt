@@ -19,7 +19,7 @@ interface CarListEntry {
             setAvatarColor(getColorForCar(car, context), context, view)
 
     fun setAvatarColor(color: Int, context: Context, view: View) {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)
+        val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)!!
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
         setBackgroundPreservePadding(view, drawable)
     }

@@ -136,7 +136,7 @@ open class NetworkManager {
         }
         Fuel.post(url, parameters)
                 .header(mapOf("User-Agent" to userAgent))
-                .responseJson { request, response, result ->
+                .responseJson { _, response, result ->
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
                             try {
@@ -196,7 +196,7 @@ open class NetworkManager {
         Fuel.post(Backend.waitListEndpoint)
                 .authenticate(token, "")
                 .header(mapOf("Content-Type" to "application/json", "User-Agent" to userAgent))
-                .body(body).response { r, response, result ->
+                .body(body).response { _, response, result ->
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
                             resultReadyListener(Result.AddedToWaitList())

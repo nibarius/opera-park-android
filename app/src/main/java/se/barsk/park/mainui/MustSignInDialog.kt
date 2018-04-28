@@ -34,7 +34,7 @@ class MustSignInDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(requireContext())
 
         builder.setTitle(getString(R.string.sign_in_dialog_title))
                 .setMessage(getString(R.string.sign_in_dialog_message))
