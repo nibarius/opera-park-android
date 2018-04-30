@@ -1,5 +1,6 @@
 package se.barsk.park
 
+import android.util.Log
 import android.view.View
 import android.widget.ViewSwitcher
 

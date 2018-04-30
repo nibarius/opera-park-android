@@ -13,7 +13,7 @@ open class CarCollection {
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
     protected val ownCars: MutableList<OwnCar> by lazy { readCarsFromStorage() }
 
-    open protected fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
+    protected open fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
 
     protected fun notifyListeners() {
         for (listener in listeners) {

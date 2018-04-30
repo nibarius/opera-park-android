@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -20,13 +19,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
+import se.barsk.park.analytics.ParkActionEvent
 import se.barsk.park.datatypes.*
+import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
@@ -34,7 +36,13 @@ import se.barsk.park.utils.TimeUtils
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
-        CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
+        CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener,
+        MustSignInDialog.MustSignInDialogListener {
+
+    override fun onSignInDialogPositiveClick() {
+        user.signIn(this) { user.addToWaitList(this) }
+    }
+
     override fun parkServerChanged() {
         garage.clear()
         garage.updateStatus(applicationContext)
@@ -43,6 +51,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     // called when the garage status change (happens just after the update is ready in the success case)
     override fun onGarageStatusChange() {
         updateGarageStatus()
+        updateListOfOwnCars()
     }
 
     // called when the network request is done
@@ -57,10 +66,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             showParkedCarsPlaceholderIfNeeded()
         }
         if (errorMessage != null) {
-            val snackbar = Snackbar.make(containerView, errorMessage, Snackbar.LENGTH_LONG).setAction("Action", null)
-            val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
-            textView.maxLines = 5
-            snackbar.show()
+            ErrorHandler.showMessage(containerView, errorMessage)
         }
     }
 
@@ -86,6 +92,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
+    private val user: User by lazy { ParkApp.theUser }
+    private val userListener = UserChangeListener()
     private val pullToRefreshView: SwipeRefreshLayout by lazy {
         findViewById<SwipeRefreshLayout>(R.id.parked_cars_pull_to_refresh)
     }
@@ -130,6 +138,17 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
         showOwnCarsPlaceholderIfNeeded()
+        NotificationsManager().createNotificationChannels(applicationContext)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        user.addListener(userListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        user.removeListener(userListener)
     }
 
     override fun onResume() {
@@ -155,6 +174,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
         getDynamicLink()
+        user.silentSignIn(this)
     }
 
     override fun onPause() {
@@ -162,6 +182,27 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         serverBeforePause = ParkApp.storageManager.getServer()
         automaticUpdateTask.stop()
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == SignInHandler.REQUEST_CODE_SIGN_IN) {
+            user.onSignInResult(data)
+        }
+    }
+
+    private var optionsMenu: Menu? = null
+    private fun updateSignInText() {
+        val title = if (user.isSignedIn) {
+            getString(R.string.sign_out_menu_entry, user.accountName)
+        } else {
+            getString(R.string.sign_in_menu_entry)
+        }
+        optionsMenu?.findItem(R.id.menu_sign_in)?.title = title
+    }
+
 
     private fun automaticUpdate() {
         // Only try to update if we can communicate with the server and there is no update
@@ -289,14 +330,17 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        optionsMenu = menu
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main_menu, menu)
+        updateSignInText()
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
+        R.id.menu_sign_in -> consume { signInOrOut() }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -316,14 +360,37 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         startActivity(intent)
     }
 
+    private fun signInOrOut() {
+        if (user.isSignedIn) {
+            user.signOut(this)
+        } else {
+            user.signIn(this)
+        }
+    }
+
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
-        if (garage.isParked(car)) {
-            garage.unparkCar(applicationContext, car)
-        } else if (!garage.isFull()) {
-            garage.parkCar(applicationContext, car)
-        } else {
-            return
+        when {
+            garage.isParked(car) -> {
+                garage.unparkCar(applicationContext, car)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Unpark()))
+            }
+            !garage.isFull() -> {
+                garage.parkCar(applicationContext, car)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Park()))
+            }
+            user.isOnWaitList -> {
+                user.removeFromWaitList(this)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.StopWaiting()))
+            }
+            user.isSignedIn -> {
+                user.addToWaitList(this)
+                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Wait()))
+            }
+            else -> {
+                // Garage is full, but the user is not signed in: show dialog for signing in.
+                MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")
+            }
         }
     }
 
@@ -386,11 +453,30 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
 
     private fun getDynamicLink() {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) !=
+                com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
+            // If there is no Google play services on the device, then there is no
+            // dynamic link either
+            return
+        }
         val listener = DynamicLinkListener()
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(intent)
                 .addOnSuccessListener(this, listener)
                 .addOnFailureListener(this, listener)
+    }
+
+    inner class UserChangeListener : User.ChangeListener {
+        override fun onWaitListStatusChanged() = updateListOfOwnCars()
+        override fun onWaitListFailed(message: String) = ErrorHandler.showMessage(containerView, message)
+        override fun onSignInStatusChanged() = updateSignInText()
+        override fun onSignInFailed(statusCode: Int) {
+            val message = SignInHandler.getMessageForStatusCode(applicationContext, statusCode)
+            ErrorHandler.showMessage(containerView, getString(R.string.sign_in_failed, message))
+            if (statusCode != com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR) {
+                ErrorHandler.raiseException("Failed to sign in: $message")
+            }
+        }
     }
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {

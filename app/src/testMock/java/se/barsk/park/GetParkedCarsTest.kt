@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.barsk.park.datatypes.ParkedCar
 import se.barsk.park.network.MockNetworkManager
-import se.barsk.park.network.NetworkManager
 
 /**
  * Tests for getting parked cars

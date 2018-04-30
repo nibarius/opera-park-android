@@ -41,6 +41,11 @@
     <string name="specify_server_dialog_title">Ange server</string>
     <string name="unpark_label">Avparkera</string>
     <string name="park_label">Parkera</string>
+    <string name="wait_label">Vänta</string>
+    <string name="stop_waiting_label">Sluta vänta</string>
+    <string name="sign_in_menu_entry">Logga in</string>
+    <string name="sign_out_menu_entry">Logga ut (%s)</string>
+    <string name="sign_in_failed">Misslyckades med att logga in:\n%s</string>
 
     <!-- Settings activity -->
     <string name="settings_activity_title">Inställningar</string>
@@ -63,4 +68,22 @@
     <string name="fail_reason_unknown_error">Okänt fel</string>
     <string name="dialog_button_ok">OK</string>
     <string name="refresh_interval">Automatisk uppdatering</string>
+    <string name="parking_available_notif_channel_name">Lediga platser</string>
+    <string name="parking_available_notif_channel_description">Få aviseringar när det blir ledigt i garaget</string>
+    <string name="wait_list_registration_failed">Misslyckades att registrera i väntelistan</string>
+    <string name="wait_list_unregistration_failed">Misslyckades att avregistrera från väntelistan</string>
+
+    <!-- Notifications -->
+    <string name="free_spots_notification_title">Det finns %s lediga platser</string>
+    <string name="free_spots_notification_body">Flytta bilen medan du kan</string>
+    <string name="can_not_get_fcm_token">Misslyckades med att hämta en FCM token</string>
+
+    <!-- Sign in handler -->
+    <string name="sign_in_network_error">Ett nätverksproblem uppstod</string>
+    <string name="sign_in_unknown_error">Ett okänt fel inträffade (statuskod %d)</string>
+
+    <!-- Sign in dialog -->
+    <string name="sign_in_dialog_message">Logga in för att få en notis när garaget blir ledigt.</string>
+    <string name="sign_in_dialog_title">Logga in?</string>
+    <string name="sign_in_dialog_positive_button">Logga in</string>
 </resources>

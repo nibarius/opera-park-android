@@ -18,8 +18,10 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val SERVER_URL = context.getString(R.string.key_park_server_url)
     private val USAGE_STATISTICS = context.getString(R.string.key_usage_statistics)
     private val CRASH_REPORTING = context.getString(R.string.key_crash_reporting)
-    private val DEFAULT_USAGE_STATISTICS = context.getString(R.string.default_usage_statistics).toBoolean()
+    private val DEFAULT_USAGE_STATISTICS = context.getString(R.string.default_usage_statistics)!!.toBoolean()
     private val REFRESH_INTERVAL = context.getString(R.string.key_refresh_interval)
+    private val ON_WAIT_LIST = context.getString(R.string.key_on_wait_list)
+    private val DEFAULT_ON_WAIT_LIST = context.getString(R.string.default_on_wait_list)!!.toBoolean()
 
 
     private val internalServerChangeListener = InternalServerChangeListener()
@@ -36,6 +38,12 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private fun putSetting(key: String, value: String) {
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
+        editor.apply()
+    }
+
+    private fun putSetting(key: String, value: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(key, value)
         editor.apply()
     }
 
@@ -66,6 +74,8 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     fun crashReportingEnabled(): Boolean = sharedPreferences.getBoolean(CRASH_REPORTING, DEFAULT_USAGE_STATISTICS)
     fun getAutomaticUpdateInterval(): Long = sharedPreferences.getString(REFRESH_INTERVAL,
             context.getString(R.string.default_refresh_interval)).toLong()
+    fun onWaitList(): Boolean = sharedPreferences.getBoolean(ON_WAIT_LIST, DEFAULT_ON_WAIT_LIST)
+    fun setOnWaitList(onWaitList: Boolean) = putSetting(ON_WAIT_LIST, onWaitList)
 
     /**
      * Listener used to be notified about changes done to the server via the settings activity

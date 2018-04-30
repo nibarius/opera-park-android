@@ -16,7 +16,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
 
     private var listeners: MutableList<GarageStatusChangedListener> = mutableListOf()
 
-    var parkedCars: List<ParkedCar> by Delegates.observable(initialParkedCars) { property, oldValue, newValue ->
+    var parkedCars: List<ParkedCar> by Delegates.observable(initialParkedCars) { _, _, _ ->
         for (listener in listeners) {
             listener.onGarageStatusChange()
         }
@@ -53,6 +53,9 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         }
         is Result.NoServer -> {
             notifyListenersAboutReady(false)
+        }
+        else -> {
+            throw RuntimeException("Unexpected result type given to the Garage")
         }
     }
 }

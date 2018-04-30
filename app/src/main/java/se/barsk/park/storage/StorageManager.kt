@@ -1,19 +1,14 @@
 package se.barsk.park.storage
 
+import android.content.Context
 import se.barsk.park.ParkApp
 import se.barsk.park.datatypes.OwnCar
 
 
-open class StorageManager {
+open class StorageManager(context: Context) {
 
-    private val sharedPrefs: SharedPrefs
-    private val database: Database
-
-    init {
-        val context = ParkApp.context
-        database = Database(context)
-        sharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences())
-    }
+    private val sharedPrefs: SharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences(context))
+    private val database: Database = Database(context)
 
     // Shared preferences interaction functions
     open fun hasServer() = sharedPrefs.hasServer()
@@ -24,6 +19,9 @@ open class StorageManager {
     open fun statsEnabled(): Boolean = sharedPrefs.statsEnabled()
     open fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
     open fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
+
+    fun onWaitList(): Boolean = sharedPrefs.onWaitList()
+    fun setOnWaitList(onWaitList: Boolean) = sharedPrefs.setOnWaitList(onWaitList)
 
     // Database interaction functions
     open fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()

@@ -7,6 +7,7 @@ import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
+import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
@@ -22,6 +23,8 @@ open class NetworkManager {
         private const val PARK = "park"
         private const val UNPARK = "unpark"
     }
+
+    private val userAgent = "Opark/${BuildConfig.VERSION_NAME}"
 
     /**
      * Describes the state of the NetworkManager. This can be used to decide which
@@ -66,35 +69,37 @@ open class NetworkManager {
             return
         }
         updateState = UpdateState.UPDATE_IN_PROGRESS
-        Fuel.get(serverUrl + STATUS).responseJson { _, _, result ->
-            updateState = UpdateState.IDLE
-            when (result) {
-                is com.github.kittinunf.result.Result.Failure -> {
-                    val (_, error) = result
-                    if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
-                        state = State.ONLY_FAILED_REQUESTS
-                    }
-                    resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, error)))
-                }
-                is com.github.kittinunf.result.Result.Success -> {
-                    try {
-                        val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
-                        val parkedCars = getParkedCarsFromResponse(data)
-                        state = State.HAVE_MADE_SUCCESSFUL_REQUEST
+        Fuel.get(serverUrl + STATUS)
+                .header(mapOf("User-Agent" to userAgent))
+                .responseJson { _, _, result ->
+                    updateState = UpdateState.IDLE
+                    when (result) {
+                        is com.github.kittinunf.result.Result.Failure -> {
+                            val (_, error) = result
+                            if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
+                                state = State.ONLY_FAILED_REQUESTS
+                            }
+                            resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, error)))
+                        }
+                        is com.github.kittinunf.result.Result.Success -> {
+                            try {
+                                val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                                val parkedCars = getParkedCarsFromResponse(data)
+                                state = State.HAVE_MADE_SUCCESSFUL_REQUEST
 
-                        resultReadyListener(Result.Success(parkedCars))
-                    } catch (e: org.json.JSONException) {
-                        val errorMessage = context.getString(R.string.failed_to_update) +
-                                "\n" + context.getString(R.string.fail_reason_unknown_data)
-                        resultReadyListener(Result.Fail(null, errorMessage))
-                    } catch (e: Exception) {
-                        val errorMessage = context.getString(R.string.failed_to_update) +
-                                "\n" + context.getString(R.string.fail_reason_unknown_error)
-                        resultReadyListener(Result.Fail(null, errorMessage))
+                                resultReadyListener(Result.Success(parkedCars))
+                            } catch (e: org.json.JSONException) {
+                                val errorMessage = context.getString(R.string.failed_to_update) +
+                                        "\n" + context.getString(R.string.fail_reason_unknown_data)
+                                resultReadyListener(Result.Fail(null, errorMessage))
+                            } catch (e: Exception) {
+                                val errorMessage = context.getString(R.string.failed_to_update) +
+                                        "\n" + context.getString(R.string.fail_reason_unknown_error)
+                                resultReadyListener(Result.Fail(null, errorMessage))
+                            }
+                        }
                     }
                 }
-            }
-        }
     }
 
     internal fun getParkedCarsFromResponse(data: JSONObject): List<ParkedCar> {
@@ -130,7 +135,8 @@ open class NetworkManager {
             }
         }
         Fuel.post(url, parameters)
-                .responseJson { request, response, result ->
+                .header(mapOf("User-Agent" to userAgent))
+                .responseJson { _, response, result ->
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
                             try {
@@ -178,4 +184,55 @@ open class NetworkManager {
      */
     open fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
             doAction(context, car, Action.UNPARK, resultReadyListener)
+
+    /**
+     * Makes a request to the Opark backend to register on the wait list.
+     * @param context the context to use to get resources for error messages
+     * @param token the IdToken used to authenticate the user
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    open fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
+        val body = "{\"pushToken\": \"$pushToken\"}"
+        Fuel.post(Backend.waitListEndpoint)
+                .authenticate(token, "")
+                .header(mapOf("Content-Type" to "application/json", "User-Agent" to userAgent))
+                .body(body).response { _, response, result ->
+                    when (result) {
+                        is com.github.kittinunf.result.Result.Success -> {
+                            resultReadyListener(Result.AddedToWaitList())
+                        }
+                        is com.github.kittinunf.result.Result.Failure -> {
+                            val errorMessage = context.getString(R.string.wait_list_registration_failed)
+                            val msg = "$errorMessage\n" +
+                                    "${response.statusCode}: ${response.responseMessage}"
+                            resultReadyListener(Result.Fail(null, msg))
+                        }
+                    }
+                }
+    }
+
+    /**
+     * Makes a request to the Opark backend to remove the user from the wait list.
+     * @param context the context to use to get resources for error messages
+     * @param token the IdToken used to authenticate the user
+     * @param resultReadyListener callback function to be called when the result is ready
+     */
+    open fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
+        Fuel.delete(Backend.waitListEndpoint)
+                .authenticate(token, "")
+                .header(mapOf("User-Agent" to userAgent))
+                .response { _, response, result ->
+                    when (result) {
+                        is com.github.kittinunf.result.Result.Success -> {
+                            resultReadyListener(Result.RemovedFromWaitList())
+                        }
+                        is com.github.kittinunf.result.Result.Failure -> {
+                            val errorMessage = context.getString(R.string.wait_list_unregistration_failed)
+                            val msg = "$errorMessage\n" +
+                                    "${response.statusCode}: ${response.responseMessage}"
+                            resultReadyListener(Result.Fail(null, msg))
+                        }
+                    }
+                }
+    }
 }

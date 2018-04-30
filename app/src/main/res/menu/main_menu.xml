@@ -11,4 +11,9 @@
         android:title="@string/menu_settings_entry"
         app:showAsAction="collapseActionView">
     </item>
+    <item
+        android:id="@+id/menu_sign_in"
+        android:title="Sign in"
+        app:showAsAction="collapseActionView">
+    </item>
 </menu>

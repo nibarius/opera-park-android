@@ -30,7 +30,7 @@ class SpecifyServerDialog : DialogFragment() {
 
     private lateinit var listener: SpecifyServerDialogListener
     private val dialogView: View by lazy {
-        activity.layoutInflater.inflate(R.layout.specify_server_dialog, null) as View
+        requireActivity().layoutInflater.inflate(R.layout.specify_server_dialog, null) as View
     }
     private val editText: EditText by lazy { dialogView.findViewById<EditText>(R.id.server_url_input) }
 
@@ -52,7 +52,7 @@ class SpecifyServerDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = AlertDialog.Builder(activity)
+        val dialog = AlertDialog.Builder(requireContext())
                 .setTitle(R.string.specify_server_dialog_title)
                 .setView(dialogView)
                 .setNegativeButton(R.string.dialog_button_cancel, { _, _ ->

@@ -41,6 +41,18 @@
             android:parentActivityName=".mainui.ParkActivity"
             android:label="@string/settings_activity_title"
             android:launchMode="singleTask"/>
+        <service
+            android:name=".fcm.ParkFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".fcm.ParkFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="59c6f5b2454cee38d5933c1c2959181195317d5c"

@@ -26,8 +26,8 @@ abstract class ManageCarDialog : DialogFragment() {
     abstract fun fetchOwnCar(): OwnCar
 
     var listener: ManageCarDialogListener? = null
-    private val dialogView: View by lazy { activity.layoutInflater.inflate(R.layout.manage_car_dialog, null) as View }
-    private val fab: FloatingActionButton by lazy { activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab) }
+    private val dialogView: View by lazy { requireActivity().layoutInflater.inflate(R.layout.manage_car_dialog, null) as View }
+    private val fab: FloatingActionButton by lazy { requireActivity().findViewById<FloatingActionButton>(R.id.manage_cards_fab) }
     private val regNoView: EditText by lazy { dialogView.findViewById<EditText>(R.id.regno) }
     private val ownerView: EditText by lazy { dialogView.findViewById<EditText>(R.id.owner) }
     private val ownCar: OwnCar by lazy { fetchOwnCar() }
@@ -58,7 +58,7 @@ abstract class ManageCarDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity)
+        val builder = AlertDialog.Builder(requireContext())
         regNoView.setText(ownCar.regNo)
         ownerView.setText(ownCar.owner)
 

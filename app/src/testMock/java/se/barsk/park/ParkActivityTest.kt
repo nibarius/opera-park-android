@@ -15,7 +15,9 @@ import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowLooper
-import se.barsk.park.carcollection.MockCarCollection
+import org.robolectric.shadows.support.v4.ShadowSwipeRefreshLayout
+import se.barsk.park.datatypes.MockCarCollection
+import se.barsk.park.mainui.MustSignInDialog
 import se.barsk.park.mainui.OwnCarListEntry
 import se.barsk.park.mainui.ParkActivity
 import se.barsk.park.mainui.SpecifyServerDialog
@@ -369,7 +371,7 @@ class ParkActivityTest : RobolectricTest() {
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
-        carIsNotParkable(car2)
+        carCanBePutOnWaitList(car2)
         activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
 
         // Unpark it again
@@ -378,6 +380,79 @@ class ParkActivityTest : RobolectricTest() {
         carIsNotParked(car1)
         carIsNotParked(car2)
         activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        controller.pause().stop().destroy()
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun waitListNotLoggedInLandscapeTest() = waitListNotLoggedInTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun waitListNotLoggedInPortraitTest() = waitListNotLoggedInTest()
+
+    private fun waitListNotLoggedInTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(6)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+        ParkApp.theUser.signOut(activity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        val car = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1).itemView
+        car as OwnCarListEntry
+
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+
+        // Register on the wait list while not logged in should trigger the sign in dialog
+        car.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        val dialog = activity.supportFragmentManager.findFragmentByTag("signIn")
+        dialog.shouldNotBeNull()
+        dialog shouldBeInstanceOf MustSignInDialog::class
+
+        controller.pause().stop().destroy()
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun waitListLandscapeTest() = waitListTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun waitListPortraitTest() = waitListTest()
+
+    private fun waitListTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(6)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        val car = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1).itemView
+        car as OwnCarListEntry
+        carCanBePutOnWaitList(car)
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+
+        // Register on the wait list
+        car.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsOnWaitList(car)
+
+        //Remove from the wait list
+        car.performClick()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carCanBePutOnWaitList(car)
 
         controller.pause().stop().destroy()
     }
@@ -420,6 +495,52 @@ class ParkActivityTest : RobolectricTest() {
         carIsNotParked(car2)
         activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
         emptyGaragePlaceholderShown(activity)
+    }
+
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun updateOwnCarsListOnServerStateChangeLandscapeTest() = updateOwnCarsListOnServerStateChangeTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun updateOwnCarsListOnServerStateChangePortraitTest() = updateOwnCarsListOnServerStateChangeTest()
+
+    private fun updateOwnCarsListOnServerStateChangeTest() {
+        // Create a new activity just for this test with a special network manager
+        val almostFull = MockNetworkManager(5)
+        val full = MockNetworkManager(6)
+        ParkApp.networkManager = almostFull
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        val car = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1).itemView
+        car as OwnCarListEntry
+
+        carIsNotParked(car)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        // Refresh list of parked cars from server, now the garage is full
+        ParkApp.networkManager = full
+        val pullToRefreshView = Shadows.shadowOf(activity.parked_cars_pull_to_refresh) as ShadowSwipeRefreshLayout
+        pullToRefreshView.onRefreshListener.onRefresh()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carCanBePutOnWaitList(car)
+        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+
+        // Refresh list of parked cars from server, there is one spot free again
+        ParkApp.networkManager = almostFull
+        pullToRefreshView.onRefreshListener.onRefresh()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        carIsNotParked(car)
+        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+
+        controller.pause().stop().destroy()
     }
 
     private fun loadingPlaceholderShown(activity: ParkActivity) {
@@ -480,6 +601,18 @@ class ParkActivityTest : RobolectricTest() {
         val button = car.park_button
         button.isEnabled.shouldBeFalse()
         button.text.shouldStartWith(context().getString(R.string.park_label).toUpperCase())
+    }
+
+    private fun carCanBePutOnWaitList(car: OwnCarListEntry) {
+        val button = car.park_button
+        button.isEnabled.shouldBeTrue()
+        button.text.shouldStartWith(context().getString(R.string.wait_label).toUpperCase())
+    }
+
+    private fun carIsOnWaitList(car: OwnCarListEntry) {
+        val button = car.park_button
+        button.isEnabled.shouldBeTrue()
+        button.text.shouldStartWith(context().getString(R.string.stop_waiting_label).toUpperCase())
     }
 
     private fun View.shouldBeGone() {

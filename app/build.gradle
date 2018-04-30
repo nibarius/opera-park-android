@@ -11,13 +11,13 @@ android {
     def majorVersion = 1
     def minorVersion = 2
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     testOptions.unitTests.includeAndroidResources true
     defaultConfig {
         applicationId "se.barsk.park"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 4
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -100,28 +100,28 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'com.android.support:appcompat-v7:26.0.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:26.0.0'
-    compile 'com.github.kittinunf.fuel:fuel-android:1.10.0'
-    compile 'com.github.kittinunf.result:result:1.1.0'
-    compile 'com.google.firebase:firebase-core:11.2.0'
-    compile 'com.google.firebase:firebase-invites:11.2.0'
-    compile 'de.psdev.licensesdialog:licensesdialog:1.8.3'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.android.gms:play-services-auth:15.0.0'
+    implementation 'com.github.kittinunf.fuel:fuel-android:1.10.0'
+    implementation 'com.github.kittinunf.result:result:1.2.0'
+    implementation 'com.google.firebase:firebase-core:15.0.0'
+    implementation 'com.google.firebase:firebase-invites:15.0.0'
+    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'de.psdev.licensesdialog:licensesdialog:1.8.3'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') {
         transitive = true;
     }
-    compile 'net.danlew:android.joda:2.9.9'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.json:json:20140107'
-    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testCompile "org.robolectric:robolectric:3.5"
-    testCompile 'org.amshove.kluent:kluent-android:1.30'
+    implementation 'net.danlew:android.joda:2.9.9'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.json:json:20140107'
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    testImplementation "org.robolectric:robolectric:3.8"
+    testImplementation "org.robolectric:shadows-supportv4:3.8"
+    testImplementation 'org.amshove.kluent:kluent-android:1.30'
 }
 repositories {
     mavenCentral()
@@ -140,6 +140,6 @@ buildscript {
     dependencies {
         // We recommend changing it to the latest version from our changelog:
         // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
-        classpath 'io.fabric.tools:gradle:1.22.0'
+        classpath 'io.fabric.tools:gradle:1.25.3'
     }
 }
