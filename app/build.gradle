@@ -108,9 +108,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:15.0.0'
     implementation 'com.github.kittinunf.fuel:fuel-android:1.10.0'
     implementation 'com.github.kittinunf.result:result:1.2.0'
-    implementation 'com.google.firebase:firebase-core:15.0.0'
-    implementation 'com.google.firebase:firebase-invites:15.0.0'
-    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-invites:15.0.1'
+    implementation 'com.google.firebase:firebase-messaging:15.0.2'
     implementation 'de.psdev.licensesdialog:licensesdialog:1.8.3'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') {
         transitive = true;
