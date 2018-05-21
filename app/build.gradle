@@ -9,7 +9,7 @@ repositories {
 
 android {
     def majorVersion = 2
-    def minorVersion = 0
+    def minorVersion = 1
 
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -18,7 +18,7 @@ android {
         applicationId "se.barsk.park"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 5
+        versionCode 6
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "releaseBuild", "false"
