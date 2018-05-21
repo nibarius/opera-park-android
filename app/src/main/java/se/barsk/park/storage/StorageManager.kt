@@ -23,6 +23,13 @@ open class StorageManager(context: Context) {
     fun onWaitList(): Boolean = sharedPrefs.onWaitList()
     fun setOnWaitList(onWaitList: Boolean) = sharedPrefs.setOnWaitList(onWaitList)
 
+    fun hasSeenPrivacyOnBoarding(): Boolean = sharedPrefs.hasSeenPrivacyOnBoarding()
+    fun setPrivacyOnBoardingSeen() = sharedPrefs.setPrivacyOnBoardingSeen()
+    fun giveStatsConsent() = sharedPrefs.giveAllStatsConsent(true)
+    fun withdrawStatsConsent() = sharedPrefs.giveAllStatsConsent(false)
+    fun recordCrashReportingConsentChange() = sharedPrefs.recordCrashReportingConsentChange()
+    fun recordUsageStatisticsConsentChange() = sharedPrefs.recordUsageStatisticsConsentChange()
+
     // Database interaction functions
     open fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
 

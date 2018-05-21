@@ -11,10 +11,13 @@ import se.barsk.park.storage.StorageManager
  * Object for handling crash reporting
  */
 class CrashReporting {
+    private var isStarted = false
+
     fun enableIfAllowed(context: Context) {
-        if (ParkApp.storageManager.crashReportingEnabled()) {
+        if (!isStarted && ParkApp.storageManager.crashReportingEnabled()) {
             Fabric.with(context, Crashlytics())
             Crashlytics.setBool("public_release", BuildConfig.releaseBuild)
+            isStarted = true
         }
     }
 }

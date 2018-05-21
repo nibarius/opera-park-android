@@ -1,33 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
-        android:title="@string/refresh_interval"
-        android:key="@string/key_refresh_interval"
+        android:defaultValue="@string/default_refresh_interval"
         android:entries="@array/refresh_intervals"
         android:entryValues="@array/refresh_interval_values"
-        android:defaultValue="@string/default_refresh_interval"/>
+        android:key="@string/key_refresh_interval"
+        android:title="@string/refresh_interval"/>
     <EditTextPreference
-        android:title="@string/settings_server"
+        android:defaultValue="@string/the_empty_string"
         android:hint="@string/park_server_input_hint"
         android:key="@string/key_park_server_url"
-        android:defaultValue="@string/the_empty_string"/>
-    <CheckBoxPreference
-        android:title="@string/settings_usage_statistics"
-        android:defaultValue="@string/default_usage_statistics"
-        android:key="@string/key_usage_statistics" />
-    <CheckBoxPreference
-        android:title="@string/settings_crash_reporting"
-        android:defaultValue="@string/default_usage_statistics"
-        android:key="@string/key_crash_reporting" />
+        android:title="@string/settings_server"/>
     <PreferenceCategory
-        android:title="@string/settings_about_group_title"
-        android:key="@string/key_about_group">
+        android:key="@string/key_privacy_group"
+        android:title="@string/settings_privacy_group_title">
+        <CheckBoxPreference
+            android:defaultValue="@string/default_usage_statistics"
+            android:key="@string/key_usage_statistics"
+            android:title="@string/settings_usage_statistics"/>
+        <CheckBoxPreference
+            android:defaultValue="@string/default_usage_statistics"
+            android:key="@string/key_crash_reporting"
+            android:title="@string/settings_crash_reporting"/>
         <Preference
-            android:title="@string/settings_version"
-            android:key="@string/key_version"/>
+            android:key="@string/key_privacy_statement"
+            android:title="@string/settings_privacy_statement"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="@string/key_about_group"
+        android:title="@string/settings_about_group_title">
         <Preference
-            android:title="@string/notices_title"
-            android:key="@string/key_third_party_licenses"/>
+            android:key="@string/key_version"
+            android:title="@string/settings_version"/>
+        <Preference
+            android:key="@string/key_third_party_licenses"
+            android:title="@string/notices_title"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

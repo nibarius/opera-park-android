@@ -175,6 +175,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         automaticUpdateTask.start()
         getDynamicLink()
         user.silentSignIn(this)
+        showPrivacyDialogIfNeeded()
     }
 
     override fun onPause() {
@@ -451,6 +452,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private fun showServerDialog() =
             SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
+
+    private fun showPrivacyDialogIfNeeded() {
+        val tag = "privacyDialog"
+        if (supportFragmentManager.findFragmentByTag(tag) == null &&
+                !ParkApp.storageManager.hasSeenPrivacyOnBoarding()) {
+            PrivacyPolicyOnBoardingDialog.newInstance().show(supportFragmentManager, tag)
+        }
+    }
 
     private fun getDynamicLink() {
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) !=

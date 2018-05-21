@@ -1,6 +1,8 @@
 package se.barsk.park.settings
 
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.preference.*
 import android.support.v7.app.AppCompatActivity
@@ -8,6 +10,7 @@ import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
+import se.barsk.park.network.Backend
 
 
 /**
@@ -68,6 +71,8 @@ class SettingsActivity : AppCompatActivity() {
         override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
             if (preference?.key == getString(R.string.key_third_party_licenses)) {
                 thirdPartyListener.invoke()
+            } else if (preference?.key == getString(R.string.key_privacy_statement)) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Backend.privacyStatementUrl)))
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference)
         }
@@ -96,7 +101,11 @@ class SettingsActivity : AppCompatActivity() {
                         pref.text
                 }
                 getString(R.string.key_usage_statistics) -> {
+                    ParkApp.storageManager.recordUsageStatisticsConsentChange()
                     ParkApp.analytics.optOutToggled()
+                }
+                getString(R.string.key_crash_reporting) -> {
+                    ParkApp.storageManager.recordCrashReportingConsentChange()
                 }
             }
         }

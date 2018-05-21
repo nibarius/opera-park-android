@@ -19,7 +19,7 @@ import se.barsk.park.storage.StorageManager
 object ParkApp {
     private var isInitiated = false
     lateinit var analytics: Analytics
-    private lateinit var crashlytics: CrashReporting
+    lateinit var crashlytics: CrashReporting
     lateinit var carCollection: CarCollection
     lateinit var networkManager: NetworkManager
     lateinit var storageManager: StorageManager

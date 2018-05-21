@@ -13,7 +13,7 @@ import se.barsk.park.datatypes.OwnCar
 class DeepLinkTest : RobolectricTest() {
     @Test
     fun createDeepLinkOnlyServerTest() {
-        val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F"
+        val url = "https://opera-park.appspot.com/app/dl?park_server=http%3A%2F%2Fpark.example.com%2F"
         val deepLink = DeepLink(Uri.parse(url))
         deepLink.isValid.shouldBeTrue()
         deepLink.server shouldEqual "http://park.example.com/"
@@ -22,7 +22,7 @@ class DeepLinkTest : RobolectricTest() {
 
     @Test
     fun createDeepLinkOneCarTest() {
-        val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=user"
+        val url = "https://opera-park.appspot.com/app/dl?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=user"
         val deepLink = DeepLink(Uri.parse(url))
         deepLink.isValid.shouldBeTrue()
         deepLink.server shouldEqual "http://park.example.com/"
@@ -33,7 +33,7 @@ class DeepLinkTest : RobolectricTest() {
 
     @Test
     fun createDeepLinkTwoCarsTest() {
-        val url = "https://opera-park.appspot.com?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=owner&r=DEF%20456&o=owner2"
+        val url = "https://opera-park.appspot.com/app/dl?park_server=http%3A%2F%2Fpark.example.com%2F&r=ABC%20123&o=owner&r=DEF%20456&o=owner2"
         val deepLink = DeepLink(Uri.parse(url))
 
         testDeepLinkWithTwoCars(deepLink)

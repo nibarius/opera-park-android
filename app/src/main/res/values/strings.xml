@@ -57,8 +57,10 @@
     <!-- Settings activity -->
     <string name="settings_activity_title">Settings</string>
     <string name="notices_title">Third party licences</string>
+    <string name="settings_privacy_group_title">Privacy</string>
     <string name="settings_usage_statistics">Usage statistics</string>
     <string name="settings_crash_reporting">Crash reporting</string>
+    <string name="settings_privacy_statement">Privacy statement</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">About %s</string>
     <string name="settings_version">Version: %s</string>
@@ -88,5 +90,11 @@
     <string name="sign_in_dialog_message">Sign in to Opark to get a notification when the garage frees up.</string>
     <string name="sign_in_dialog_title">Sign in?</string>
     <string name="sign_in_dialog_positive_button">Sign in</string>
+
+    <!-- Privacy statement on boarding dialog -->
+    <string name="ppo_dialog_title">Help improving Opark?</string>
+    <string name="ppo_dialog_message"><![CDATA[To be able to improve Opark, Firebase is used to collect crash reports and limited usage statistics. To learn what more about the data Opark collects please see the <a href="%s">privacy statement</a>.<br><br>Do you allow the collection of this data?]]></string>
+    <string name="ppo_dialog_positive">Yes</string>
+    <string name="ppo_dialog_negative">No</string>
 
 </resources>

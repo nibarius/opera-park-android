@@ -78,6 +78,26 @@ class SharedPreferencesTest : RobolectricTest() {
         Assert.assertEquals(BuildConfig.VERSION_CODE.toString(), sharedPreferences.getString(context.getString(R.string.key_current_version_code), ""))
     }
 
+    @Test
+    fun upgradePast5Test() {
+        if (BuildConfig.VERSION_CODE < 6) {
+            // This test can only be run when current version is 6 or higher.
+            return
+        }
+        val context = context()
+        val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(context.getString(R.string.key_first_version_code), "0")
+        editor.putString(context.getString(R.string.key_first_version_name), "0.1")
+        editor.putString(context.getString(R.string.key_current_version_code), "0")
+        editor.putBoolean(context.getString(R.string.key_usage_statistics), true)
+        editor.putBoolean(context.getString(R.string.key_crash_reporting), true)
+        editor.apply()
+        SharedPrefs(context, sharedPreferences)
+        Assert.assertEquals(false, sharedPreferences.getBoolean(context.getString(R.string.key_usage_statistics), false))
+        Assert.assertEquals(false, sharedPreferences.getBoolean(context.getString(R.string.key_crash_reporting), false))
+    }
+
     /**
      * Test that the expected default values are reported on clean install before the user
      * have changed anything.
@@ -87,8 +107,8 @@ class SharedPreferencesTest : RobolectricTest() {
         val context = context()
         val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val sharedPrefs = SharedPrefs(context, sharedPreferences)
-        Assert.assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.crashReportingEnabled())
-        Assert.assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.statsEnabled())
+        Assert.assertEquals(context.getString(R.string.default_usage_statistics)!!.toBoolean(), sharedPrefs.crashReportingEnabled())
+        Assert.assertEquals(context.getString(R.string.default_usage_statistics)!!.toBoolean(), sharedPrefs.statsEnabled())
         Assert.assertEquals(context.getString(R.string.default_refresh_interval).toLong(), sharedPrefs.getAutomaticUpdateInterval())
     }
 }

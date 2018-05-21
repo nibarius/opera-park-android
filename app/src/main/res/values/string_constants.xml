@@ -12,6 +12,8 @@
     <string name="key_usage_statistics" translatable="false">usage_statistics</string>
     <string name="key_crash_reporting" translatable="false">key_crash_reporting</string>
     <string name="key_about_group" translatable="false">about_group</string>
+    <string name="key_privacy_group" translatable="false">privacy_group</string>
+    <string name="key_privacy_statement" translatable="false">privacy_statement</string>
     <string name="key_version" translatable="false">version</string>
     <string name="key_third_party_licenses" translatable="false">third_party_licenses</string>
     <string name="key_first_version_code" translatable="false">fvc</string>
@@ -19,11 +21,17 @@
     <string name="key_current_version_code" translatable="false">cvc</string>
     <string name="key_previous_version_code" translatable="false">pvc</string>
     <string name="key_on_wait_list" translatable="false">owl</string>
+    <string name="key_privacy_on_boarding" translatable="false">pob</string>
+    <string name="key_usage_stats_consent" translatable="false">cus</string>
+    <string name="key_usage_stats_consent_timestamp" translatable="false">cust</string>
+    <string name="key_crash_reporting_consent" translatable="false">ccr</string>
+    <string name="key_crash_reporting_consent_timestamp" translatable="false">ccrt</string>
 
     <!-- Default values -->
     <string name="the_empty_string" translatable="false"/>
-    <string name="default_usage_statistics" translatable="false">true</string>
+    <string name="default_usage_statistics" translatable="false">false</string>
     <string name="default_refresh_interval" translatable="false">10</string>
     <string name="default_on_wait_list" translatable="false">false</string>
+    <string name="default_privacy_on_boarding" translatable="false">false</string>
 
 </resources>

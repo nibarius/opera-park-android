@@ -5,4 +5,5 @@ package se.barsk.park.network
  */
 object Backend {
     const val waitListEndpoint = "https://opera-park.appspot.com/api/v1/waitList"
+    const val privacyStatementUrl = "https://opera-park.appspot.com/privacy"
 }
