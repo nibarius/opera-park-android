@@ -8,14 +8,13 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
-import android.webkit.URLUtil
 import android.widget.EditText
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.Utils
-import se.barsk.park.storage.StorageManager
 
 
 class SpecifyServerDialog : DialogFragment() {
@@ -74,7 +73,7 @@ class SpecifyServerDialog : DialogFragment() {
     }
 
     private fun updatePositiveButton() {
-        val canSave = URLUtil.isValidUrl(Utils.fixUrl(editText.text.toString()))
+        val canSave = Patterns.WEB_URL.matcher(Utils.fixUrl(editText.text.toString())).matches()
         (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = canSave
     }
 

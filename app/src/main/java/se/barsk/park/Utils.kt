@@ -4,15 +4,16 @@ object Utils {
     /**
      * Adds a http:// to the beginning of an url if it doesn't have any protocol
      * Adds a / to the end of an url if it doesn't have any
+     * Also trims any leading / trailing whitespace
      */
     fun fixUrl(url: String): String {
         if (url.isEmpty()) {
             return ""
         }
 
-        var fixedUrl = url
+        var fixedUrl = url.trim()
         if (!url.startsWith("https://") && !url.startsWith("http://")) {
-            fixedUrl = "http://" + fixedUrl
+            fixedUrl = "http://$fixedUrl"
         }
         if (!url.endsWith("/")) {
             fixedUrl += "/"
