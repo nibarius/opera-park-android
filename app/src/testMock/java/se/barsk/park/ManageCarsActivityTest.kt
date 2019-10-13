@@ -2,9 +2,9 @@ package se.barsk.park
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -111,20 +111,21 @@ class ManageCarsActivityTest : RobolectricTest() {
     fun disabledAddButtonInCreateDialogTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         fab.performClick()
-        val dialog = activity.supportFragmentManager.findFragmentByTag("addCar")
-        dialog as AddCarDialog
-        val button = (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+        val addCarDialog =
+                activity.supportFragmentManager.findFragmentByTag("addCar") as AddCarDialog
+        val dialog = addCarDialog.dialog as AlertDialog
+        val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
         button.isEnabled.shouldBeFalse()
-        val regnoView = dialog.dialog.findViewById<EditText>(R.id.regno)
-        val userView = dialog.dialog.findViewById<EditText>(R.id.owner)
+        val regnoView = dialog.findViewById<EditText>(R.id.regno)
+        val userView = dialog.findViewById<EditText>(R.id.owner)
         regnoView.shouldNotBeNull()
         userView.shouldNotBeNull()
-        regnoView.setText("regno")
+        regnoView?.setText("regno")
         button.isEnabled.shouldBeFalse()
-        regnoView.setText("")
-        userView.setText("user")
+        regnoView?.setText("")
+        userView?.setText("user")
         button.isEnabled.shouldBeFalse()
-        regnoView.setText("regno")
+        regnoView?.setText("regno")
         button.isEnabled.shouldBeTrue()
     }
 
@@ -182,14 +183,17 @@ class ManageCarsActivityTest : RobolectricTest() {
         //val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         //fab.visibility shouldEqual View.GONE
 
-        val dialog = activity.supportFragmentManager.findFragmentByTag("editCar")
-        dialog.shouldNotBeNull()
-        dialog shouldBeInstanceOf EditCarDialog::class
-        dialog as EditCarDialog
-        val regnoView = dialog.dialog.findViewById<EditText>(R.id.regno)
-        val userView = dialog.dialog.findViewById<EditText>(R.id.owner)
-        regnoView.text.toString() shouldEqual adapter.cars[0].regNo
-        userView.text.toString() shouldEqual adapter.cars[0].owner
+        val editCarDialog = activity.supportFragmentManager.findFragmentByTag("editCar")
+        editCarDialog.shouldNotBeNull()
+        editCarDialog shouldBeInstanceOf EditCarDialog::class
+        editCarDialog as EditCarDialog
+        val dialog = editCarDialog.dialog as AlertDialog
+        val regnoView = dialog.findViewById<EditText>(R.id.regno)
+        val userView = dialog.findViewById<EditText>(R.id.owner)
+        regnoView.shouldNotBeNull()
+        userView.shouldNotBeNull()
+        regnoView?.text.toString() shouldEqual adapter.cars[0].regNo
+        userView?.text.toString() shouldEqual adapter.cars[0].owner
     }
 
     @Test

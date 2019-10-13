@@ -2,8 +2,9 @@ package se.barsk.park.network
 
 import android.content.Context
 import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.android.core.Json
-import com.github.kittinunf.fuel.android.extension.responseJson
+import com.github.kittinunf.fuel.core.extensions.authentication
+import com.github.kittinunf.fuel.json.FuelJson
+import com.github.kittinunf.fuel.json.responseJson
 import com.github.kittinunf.result.getAs
 import org.json.JSONArray
 import org.json.JSONObject
@@ -83,7 +84,7 @@ open class NetworkManager {
                         }
                         is com.github.kittinunf.result.Result.Success -> {
                             try {
-                                val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                                val data: JSONObject = result.getAs<FuelJson>()?.obj() as JSONObject
                                 val parkedCars = getParkedCarsFromResponse(data)
                                 state = State.HAVE_MADE_SUCCESSFUL_REQUEST
 
@@ -140,7 +141,7 @@ open class NetworkManager {
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
                             try {
-                                val data: JSONObject = result.getAs<Json>()?.obj() as JSONObject
+                                val data: JSONObject = result.getAs<FuelJson>()?.obj() as JSONObject
                                 val success = data.getString("result") == "ok"
                                 val parkedCars = getParkedCarsFromResponse(data)
                                 if (success) {
@@ -194,7 +195,8 @@ open class NetworkManager {
     open fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
         val body = "{\"pushToken\": \"$pushToken\"}"
         Fuel.post(Backend.waitListEndpoint)
-                .authenticate(token, "")
+                .authentication()
+                .basic(token, "")
                 .header(mapOf("Content-Type" to "application/json", "User-Agent" to userAgent))
                 .body(body).response { _, response, result ->
                     when (result) {
@@ -219,7 +221,8 @@ open class NetworkManager {
      */
     open fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
         Fuel.delete(Backend.waitListEndpoint)
-                .authenticate(token, "")
+                .authentication()
+                .basic(token, "")
                 .header(mapOf("User-Agent" to userAgent))
                 .response { _, response, result ->
                     when (result) {

@@ -4,8 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
@@ -33,7 +33,7 @@ class SpecifyServerDialog : DialogFragment() {
     }
     private val editText: EditText by lazy { dialogView.findViewById<EditText>(R.id.server_url_input) }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = try {
             // Instantiate the NoticeDialogListener so we can send events to the host
@@ -55,7 +55,7 @@ class SpecifyServerDialog : DialogFragment() {
                 .setTitle(R.string.specify_server_dialog_title)
                 .setView(dialogView)
                 .setNegativeButton(R.string.dialog_button_cancel, { _, _ ->
-                    dialog.cancel()
+                    dialog!!.cancel() //todo: null
                 })
                 .setPositiveButton(R.string.dialog_button_ok, { _, _: Int ->
                     ParkApp.storageManager.setServer(editText.text.toString())
@@ -67,8 +67,8 @@ class SpecifyServerDialog : DialogFragment() {
             false
         })
         editText.setText(ParkApp.storageManager.getServer())
-        dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams .FLAG_ALT_FOCUSABLE_IM) // todo: null
+        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)  // todo: null
         return dialog
     }
 

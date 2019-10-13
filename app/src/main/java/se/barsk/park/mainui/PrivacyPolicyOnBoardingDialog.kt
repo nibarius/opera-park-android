@@ -3,9 +3,9 @@ package se.barsk.park.mainui
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AlertDialog
 import android.text.Html
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -37,11 +37,11 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         // Make the dialog's TextView clickable
-        (dialog.findViewById(android.R.id.message) as TextView).movementMethod =
+        (dialog!!.findViewById(android.R.id.message) as TextView).movementMethod = // todo: handle null
                 LinkMovementMethod.getInstance()
     }
 
-    override fun show(manager: FragmentManager?, tag: String?) {
+    override fun show(manager: FragmentManager, tag: String?) {
         super.show(manager, tag)
         isCancelable = false
     }

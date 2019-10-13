@@ -1,6 +1,6 @@
 package se.barsk.park
 
-import android.support.design.widget.Snackbar
+import com.google.android.material.snackbar.Snackbar
 import android.view.View
 import android.widget.TextView
 import se.barsk.park.analytics.ExceptionEvent
@@ -31,7 +31,7 @@ object ErrorHandler {
         val snackbar = Snackbar
                 .make(containerView, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
-        val textView = snackbar.view.findViewById<TextView>(android.support.design.R.id.snackbar_text)
+        val textView = snackbar.view.findViewById<TextView>(R.id.snackbar_text)
         textView.maxLines = 5
         snackbar.show()
     }

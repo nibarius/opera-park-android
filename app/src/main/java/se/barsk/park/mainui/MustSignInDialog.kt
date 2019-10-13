@@ -3,8 +3,8 @@ package se.barsk.park.mainui
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AlertDialog
 import se.barsk.park.R
 
 /**
@@ -22,7 +22,7 @@ class MustSignInDialog : DialogFragment() {
 
     var listener: MustSignInDialogListener? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = try {
             // Instantiate the MustSignInDialogListener so we can send events to the host

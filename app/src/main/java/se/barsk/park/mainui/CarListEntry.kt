@@ -3,7 +3,7 @@ package se.barsk.park.mainui
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.View
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car

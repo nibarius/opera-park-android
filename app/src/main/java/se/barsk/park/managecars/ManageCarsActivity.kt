@@ -3,12 +3,12 @@ package se.barsk.park.managecars
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.view.ActionMode
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -182,7 +182,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private fun showCarsPlaceholderIfNeededAfterAnimation() {
         if (manageCarsRecyclerView.isAnimating) {
             // If the recyclerview is animating, try again a bit later
-            manageCarsRecyclerView.itemAnimator.isRunning { showCarsPlaceholderIfNeeded() }
+            manageCarsRecyclerView.itemAnimator!!.isRunning { showCarsPlaceholderIfNeeded() }  // todo: null
             return
         }
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)

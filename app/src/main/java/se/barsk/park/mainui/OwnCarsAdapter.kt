@@ -1,6 +1,6 @@
 package se.barsk.park.mainui
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import se.barsk.park.datatypes.Car
 
 /**

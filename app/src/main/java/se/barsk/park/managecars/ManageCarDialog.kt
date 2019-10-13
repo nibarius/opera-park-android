@@ -4,9 +4,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AlertDialog
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -32,7 +32,7 @@ abstract class ManageCarDialog : DialogFragment() {
     private val ownerView: EditText by lazy { dialogView.findViewById<EditText>(R.id.owner) }
     private val ownCar: OwnCar by lazy { fetchOwnCar() }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = try {
             // Instantiate the NoticeDialogListener so we can send events to the host
@@ -79,8 +79,8 @@ abstract class ManageCarDialog : DialogFragment() {
             dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
             false
         })
-        dialog.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) // todo: null
+        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)  // todo: null
         return dialog
     }
 

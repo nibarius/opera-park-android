@@ -14,7 +14,7 @@ class EditCarDialog : ManageCarDialog() {
     override val dialogType: DialogType
         get() = DialogType.EDIT
 
-    override fun fetchOwnCar(): OwnCar = ParkApp.carCollection.getCar(arguments!!.getString(ARG_ID))
+    override fun fetchOwnCar(): OwnCar = ParkApp.carCollection.getCar(arguments!!.getString(ARG_ID)!!)  // todo: null
 
     companion object {
         private const val ARG_ID: String = "id"

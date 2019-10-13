@@ -116,7 +116,7 @@ class User(context: Context) {
     /**
      * Function that should be called by the ParkActivity when the sign in result is ready.
      */
-    fun onSignInResult(data: Intent) {
+    fun onSignInResult(data: Intent?) {
         signInHandler.onSignInResult(data)
     }
 

@@ -122,7 +122,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         silentSignIn(activity, { doWith(token!!) })
     }
 
-    fun onSignInResult(data: Intent) {
+    fun onSignInResult(data: Intent?) {
         handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
     }
 
@@ -130,7 +130,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         try {
             val account = completedTask.getResult(ApiException::class.java)
             lastSignedInAccount = account
-            token = account.idToken
+            token = account!!.idToken // todo fix null
             listener.onSignedIn()
             ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueYes)
             // Do the success callback as a new message so the sign in process can finish completely

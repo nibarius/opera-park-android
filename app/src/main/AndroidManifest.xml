@@ -48,12 +48,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <service
-            android:name=".fcm.ParkFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="59c6f5b2454cee38d5933c1c2959181195317d5c"
@@ -61,6 +55,8 @@
         <!-- Don't collect Advertising ID and disable collection until the user have opted in -->
         <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

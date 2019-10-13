@@ -7,13 +7,13 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -185,7 +185,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
@@ -246,7 +246,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun showParkedCarsPlaceholderIfNeededAfterAnimations() {
         if (parkedCarsRecyclerView.isAnimating) {
             // If the recyclerview is animating, try again once current animation has finished
-            parkedCarsRecyclerView.itemAnimator.isRunning { showParkedCarsPlaceholderIfNeeded() }
+            parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() } // todo: handle null
             return
         }
         if (parkingState.showsPlaceholder()) {
