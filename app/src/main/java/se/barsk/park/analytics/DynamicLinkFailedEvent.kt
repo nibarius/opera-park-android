@@ -7,7 +7,7 @@ class DynamicLinkFailedEvent(exception: String) : AnalyticsEvent() {
     override val name: String = "dynamic_link_failed"
 
     init {
-        parameters.putString(AnalyticsEvent.Param.EXCEPTION,
+        parameters.putString(Param.EXCEPTION,
                 exception.substring(0, minOf(100, exception.length)))
     }
 }

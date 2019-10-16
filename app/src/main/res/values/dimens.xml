@@ -1,10 +1,7 @@
 <resources>
-    <dimen name="custom_wrap_content">-2px</dimen>
-    <dimen name="custom_match_parent">-1px</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="own_cars_bar_landscape_width">192dp</dimen>
-    <dimen name="own_cars_layout_width">@dimen/custom_wrap_content</dimen>
     <dimen name="own_cars_padding_top">0dp</dimen>
     <dimen name="own_cars_padding_start">8dp</dimen>
     <dimen name="own_cars_padding_end">8dp</dimen>

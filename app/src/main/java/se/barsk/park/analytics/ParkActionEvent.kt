@@ -13,6 +13,6 @@ class ParkActionEvent(action: Action) : AnalyticsEvent() {
     override val name: String = "park_action"
 
     init {
-        parameters.putString(AnalyticsEvent.Param.ACTION, action.action)
+        parameters.putString(Param.ACTION, action.action)
     }
 }

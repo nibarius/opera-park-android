@@ -29,7 +29,7 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
 
     override fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
         if (readServerFromStorage().isEmpty()) {
-            resultReadyListener(Result.NoServer())
+            resultReadyListener(Result.NoServer)
             return
         }
         updateState = UpdateState.UPDATE_IN_PROGRESS
@@ -64,11 +64,11 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
     }
 
     override fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
-        Handler().postDelayed({ resultReadyListener(Result.AddedToWaitList()) }, networkDelay)
+        Handler().postDelayed({ resultReadyListener(Result.AddedToWaitList) }, networkDelay)
     }
 
     override fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
-        Handler().postDelayed({ resultReadyListener(Result.RemovedFromWaitList()) }, networkDelay)
+        Handler().postDelayed({ resultReadyListener(Result.RemovedFromWaitList) }, networkDelay)
     }
 
     private fun addIfNotExist(ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
@@ -77,7 +77,7 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         }
         parkedCars
                 .filter { it.regNo == ownCar.regNo }
-                .forEach {
+                .forEach {// todo: what is this doing, why isn't it using the it parameter?
                     resultReadyListener(Result.Success(parkedCars))
                     return
                 }

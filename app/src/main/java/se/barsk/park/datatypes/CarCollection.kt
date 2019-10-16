@@ -11,10 +11,12 @@ import se.barsk.park.ParkApp
 open class CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
+    @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
     protected val ownCars: MutableList<OwnCar> by lazy { readCarsFromStorage() }
 
     protected open fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
 
+    @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
     protected fun notifyListeners() {
         for (listener in listeners) {
             listener.onCarCollectionStatusChange()
@@ -103,6 +105,7 @@ open class CarCollection {
      */
     private fun hasCar(otherCar: OwnCar): Boolean = ownCars.any { it.isSameCar(otherCar) }
 
+    @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
     fun positionOf(car: OwnCar): Int = positionOf(car.id)
 
     private fun positionOf(carId: String): Int {
@@ -120,18 +123,8 @@ open class CarCollection {
     fun getCar(id: String): OwnCar = ownCars[positionOf(id)]
 
     /**
-     * Returns the id for the car at the given position
-     */
-    fun getCarId(position: Int): String = ownCars[position].id
-
-    /**
      * Returns a list of all the cars in the collection.
      */
     fun getCars(): List<OwnCar> = ownCars.toList()
-
-    /**
-     * Returns the car at the given position.
-     */
-    fun getCarAtPosition(position: Int): OwnCar = ownCars[position]
 
 }

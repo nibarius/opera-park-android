@@ -13,6 +13,7 @@ import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.mainui.CarListEntry
+import kotlin.math.max
 
 
 /**
@@ -61,7 +62,7 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
 
     // Do a circular review animation for the check view.
     private fun circularReveal(view: View) {
-        val finalRadius = Math.max(view.width, view.height).toFloat()
+        val finalRadius = max(view.width, view.height).toFloat()
 
         val circularReveal = ViewAnimationUtils.createCircularReveal(view, 0, 0, 0f, finalRadius * 1.4f)
         circularReveal.duration = animationDuration
@@ -87,7 +88,7 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
 
     // Do a circular hide animation for the check view.
     private fun circularHide(view: View) {
-        val finalRadius = Math.max(view.width, view.height).toFloat()
+        val finalRadius = max(view.width, view.height).toFloat()
 
         val animation = ViewAnimationUtils.createCircularReveal(view, 0, 0, finalRadius * 1.4f, 0f)
         animation.duration = animationDuration

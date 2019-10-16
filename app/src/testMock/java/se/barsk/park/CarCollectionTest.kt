@@ -1,7 +1,6 @@
 package se.barsk.park
 
 import android.util.SparseBooleanArray
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.barsk.park.datatypes.Garage
@@ -98,9 +97,9 @@ class CarCollectionTest : RobolectricTest() {
         val toDelete = SparseBooleanArray()
         toDelete.put(0, true)
         carCollection.removeCars(toDelete)
-        Assert.assertEquals(2, carCollection.getCars().size)
-        Assert.assertEquals(car2, carCollection.getCarAtPosition(0))
-        Assert.assertEquals(car3, carCollection.getCarAtPosition(1))
+        assertEquals(2, carCollection.getCars().size)
+        assertEquals(car2, carCollection.getCarAtPosition(0))
+        assertEquals(car3, carCollection.getCarAtPosition(1))
     }
 
     @Test
@@ -112,9 +111,9 @@ class CarCollectionTest : RobolectricTest() {
         val toDelete = SparseBooleanArray()
         toDelete.put(2, true)
         carCollection.removeCars(toDelete)
-        Assert.assertEquals(2, carCollection.getCars().size)
-        Assert.assertEquals(car1, carCollection.getCarAtPosition(0))
-        Assert.assertEquals(car2, carCollection.getCarAtPosition(1))
+        assertEquals(2, carCollection.getCars().size)
+        assertEquals(car1, carCollection.getCarAtPosition(0))
+        assertEquals(car2, carCollection.getCarAtPosition(1))
     }
 
     @Test
@@ -127,8 +126,8 @@ class CarCollectionTest : RobolectricTest() {
         toDelete.put(0, true)
         toDelete.put(2, true)
         carCollection.removeCars(toDelete)
-        Assert.assertEquals(1, carCollection.getCars().size)
-        Assert.assertEquals(car2, carCollection.getCarAtPosition(0))
+        assertEquals(1, carCollection.getCars().size)
+        assertEquals(car2, carCollection.getCarAtPosition(0))
     }
 
     @Test
@@ -142,6 +141,6 @@ class CarCollectionTest : RobolectricTest() {
         toDelete.put(1, true)
         toDelete.put(2, true)
         carCollection.removeCars(toDelete)
-        Assert.assertEquals(0, carCollection.getCars().size)
+        assertEquals(0, carCollection.getCars().size)
     }
 }

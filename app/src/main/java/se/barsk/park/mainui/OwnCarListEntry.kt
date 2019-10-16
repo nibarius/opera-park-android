@@ -12,6 +12,7 @@ import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
+import java.util.*
 
 
 /**
@@ -41,7 +42,7 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
             context.getString(R.string.wait_label)
         }
         val firstLen = park.length
-        val spannable = SpannableString("${park.toUpperCase()}\n${car.regNo}")
+        val spannable = SpannableString("${park.toUpperCase(Locale.getDefault())}\n${car.regNo}")
         spannable.setSpan(RelativeSizeSpan(0.67f), 0, firstLen, 0)
         parkButton.text = spannable
         parkButton.setOnClickListener { listener?.invoke(car) }

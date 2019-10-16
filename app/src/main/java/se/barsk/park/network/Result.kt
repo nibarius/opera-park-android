@@ -8,7 +8,7 @@ import se.barsk.park.datatypes.ParkedCar
 sealed class Result {
     data class Success(val parkedCars: List<ParkedCar>) : Result()
     data class Fail(val parkedCars: List<ParkedCar>?, val message: String) : Result()
-    class NoServer : Result()
-    class AddedToWaitList() : Result()
-    class RemovedFromWaitList() : Result()
+    object NoServer : Result()
+    object AddedToWaitList : Result()
+    object RemovedFromWaitList : Result()
 }

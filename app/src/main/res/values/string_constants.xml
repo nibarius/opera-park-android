@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Non translatable string constants used in the code for storage and other things -->
 
     <!-- Filenames -->
-    <string name="shared_prefs_file_name" translatable="false">settings</string>
+    <string name="shared_prefs_file_name" translatable="false" tools:keep="@string/shared_prefs_file_name">settings</string>
     <string name="parked_cars_database_name" translatable="false">Park.db</string>
 
     <!-- Shared preferences keys -->

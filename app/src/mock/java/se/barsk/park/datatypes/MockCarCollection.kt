@@ -4,7 +4,7 @@ package se.barsk.park.datatypes
  * A mock implementation of the CarCollection with a hard coded list of cars to
  * get well defined data and stable data. It does not persist any changes to storage.
  */
-class MockCarCollection(var numCars: Int = 2) : CarCollection() {
+class MockCarCollection(private var numCars: Int = 2) : CarCollection() {
     override fun readCarsFromStorage(): MutableList<OwnCar> {
         val car1 = OwnCar("ALP 110", "Margaretha")
         val car2 = OwnCar("MLB 803", "Margaretha")
@@ -24,4 +24,9 @@ class MockCarCollection(var numCars: Int = 2) : CarCollection() {
         ownCars.addAll(newCars)
         notifyListeners()
     }
+
+    /**
+     * Returns the car at the given position.
+     */
+    fun getCarAtPosition(position: Int): OwnCar = ownCars[position]
 }

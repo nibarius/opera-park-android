@@ -1,5 +1,7 @@
 package se.barsk.park
 
+import java.util.*
+
 object Utils {
     /**
      * Adds a http:// to the beginning of an url if it doesn't have any protocol
@@ -28,5 +30,7 @@ object Utils {
      * and numbers.
      */
     fun fixRegnoForDisplay(regNo: String): String =
-            regNo.toUpperCase().replace("[A-Z][0-9]".toRegex()) { "${it.value[0]} ${it.value[1]}" }
+            regNo.toUpperCase(Locale.getDefault()).replace("[A-Z][0-9]".toRegex()) {
+                "${it.value[0]} ${it.value[1]}"
+            }
 }

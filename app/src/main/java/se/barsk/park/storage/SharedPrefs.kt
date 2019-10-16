@@ -20,12 +20,12 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val serverUrl = context.getString(R.string.key_park_server_url)
     private val usageStatistics = context.getString(R.string.key_usage_statistics)
     private val crashReporting = context.getString(R.string.key_crash_reporting)
-    private val defaultUsageStatistics = context.getString(R.string.default_usage_statistics)!!.toBoolean()
+    private val defaultUsageStatistics = context.getString(R.string.default_usage_statistics).toBoolean()
     private val refreshInterval = context.getString(R.string.key_refresh_interval)
     private val onWaitList = context.getString(R.string.key_on_wait_list)
-    private val defaultOnWaitList = context.getString(R.string.default_on_wait_list)!!.toBoolean()
+    private val defaultOnWaitList = context.getString(R.string.default_on_wait_list).toBoolean()
     private val privacyOnBoarding = context.getString(R.string.key_privacy_on_boarding)
-    private val defaultPrivacyOnBoarding = context.getString(R.string.default_privacy_on_boarding)!!.toBoolean()
+    private val defaultPrivacyOnBoarding = context.getString(R.string.default_privacy_on_boarding).toBoolean()
 
 
     private val internalServerChangeListener = InternalServerChangeListener()

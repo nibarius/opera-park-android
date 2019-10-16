@@ -77,9 +77,9 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
             "onSignInSuccessCallback is not null"
         }
         onSignInSuccessCallback = onSuccess
-        client.silentSignIn().addOnCompleteListener(activity, { completedTask ->
+        client.silentSignIn().addOnCompleteListener(activity) { completedTask ->
             handleSignInResult(completedTask)
-        })
+        }
     }
 
     private var onSignInSuccessCallback: (() -> Unit)? = null
@@ -104,12 +104,6 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueNo)
     }
 
-    fun revokeAccess() {
-        // forget me and delete all data stored (need to delete data on the server)
-        signOut()
-        client.revokeAccess()
-    }
-
     /**
      * Does a silent sign in and if it succeeds it calls the given function with
      * the newly updated token (which is guaranteed to be not null).
@@ -119,7 +113,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
      * has finished successfully
      */
     fun doWithFreshToken(activity: Activity, doWith: (String) -> Unit) {
-        silentSignIn(activity, { doWith(token!!) })
+        silentSignIn(activity) { doWith(token!!) }
     }
 
     fun onSignInResult(data: Intent?) {

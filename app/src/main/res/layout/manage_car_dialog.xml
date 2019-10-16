@@ -12,7 +12,8 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="8dp"
-        android:hint="@string/manage_car_dialog_license_plate_hint" />
+        android:hint="@string/manage_car_dialog_license_plate_hint"
+        android:importantForAutofill="no" />
     <EditText
         android:id="@+id/owner"
         android:inputType="text"
@@ -21,5 +22,6 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="8dp"
-        android:hint="@string/manage_car_dialog_owner_hint"/>
+        android:hint="@string/manage_car_dialog_owner_hint"
+        android:importantForAutofill="no" />
 </LinearLayout>

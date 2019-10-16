@@ -5,7 +5,6 @@ import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
-import se.barsk.park.storage.StorageManager
 
 /**
  * Object for handling crash reporting

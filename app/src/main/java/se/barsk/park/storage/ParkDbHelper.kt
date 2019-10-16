@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class ParkDbHelper(context: Context, dbName: String) : SQLiteOpenHelper(context, dbName, null, DATABASE_VERSION) {
     companion object {
-        val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 1
     }
 
     override fun onCreate(db: SQLiteDatabase?) {

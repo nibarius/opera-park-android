@@ -34,16 +34,13 @@
     <color name="colorWhite">#ffffffff</color>
     <color name="colorGray50">#fffafafa</color>
     <color name="colorGray100">#fff5f5f5</color>
-    <color name="colorGray300">#ffe0e0e0</color>
     <color name="colorGray600">#ff757575</color>
     <color name="colorBlack87percent">#de000000</color>
     <color name="colorBlack54percent">#8a000000</color>
     <color name="colorBlack38percent">#61000000</color>
-    <color name="colorBlack26percent">#42000000</color>
 
     <color name="colorPlaceholderText">@color/colorBlack38percent</color>
     <color name="colorPrimaryDarkText">@color/colorBlack87percent</color>
-    <color name="colorDisabled">@color/colorBlack26percent</color>
     <color name="colorCabBackground">@color/colorGray100</color>
 
     <color name="colorAvatarTextColor">#b3ffffff</color>

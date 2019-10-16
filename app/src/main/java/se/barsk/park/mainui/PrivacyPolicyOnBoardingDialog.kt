@@ -29,8 +29,8 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
         val message = getString(R.string.ppo_dialog_message, Backend.privacyStatementUrl).fromHtml()
         builder.setTitle(getString(R.string.ppo_dialog_title))
                 .setMessage(message)
-                .setNegativeButton(R.string.ppo_dialog_negative, { _, _ -> decline() })
-                .setPositiveButton(getString(R.string.ppo_dialog_positive), { _, _ -> accept() })
+                .setNegativeButton(R.string.ppo_dialog_negative) { _, _ -> decline() }
+                .setPositiveButton(getString(R.string.ppo_dialog_positive)) { _, _ -> accept() }
         return builder.create()
     }
 

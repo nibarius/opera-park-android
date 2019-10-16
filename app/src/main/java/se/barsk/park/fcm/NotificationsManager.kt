@@ -17,6 +17,8 @@ open class NotificationsManager {
      */
     open val pushToken: String?
         get() = FirebaseInstanceId.getInstance().token
+    //todo: fix deprecation https://firebase.google.com/docs/cloud-messaging/android/client
+    // getting token is now an async call, need to handle things asynchronously
 
     /**
      * Creates all the notification channels used by the app.

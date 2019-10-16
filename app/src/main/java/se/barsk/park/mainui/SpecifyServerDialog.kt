@@ -1,5 +1,6 @@
 package se.barsk.park.mainui
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -16,7 +17,9 @@ import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.Utils
 
-
+// OK to ignore on Alert dialogs
+// https://wundermanthompsonmobile.com/2013/05/layout-inflation-as-intended/
+@SuppressLint("InflateParams")
 class SpecifyServerDialog : DialogFragment() {
 
     interface SpecifyServerDialogListener {
@@ -54,18 +57,18 @@ class SpecifyServerDialog : DialogFragment() {
         val dialog = AlertDialog.Builder(requireContext())
                 .setTitle(R.string.specify_server_dialog_title)
                 .setView(dialogView)
-                .setNegativeButton(R.string.dialog_button_cancel, { _, _ ->
+                .setNegativeButton(R.string.dialog_button_cancel) { _, _ ->
                     dialog!!.cancel() //todo: null
-                })
-                .setPositiveButton(R.string.dialog_button_ok, { _, _: Int ->
+                }
+                .setPositiveButton(R.string.dialog_button_ok) { _, _: Int ->
                     ParkApp.storageManager.setServer(editText.text.toString())
                     listener.parkServerChanged()
-                })
+                }
                 .create()
-        editText.setOnEditorActionListener({ _, _, _ ->
+        editText.setOnEditorActionListener { _, _, _ ->
             dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
             false
-        })
+        }
         editText.setText(ParkApp.storageManager.getServer())
         dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams .FLAG_ALT_FOCUSABLE_IM) // todo: null
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)  // todo: null

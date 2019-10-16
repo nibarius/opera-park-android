@@ -12,5 +12,5 @@
         android:hint="@string/park_server_input_hint"
         android:inputType="textUri"
         android:imeOptions="actionDone"
-        />
+        android:importantForAutofill="no" />
 </FrameLayout>

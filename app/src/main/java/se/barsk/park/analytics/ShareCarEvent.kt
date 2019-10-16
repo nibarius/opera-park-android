@@ -9,7 +9,7 @@ class ShareCarEvent(carsShared: Int) : AnalyticsEvent() {
     override val name: String = FirebaseAnalytics.Event.SHARE
 
     init {
-        parameters.putInt(AnalyticsEvent.Param.CARS_SHARED, carsShared)
+        parameters.putInt(Param.CARS_SHARED, carsShared)
         parameters.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "car")
     }
 }

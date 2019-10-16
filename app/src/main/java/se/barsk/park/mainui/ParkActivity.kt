@@ -117,21 +117,21 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        parkedCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        parkedCarsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         parkedCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.PARKED_CARS,
-                garage.parkedCars, { /*listener that does nothing */ })
+                garage.parkedCars) { /*listener that does nothing */ }
 
         ownCarsRecyclerView.layoutManager =
                 if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
-                    LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+                    LinearLayoutManager(this, RecyclerView.VERTICAL, false)
                 else
-                    LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         ownCarsRecyclerView.adapter = OwnCarsAdapter(ParkApp.carCollection.getCars(), this::onOwnCarClicked)
 
         val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
-        addCarButton.setOnClickListener { _ -> navigateToManageCarsAndAddCar() }
+        addCarButton.setOnClickListener { navigateToManageCarsAndAddCar() }
 
         pullToRefreshView.setOnRefreshListener { garage.updateStatus(applicationContext) }
 
@@ -186,7 +186,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data)
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == SignInHandler.REQUEST_CODE_SIGN_IN) {
@@ -234,7 +234,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         // the recyclerview have started animating the changes. Post a message on the message
         // queue to continue after the recycler view have started animations so we can detect
         // if they are still going
-        Handler().post({ showParkedCarsPlaceholderIfNeededAfterAnimations() })
+        Handler().post { showParkedCarsPlaceholderIfNeededAfterAnimations() }
     }
 
     /**
@@ -273,7 +273,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.no_server_placeholder_button)
-                parkServerButton.setOnClickListener { _ -> showServerDialog() }
+                parkServerButton.setOnClickListener { showServerDialog() }
             }
             ParkingState.REQUEST_FAILED -> {
                 // failed to communicate with server
@@ -282,7 +282,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
-                parkServerButton.setOnClickListener { _ ->
+                parkServerButton.setOnClickListener {
                     ParkApp.networkManager.resetState()
                     garage.updateStatus(applicationContext)
                     updateParkingState()

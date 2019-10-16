@@ -38,8 +38,8 @@ class MustSignInDialog : DialogFragment() {
 
         builder.setTitle(getString(R.string.sign_in_dialog_title))
                 .setMessage(getString(R.string.sign_in_dialog_message))
-                .setNegativeButton(R.string.dialog_button_cancel, { _, _ -> })
-                .setPositiveButton(getString(R.string.sign_in_dialog_positive_button), { _, _ -> listener?.onSignInDialogPositiveClick() })
+                .setNegativeButton(R.string.dialog_button_cancel) { _, _ -> }
+                .setPositiveButton(getString(R.string.sign_in_dialog_positive_button)) { _, _ -> listener?.onSignInDialogPositiveClick() }
         return builder.create()
     }
 }

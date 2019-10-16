@@ -13,7 +13,7 @@
     </item>
     <item
         android:id="@+id/menu_sign_in"
-        android:title="Sign in"
+        android:title="@string/sign_in_menu_entry"
         app:showAsAction="collapseActionView">
     </item>
 </menu>

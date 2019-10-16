@@ -17,7 +17,7 @@ open class CarsAdapter(private val type: Type, var cars: List<Car>, val listener
     var recyclerView: RecyclerView? = null
 
     init {
-        setHasStableIds(true)
+        setHasStableIds(true) //todo: can this be moved into the onAttachedToRecyclerView instead?
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -48,7 +48,7 @@ open class CarsAdapter(private val type: Type, var cars: List<Car>, val listener
             (holder.itemView as CarListEntry).showItem(cars[position])
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun onClick(listener: (car: Car) -> Unit) = itemView.setOnClickListener { _ ->
+        fun onClick(listener: (car: Car) -> Unit) = itemView.setOnClickListener {
             listener.invoke(cars[adapterPosition])
         }
     }

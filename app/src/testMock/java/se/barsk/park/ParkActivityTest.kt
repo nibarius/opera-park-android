@@ -609,12 +609,6 @@ class ParkActivityTest : RobolectricTest() {
         button.text.shouldStartWith(context().getString(R.string.unpark_label).toUpperCase())
     }
 
-    private fun carIsNotParkable(car: OwnCarListEntry) {
-        val button = car.park_button
-        button.isEnabled.shouldBeFalse()
-        button.text.shouldStartWith(context().getString(R.string.park_label).toUpperCase())
-    }
-
     private fun carCanBePutOnWaitList(car: OwnCarListEntry) {
         val button = car.park_button
         button.isEnabled.shouldBeTrue()

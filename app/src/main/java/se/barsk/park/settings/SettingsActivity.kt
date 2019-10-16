@@ -26,7 +26,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         val fragment = ParkPreferenceFragment()
-        fragment.setThirdPartyClickListener({ showThirdPartyList() })
+        fragment.setThirdPartyClickListener { showThirdPartyList() }
         fragmentManager.beginTransaction().replace(android.R.id.content, fragment).commit()
     }
 

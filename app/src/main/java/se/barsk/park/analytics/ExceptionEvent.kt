@@ -7,9 +7,9 @@ class ExceptionEvent(msg: String, exception: String? = null) : AnalyticsEvent() 
     override val name: String = "generic_failure"
 
     init {
-        parameters.putString(AnalyticsEvent.Param.MESSAGE, msg)
+        parameters.putString(Param.MESSAGE, msg)
         if (exception != null) {
-            parameters.putString(AnalyticsEvent.Param.EXCEPTION,
+            parameters.putString(Param.EXCEPTION,
                     exception.substring(0, minOf(100, exception.length)))
         }
     }

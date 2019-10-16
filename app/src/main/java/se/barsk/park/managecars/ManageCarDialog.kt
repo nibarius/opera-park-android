@@ -1,5 +1,6 @@
 package se.barsk.park.managecars
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -16,6 +17,9 @@ import android.widget.EditText
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
+// OK to ignore on Alert dialogs
+// https://wundermanthompsonmobile.com/2013/05/layout-inflation-as-intended/
+@SuppressLint("InflateParams")
 abstract class ManageCarDialog : DialogFragment() {
     interface ManageCarDialogListener {
         fun onDialogPositiveClick(newCar: OwnCar, dialogType: DialogType)
@@ -26,6 +30,7 @@ abstract class ManageCarDialog : DialogFragment() {
     abstract fun fetchOwnCar(): OwnCar
 
     var listener: ManageCarDialogListener? = null
+
     private val dialogView: View by lazy { requireActivity().layoutInflater.inflate(R.layout.manage_car_dialog, null) as View }
     private val fab: FloatingActionButton by lazy { requireActivity().findViewById<FloatingActionButton>(R.id.manage_cards_fab) }
     private val regNoView: EditText by lazy { dialogView.findViewById<EditText>(R.id.regno) }
@@ -64,8 +69,8 @@ abstract class ManageCarDialog : DialogFragment() {
 
         builder.setView(dialogView)
                 .setTitle(dialogTitle)
-                .setNegativeButton(R.string.dialog_button_cancel, { _, _ -> })
-                .setPositiveButton(R.string.dialog_button_save, { _, _ ->
+                .setNegativeButton(R.string.dialog_button_cancel) { _, _ -> }
+                .setPositiveButton(R.string.dialog_button_save) { _, _ ->
                     val newCar = OwnCar(
                             regNoView.text.toString().trim(),
                             ownerView.text.toString().trim(),
@@ -73,12 +78,12 @@ abstract class ManageCarDialog : DialogFragment() {
                             ownCar.id
                     )
                     listener?.onDialogPositiveClick(newCar, dialogType)
-                })
+                }
         val dialog = builder.create()
-        ownerView.setOnEditorActionListener({ _, _, _ ->
+        ownerView.setOnEditorActionListener { _, _, _ ->
             dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
             false
-        })
+        }
         dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) // todo: null
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)  // todo: null
         return dialog

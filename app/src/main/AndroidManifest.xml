@@ -43,7 +43,8 @@
             android:label="@string/settings_activity_title"
             android:launchMode="singleTask"/>
         <service
-            android:name=".fcm.ParkFirebaseMessagingService">
+            android:name=".fcm.ParkFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

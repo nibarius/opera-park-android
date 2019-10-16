@@ -107,8 +107,8 @@ class SharedPreferencesTest : RobolectricTest() {
         val context = context()
         val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val sharedPrefs = SharedPrefs(context, sharedPreferences)
-        Assert.assertEquals(context.getString(R.string.default_usage_statistics)!!.toBoolean(), sharedPrefs.crashReportingEnabled())
-        Assert.assertEquals(context.getString(R.string.default_usage_statistics)!!.toBoolean(), sharedPrefs.statsEnabled())
+        Assert.assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.crashReportingEnabled())
+        Assert.assertEquals(context.getString(R.string.default_usage_statistics).toBoolean(), sharedPrefs.statsEnabled())
         Assert.assertEquals(context.getString(R.string.default_refresh_interval).toLong(), sharedPrefs.getAutomaticUpdateInterval())
     }
 }

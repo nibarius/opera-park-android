@@ -3,17 +3,16 @@ package se.barsk.park.managecars
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.ViewSwitcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.ViewSwitcher
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import se.barsk.park.*
 import se.barsk.park.analytics.ShareCarEvent
 import se.barsk.park.datatypes.Car
@@ -43,9 +42,10 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private var actionMode: ActionMode? = null
-    fun getActionMode() = actionMode // Only used to access actionMode in tests.
+    @Suppress("unused")  // Used to access actionMode in tests in the mock flavor
+    fun getActionMode() = actionMode
     private val adapter: SelectableCarsAdapter by lazy {
-        SelectableCarsAdapter(ParkApp.carCollection.getCars(), {})
+        SelectableCarsAdapter(ParkApp.carCollection.getCars()) {}
     }
     private val manageCarsRecyclerView: RecyclerView by lazy {
         findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
@@ -71,7 +71,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_cars)
 
-        manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         manageCarsRecyclerView.itemAnimator = DefaultItemAnimator()
         manageCarsRecyclerView.adapter = adapter
         val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView,
@@ -81,7 +81,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
                 })
         manageCarsRecyclerView.addOnItemTouchListener(touchListener)
 
-        fab.setOnClickListener { _ -> showAddDialog() }
+        fab.setOnClickListener { showAddDialog() }
 
         if (intent.getBooleanExtra(INTENT_EXTRA_ADD_CAR, false)) {
             showAddDialog()
@@ -176,7 +176,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         // the recyclerview have started animating the changes. Post a message on the message
         // queue to continue after the recycler view have started animations so we can detect
         // if they are still going
-        Handler().post({ showCarsPlaceholderIfNeededAfterAnimation() })
+        Handler().post { showCarsPlaceholderIfNeededAfterAnimation() }
     }
 
     private fun showCarsPlaceholderIfNeededAfterAnimation() {

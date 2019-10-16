@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import android.view.View
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
+import kotlin.math.abs
 
 
 /**
@@ -26,7 +27,7 @@ interface CarListEntry {
 
     fun getColorForCar(car: Car, context: Context): Int {
         val colors = context.resources.getIntArray(R.array.avatar_background_color)
-        return colors[Math.abs(car.regNo.hashCode()) % colors.size]
+        return colors[abs(car.regNo.hashCode()) % colors.size]
     }
 
     private fun setBackgroundPreservePadding(view: View, background: Drawable) {

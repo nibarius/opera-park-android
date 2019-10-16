@@ -56,6 +56,7 @@ open class NetworkManager {
         state = State.FIRST_RESPONSE_NOT_RECEIVED
     }
 
+    @Suppress("MemberVisibilityCanBePrivate") // Used from subclass in mock flavor
     protected fun readServerFromStorage() = ParkApp.storageManager.getServer()
 
     /**
@@ -66,7 +67,7 @@ open class NetworkManager {
     open fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
         val serverUrl = readServerFromStorage()
         if (serverUrl.isEmpty()) {
-            resultReadyListener(Result.NoServer())
+            resultReadyListener(Result.NoServer)
             return
         }
         updateState = UpdateState.UPDATE_IN_PROGRESS
@@ -76,11 +77,11 @@ open class NetworkManager {
                     updateState = UpdateState.IDLE
                     when (result) {
                         is com.github.kittinunf.result.Result.Failure -> {
-                            val (_, error) = result
+                            val (_, fuelError) = result
                             if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
                                 state = State.ONLY_FAILED_REQUESTS
                             }
-                            resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, error)))
+                            resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, fuelError)))
                         }
                         is com.github.kittinunf.result.Result.Success -> {
                             try {
@@ -103,6 +104,7 @@ open class NetworkManager {
                 }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate") // Used in mock flavor
     internal fun getParkedCarsFromResponse(data: JSONObject): List<ParkedCar> {
         val usedSpots: JSONArray = data.getJSONArray("used")
         val parkedCars: MutableList<ParkedCar> = mutableListOf()
@@ -201,7 +203,7 @@ open class NetworkManager {
                 .body(body).response { _, response, result ->
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
-                            resultReadyListener(Result.AddedToWaitList())
+                            resultReadyListener(Result.AddedToWaitList)
                         }
                         is com.github.kittinunf.result.Result.Failure -> {
                             val errorMessage = context.getString(R.string.wait_list_registration_failed)
@@ -227,7 +229,7 @@ open class NetworkManager {
                 .response { _, response, result ->
                     when (result) {
                         is com.github.kittinunf.result.Result.Success -> {
-                            resultReadyListener(Result.RemovedFromWaitList())
+                            resultReadyListener(Result.RemovedFromWaitList)
                         }
                         is com.github.kittinunf.result.Result.Failure -> {
                             val errorMessage = context.getString(R.string.wait_list_unregistration_failed)

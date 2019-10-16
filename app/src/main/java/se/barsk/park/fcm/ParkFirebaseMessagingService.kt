@@ -1,7 +1,6 @@
 package se.barsk.park.fcm
 
 import android.util.Base64
-import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONException

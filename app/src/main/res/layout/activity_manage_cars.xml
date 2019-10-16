@@ -47,6 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:rippleColor="@color/colorFabRippleColor"
         android:clickable="true"
+        android:focusable="true"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
