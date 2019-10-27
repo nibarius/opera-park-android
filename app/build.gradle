@@ -14,6 +14,10 @@ android {
     compileSdkVersion 29
     buildToolsVersion '29.0.2'
     testOptions.unitTests.includeAndroidResources true
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
     defaultConfig {
         applicationId "se.barsk.park"
         minSdkVersion 21
