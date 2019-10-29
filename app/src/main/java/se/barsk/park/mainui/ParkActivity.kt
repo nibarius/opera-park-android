@@ -7,18 +7,21 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import androidx.core.content.ContextCompat
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.*
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.ViewSwitcher
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
@@ -30,8 +33,8 @@ import se.barsk.park.analytics.ParkActionEvent
 import se.barsk.park.datatypes.*
 import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.managecars.ManageCarsActivity
-import se.barsk.park.network.NetworkManager
 import se.barsk.park.settings.SettingsActivity
+import se.barsk.park.storage.SettingsChangeListener
 import se.barsk.park.utils.TimeUtils
 
 
@@ -44,8 +47,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     override fun parkServerChanged() {
+        networkState.resetState()
         garage.clear()
-        garage.updateStatus(applicationContext)
+        updateGarageFromServer()
     }
 
     // called when the garage status change (happens just after the update is ready in the success case)
@@ -56,6 +60,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     // called when the network request is done
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
+        networkState.requestFinished(success)
+
         pullToRefreshView.isRefreshing = false
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
@@ -89,6 +95,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private val garage: Garage = Garage()
+    private val networkState = NetworkState()
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
@@ -133,10 +140,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
         addCarButton.setOnClickListener { navigateToManageCarsAndAddCar() }
 
-        pullToRefreshView.setOnRefreshListener { garage.updateStatus(applicationContext) }
+        pullToRefreshView.setOnRefreshListener { updateGarageFromServer() }
 
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
+        ParkApp.storageManager.settingsChangeListener = ServerChangeFromSettingsListener()
         showOwnCarsPlaceholderIfNeeded()
         NotificationsManager().createNotificationChannels(applicationContext)
     }
@@ -157,15 +165,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         if (TimeUtils.isBeforeReset(lastGarageUpdateTime) && TimeUtils.isAfterReset(TimeUtils.now())) {
             // The server have automatically reset the parked cars since last update so assume
             // the garage is empty and that we haven't talked to the server yet.
+            networkState.resetState()
             garage.clear()
-            ParkApp.networkManager.resetState()
         }
 
         if (serverBeforePause != null && serverBeforePause != ParkApp.storageManager.getServer()) {
             // Server has changed since last time the activity was open
             parkServerChanged()
         } else {
-            garage.updateStatus(applicationContext)
+            updateGarageFromServer()
         }
         // when coming back to the activity the garage status must be updated to be in the correct
         // state before we've gotten the first response from the server.
@@ -182,6 +190,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         super.onPause()
         serverBeforePause = ParkApp.storageManager.getServer()
         automaticUpdateTask.stop()
+    }
+
+    override fun onDestroy() {
+        ParkApp.storageManager.settingsChangeListener = null
+        super.onDestroy()
     }
 
 
@@ -208,12 +221,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun automaticUpdate() {
         // Only try to update if we can communicate with the server and there is no update
         // in progress
-        if (parkingState.communicatesWithServer() &&
-                ParkApp.networkManager.updateState != NetworkManager.UpdateState.UPDATE_IN_PROGRESS) {
-            garage.updateStatus(applicationContext)
+        if (parkingState.communicatesWithServer() && networkState.updateInProgress) {
+            updateGarageFromServer()
         }
     }
 
+    private fun updateGarageFromServer() {
+        networkState.requestStarted()
+        garage.updateStatusFromServer(applicationContext)
+    }
 
     /**
      * Show list of own cars if there are any own cars, otherwise show the placeholder.
@@ -283,8 +299,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
                 parkServerButton.setOnClickListener {
-                    ParkApp.networkManager.resetState()
-                    garage.updateStatus(applicationContext)
+                    networkState.resetState()
+                    updateGarageFromServer()
                     updateParkingState()
                     setCorrectParkedCarsPlaceholder()
                 }
@@ -313,9 +329,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun updateParkingState() {
         parkingState = if (!ParkApp.storageManager.hasServer()) {
             ParkingState.NO_SERVER
-        } else if (ParkApp.networkManager.state == NetworkManager.State.ONLY_FAILED_REQUESTS) {
+        } else if (networkState.hasMadeFailedRequestsOnly()) {
             ParkingState.REQUEST_FAILED
-        } else if (ParkApp.networkManager.state == NetworkManager.State.FIRST_RESPONSE_NOT_RECEIVED) {
+        } else if (networkState.isWaitingForFirstResponse()) {
             ParkingState.WAITING_ON_RESPONSE
         } else if (garage.isEmpty()) {
             ParkingState.EMPTY
@@ -502,6 +518,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 parkServerChanged()
             }
             ParkApp.carCollection.addCarsThatDoesNotExist(deepLink.cars)
+        }
+    }
+
+    inner class ServerChangeFromSettingsListener : SettingsChangeListener {
+        override fun onSettingsChanged(which: SettingsChangeListener.Setting) {
+            if (which == SettingsChangeListener.Setting.SERVER) {
+                parkServerChanged()
+            }
         }
     }
 }

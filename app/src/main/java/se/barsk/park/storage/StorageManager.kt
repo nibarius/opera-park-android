@@ -10,6 +10,12 @@ open class StorageManager(context: Context) {
     private val sharedPrefs: SharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences(context))
     private val database: Database = Database(context)
 
+    var settingsChangeListener: SettingsChangeListener?
+        get() = sharedPrefs.settingsChangeListener
+        set(value) {
+            sharedPrefs.settingsChangeListener = value
+        }
+
     // Shared preferences interaction functions
     open fun hasServer() = sharedPrefs.hasServer()
 

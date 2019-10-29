@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import se.barsk.park.BuildConfig
-import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.Utils
 import se.barsk.park.utils.TimeUtils
@@ -27,7 +26,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val privacyOnBoarding = context.getString(R.string.key_privacy_on_boarding)
     private val defaultPrivacyOnBoarding = context.getString(R.string.default_privacy_on_boarding).toBoolean()
 
-
+    var settingsChangeListener: SettingsChangeListener? = null
     private val internalServerChangeListener = InternalServerChangeListener()
 
     init {
@@ -151,7 +150,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     inner class InternalServerChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
             if (key == serverUrl) {
-                ParkApp.networkManager.serverChanged()
+                settingsChangeListener?.onSettingsChanged(SettingsChangeListener.Setting.SERVER)
             }
         }
     }

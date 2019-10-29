@@ -33,7 +33,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
     fun isParked(car: OwnCar): Boolean = parkedCars.any { it.regNo == car.regNo }
     fun isFull(): Boolean = parkedCars.size == CAPACITY
     fun isEmpty(): Boolean = parkedCars.isEmpty()
-    fun updateStatus(context: Context) = ParkApp.networkManager.checkStatus(context, this::onResultReady)
+    fun updateStatusFromServer(context: Context) = ParkApp.networkManager.checkStatus(context, this::onResultReady)
     fun parkCar(context: Context, car: OwnCar) = ParkApp.networkManager.parkCar(context, car, this::onResultReady)
     fun unparkCar(context: Context, car: OwnCar) = ParkApp.networkManager.unparkCar(context, car, this::onResultReady)
 

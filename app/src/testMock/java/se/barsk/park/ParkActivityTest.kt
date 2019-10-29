@@ -2,8 +2,8 @@ package se.barsk.park
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.google.firebase.FirebaseApp
 import kotlinx.android.synthetic.main.content_park.*
 import kotlinx.android.synthetic.main.own_car_entry.view.*
@@ -253,6 +253,48 @@ class ParkActivityTest : RobolectricTest() {
         listOfParkedCarsShown(activity)
 
         controller.pause().stop().destroy()
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun parkedCarsListActivityDestroyResumeNotEmptyLandscape() = parkedCarsListActivityDestroyResumeNotEmptyTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun parkedCarsListActivityDestroyResumeNotEmptyPortrait() = parkedCarsListActivityDestroyResumeNotEmptyTest()
+
+    // Test that the pause, stop, destroy, create, start, resume lifecycle works as it should
+    // This happens for example when minimizing the app using hardware back
+    private fun parkedCarsListActivityDestroyResumeNotEmptyTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(3)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // First there is a placeholder with an a progress spinner
+        loadingPlaceholderShown(activity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(activity)
+
+        // Press HW back to close the app, then open the app again
+        controller.pause().stop().destroy()
+        val controller2 = Robolectric.buildActivity(ParkActivity::class.java)
+        val newActivity = controller2.create().start().resume().visible().get()
+
+        // After coming back to the app is a placeholder with an a progress spinner
+        loadingPlaceholderShown(newActivity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        listOfParkedCarsShown(newActivity)
+
+        controller2.pause().stop().destroy()
     }
 
     @Test

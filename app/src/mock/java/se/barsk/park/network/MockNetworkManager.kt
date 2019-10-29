@@ -32,19 +32,13 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
             resultReadyListener(Result.NoServer)
             return
         }
-        updateState = UpdateState.UPDATE_IN_PROGRESS
         Handler().postDelayed({ resultReady(resultReadyListener) }, networkDelay)
     }
 
     private fun resultReady(resultReadyListener: (Result) -> Unit) {
         if (hasConnection) {
-            updateState = UpdateState.IDLE
-            state = State.HAVE_MADE_SUCCESSFUL_REQUEST
             resultReadyListener(Result.Success(parkedCars))
         } else {
-            if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
-                state = State.ONLY_FAILED_REQUESTS
-            }
             resultReadyListener(Result.Fail(null, ""))
         }
     }

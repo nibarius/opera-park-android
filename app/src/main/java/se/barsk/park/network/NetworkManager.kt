@@ -27,34 +27,7 @@ open class NetworkManager {
 
     private val userAgent = "Opark/${BuildConfig.VERSION_NAME}"
 
-    /**
-     * Describes the state of the NetworkManager. This can be used to decide which
-     * placeholder should shown to the user if there are no data from the server available.
-     */
-    enum class State {
-        FIRST_RESPONSE_NOT_RECEIVED,
-        ONLY_FAILED_REQUESTS,
-        HAVE_MADE_SUCCESSFUL_REQUEST
-    }
-
-    enum class UpdateState {
-        IDLE,
-        UPDATE_IN_PROGRESS
-    }
-
-    var state: State = State.FIRST_RESPONSE_NOT_RECEIVED
-    var updateState: UpdateState = UpdateState.IDLE
-
     private enum class Action { PARK, UNPARK }
-
-    /**
-     * Call this to notify the NetworkManager that the sever has been changed.
-     */
-    fun serverChanged() = resetState()
-
-    fun resetState() {
-        state = State.FIRST_RESPONSE_NOT_RECEIVED
-    }
 
     @Suppress("MemberVisibilityCanBePrivate") // Used from subclass in mock flavor
     protected fun readServerFromStorage() = ParkApp.storageManager.getServer()
@@ -70,25 +43,18 @@ open class NetworkManager {
             resultReadyListener(Result.NoServer)
             return
         }
-        updateState = UpdateState.UPDATE_IN_PROGRESS
         Fuel.get(serverUrl + STATUS)
                 .header(mapOf("User-Agent" to userAgent))
                 .responseJson { _, _, result ->
-                    updateState = UpdateState.IDLE
                     when (result) {
                         is com.github.kittinunf.result.Result.Failure -> {
                             val (_, fuelError) = result
-                            if (state == State.FIRST_RESPONSE_NOT_RECEIVED) {
-                                state = State.ONLY_FAILED_REQUESTS
-                            }
                             resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, fuelError)))
                         }
                         is com.github.kittinunf.result.Result.Success -> {
                             try {
                                 val data: JSONObject = result.getAs<FuelJson>()?.obj() as JSONObject
                                 val parkedCars = getParkedCarsFromResponse(data)
-                                state = State.HAVE_MADE_SUCCESSFUL_REQUEST
-
                                 resultReadyListener(Result.Success(parkedCars))
                             } catch (e: org.json.JSONException) {
                                 val errorMessage = context.getString(R.string.failed_to_update) +

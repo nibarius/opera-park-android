@@ -19,6 +19,7 @@ class MockStorageManager(context: Context) : StorageManager(context) {
 
     // No stats or crash reporting when mocking.
     override fun statsEnabled(): Boolean = false
+
     override fun crashReportingEnabled(): Boolean = false
     override fun getAutomaticUpdateInterval(): Long = 0
 
