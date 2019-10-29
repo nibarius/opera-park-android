@@ -35,7 +35,7 @@
     <string name="menu_settings_entry">Settings</string>
     <string name="menu_manage_cars_entry">Manage cars</string>
     <string name="my_cars_label">My cars</string>
-    <string name="park_server_input_hint" translatable="false">http://park.example.com/</string>
+    <string name="park_server_input_hint" translatable="false">https://park.example.com/</string>
     <string name="park_status_full">Full</string>
     <plurals name="park_status_free">
         <item quantity="one">Last spot</item>
