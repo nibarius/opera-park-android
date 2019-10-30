@@ -5,15 +5,14 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
@@ -90,7 +89,7 @@ abstract class ManageCarDialog : DialogFragment() {
     }
 
     private fun updatePositiveButton() {
-        val canSave = !TextUtils.isEmpty(regNoView.text) && !TextUtils.isEmpty(ownerView.text)
+        val canSave = regNoView.text.isNotBlank() && ownerView.text.isNotBlank()
         (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = canSave
     }
 

@@ -28,7 +28,7 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
     var hasConnection = true
 
     override fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
-        if (readServerFromStorage().isEmpty()) {
+        if (readServerFromStorage().isBlank()) {
             resultReadyListener(Result.NoServer)
             return
         }
@@ -44,14 +44,14 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
     }
 
     override fun parkCar(context: Context, ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
-        if (readServerFromStorage().isEmpty()) {
+        if (readServerFromStorage().isBlank()) {
             return
         }
         Handler().postDelayed({ addIfNotExist(ownCar, resultReadyListener) }, networkDelay)
     }
 
     override fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) {
-        if (readServerFromStorage().isEmpty()) {
+        if (readServerFromStorage().isBlank()) {
             return
         }
         Handler().postDelayed({ removeIfExists(car, resultReadyListener) }, networkDelay)

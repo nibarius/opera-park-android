@@ -9,7 +9,7 @@ object Utils {
      * Also trims any leading / trailing whitespace
      */
     fun fixUrl(url: String): String {
-        if (url.isEmpty()) {
+        if (url.isBlank()) {
             return ""
         }
 

@@ -39,7 +39,7 @@ open class NetworkManager {
      */
     open fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
         val serverUrl = readServerFromStorage()
-        if (serverUrl.isEmpty()) {
+        if (serverUrl.isBlank()) {
             resultReadyListener(Result.NoServer)
             return
         }
@@ -85,7 +85,7 @@ open class NetworkManager {
 
     private fun doAction(context: Context, ownCar: OwnCar, action: Action, resultReadyListener: (Result) -> Unit) {
         val serverUrl = readServerFromStorage()
-        if (serverUrl.isEmpty()) {
+        if (serverUrl.isBlank()) {
             return
         }
         val errorMessage: String
