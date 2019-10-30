@@ -1,23 +1,27 @@
-package se.barsk.park
+package se.barsk.park.utils
 
 import java.util.*
 
 object Utils {
     /**
-     * Adds a http:// to the beginning of an url if it doesn't have any protocol
+     * Adds a https:// to the beginning of an url if it doesn't have any protocol
      * Adds a / to the end of an url if it doesn't have any
-     * Also trims any leading / trailing whitespace
+     * Trims any leading / trailing whitespace
+     * Make the whole url lowercase
      */
     fun fixUrl(url: String): String {
         if (url.isBlank()) {
             return ""
         }
 
-        var fixedUrl = url.trim()
-        if (!url.startsWith("https://") && !url.startsWith("http://")) {
-            fixedUrl = "http://$fixedUrl"
+        var fixedUrl = url
+                .trim()
+                .toLowerCase(Locale.US)
+                .replace("http://", "https://")
+        if (!fixedUrl.startsWith("https://")) {
+            fixedUrl = "https://$fixedUrl"
         }
-        if (!url.endsWith("/")) {
+        if (!fixedUrl.endsWith("/")) {
             fixedUrl += "/"
         }
 

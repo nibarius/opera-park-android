@@ -15,7 +15,7 @@ import android.view.WindowManager
 import android.widget.EditText
 import se.barsk.park.ParkApp
 import se.barsk.park.R
-import se.barsk.park.Utils
+import se.barsk.park.utils.Utils
 
 // OK to ignore on Alert dialogs
 // https://wundermanthompsonmobile.com/2013/05/layout-inflation-as-intended/

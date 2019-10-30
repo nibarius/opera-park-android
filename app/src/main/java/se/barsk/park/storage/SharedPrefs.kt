@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
-import se.barsk.park.Utils
+import se.barsk.park.utils.Utils
 import se.barsk.park.utils.TimeUtils
 
 /**

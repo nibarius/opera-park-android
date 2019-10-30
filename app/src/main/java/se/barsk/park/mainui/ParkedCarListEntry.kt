@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import android.widget.TextView
 import se.barsk.park.R
-import se.barsk.park.Utils.fixRegnoForDisplay
+import se.barsk.park.utils.Utils.fixRegnoForDisplay
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.ParkedCar
 
