@@ -162,7 +162,7 @@ open class NetworkManager {
      */
     open fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
         val body = "{\"pushToken\": \"$pushToken\"}"
-        Fuel.post(Backend.waitListEndpoint)
+        Fuel.post(context.getString(R.string.url_wait_list_endpoint))
                 .authentication()
                 .basic(token, "")
                 .header(mapOf("Content-Type" to "application/json", "User-Agent" to userAgent))
@@ -188,7 +188,7 @@ open class NetworkManager {
      * @param resultReadyListener callback function to be called when the result is ready
      */
     open fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
-        Fuel.delete(Backend.waitListEndpoint)
+        Fuel.delete(context.getString(R.string.url_wait_list_endpoint))
                 .authentication()
                 .basic(token, "")
                 .header(mapOf("User-Agent" to userAgent))

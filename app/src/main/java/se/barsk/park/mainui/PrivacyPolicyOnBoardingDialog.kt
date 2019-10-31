@@ -3,16 +3,15 @@ package se.barsk.park.mainui
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
-import androidx.appcompat.app.AlertDialog
 import android.text.Html
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import se.barsk.park.ParkApp
 import se.barsk.park.R
-import se.barsk.park.network.Backend
 
 
 /**
@@ -26,7 +25,8 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
-        val message = getString(R.string.ppo_dialog_message, Backend.privacyStatementUrl).fromHtml()
+        val url = getString(R.string.url_privacy_statement)
+        val message = getString(R.string.ppo_dialog_message, url).fromHtml()
         builder.setTitle(getString(R.string.ppo_dialog_title))
                 .setMessage(message)
                 .setNegativeButton(R.string.ppo_dialog_negative) { _, _ -> decline() }

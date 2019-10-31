@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
-        android:defaultValue="@string/default_refresh_interval"
-        android:entries="@array/refresh_intervals"
-        android:entryValues="@array/refresh_interval_values"
-        android:key="@string/key_refresh_interval"
-        android:title="@string/refresh_interval"/>
+        app:defaultValue="@string/default_refresh_interval"
+        app:entries="@array/refresh_intervals"
+        app:entryValues="@array/refresh_interval_values"
+        app:key="@string/key_refresh_interval"
+        app:title="@string/refresh_interval"
+        app:useSimpleSummaryProvider="true"/>
     <EditTextPreference
-        android:defaultValue="@string/the_empty_string"
-        android:hint="@string/park_server_input_hint"
-        android:key="@string/key_park_server_url"
-        android:title="@string/settings_server"/>
+        app:defaultValue="@string/the_empty_string"
+        app:key="@string/key_park_server_url"
+        app:title="@string/settings_server"
+        app:useSimpleSummaryProvider="true"/>
     <PreferenceCategory
-        android:key="@string/key_privacy_group"
-        android:title="@string/settings_privacy_group_title">
+        app:key="@string/key_privacy_group"
+        app:title="@string/settings_privacy_group_title">
         <CheckBoxPreference
-            android:defaultValue="@string/default_usage_statistics"
-            android:key="@string/key_usage_statistics"
-            android:title="@string/settings_usage_statistics"/>
+            app:defaultValue="@string/default_usage_statistics"
+            app:key="@string/key_usage_statistics"
+            app:title="@string/settings_usage_statistics"/>
         <CheckBoxPreference
-            android:defaultValue="@string/default_usage_statistics"
-            android:key="@string/key_crash_reporting"
-            android:title="@string/settings_crash_reporting"/>
+            app:defaultValue="@string/default_usage_statistics"
+            app:key="@string/key_crash_reporting"
+            app:title="@string/settings_crash_reporting"/>
         <Preference
-            android:key="@string/key_privacy_statement"
-            android:title="@string/settings_privacy_statement"/>
+            app:key="@string/key_privacy_statement"
+            app:title="@string/settings_privacy_statement">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_privacy_statement" />
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="@string/key_about_group"
-        android:title="@string/settings_about_group_title">
+        app:key="@string/key_about_group"
+        app:title="@string/settings_about_group_title">
         <Preference
-            android:key="@string/key_version"
-            android:title="@string/settings_version"/>
+            app:key="@string/key_version"
+            app:title="@string/settings_version"/>
         <Preference
-            android:key="@string/key_third_party_licenses"
-            android:title="@string/notices_title"/>
+            app:key="@string/key_third_party_licenses"
+            app:title="@string/notices_title"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

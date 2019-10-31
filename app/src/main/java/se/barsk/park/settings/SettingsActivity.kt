@@ -1,16 +1,17 @@
 package se.barsk.park.settings
 
-import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
-import android.preference.*
+import android.text.InputType
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
-import se.barsk.park.network.Backend
 
 
 /**
@@ -27,9 +28,8 @@ class SettingsActivity : AppCompatActivity() {
         super.onPostCreate(savedInstanceState)
         val fragment = ParkPreferenceFragment()
         fragment.setThirdPartyClickListener { showThirdPartyList() }
-        fragmentManager.beginTransaction().replace(android.R.id.content, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(android.R.id.content, fragment).commit()
     }
-
 
     private fun showThirdPartyList() {
         val fragment = LicensesDialogFragment.Builder(this)
@@ -41,25 +41,21 @@ class SettingsActivity : AppCompatActivity() {
         fragment.show(supportFragmentManager, null)
     }
 
-    class ParkPreferenceFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
-
+    class ParkPreferenceFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
         private lateinit var thirdPartyListener: () -> Unit
+
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            preferenceManager.sharedPreferencesName =
+                    ParkApp.getSharedPreferencesFileName(requireActivity().applicationContext)
+            setPreferencesFromResource(R.xml.preferences, rootKey)
+        }
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) =
                 preferenceChanged(key)
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            preferenceManager.sharedPreferencesName =
-                    ParkApp.getSharedPreferencesFileName(activity.applicationContext)
-            addPreferencesFromResource(R.xml.preferences)
-        }
-
         override fun onResume() {
             super.onResume()
-            preferenceChanged(getString(R.string.key_refresh_interval))
-            preferenceChanged(getString(R.string.key_park_server_url))
-            setTitles()
+            setupPreferences()
             preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
 
@@ -68,38 +64,28 @@ class SettingsActivity : AppCompatActivity() {
             preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         }
 
-        override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen?, preference: Preference?): Boolean {
-            if (preference?.key == getString(R.string.key_third_party_licenses)) {
-                thirdPartyListener.invoke()
-            } else if (preference?.key == getString(R.string.key_privacy_statement)) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Backend.privacyStatementUrl)))
-            }
-            return super.onPreferenceTreeClick(preferenceScreen, preference)
-        }
-
         fun setThirdPartyClickListener(listener: () -> Unit) {
             thirdPartyListener = listener
         }
 
-        private fun setTitles() {
-            findPreference(getString(R.string.key_about_group)).title = getString(R.string.settings_about_group_title, getString(R.string.app_name))
-            findPreference(getString(R.string.key_version)).title = getString(R.string.settings_version, BuildConfig.VERSION_NAME)
+        private fun setupPreferences() {
+            findPreference<PreferenceCategory>(getString(R.string.key_about_group))
+                    ?.title = getString(R.string.settings_about_group_title, getString(R.string.app_name))
+            findPreference<Preference>(getString(R.string.key_version))?.title = getString(R.string.settings_version, BuildConfig.VERSION_NAME)
+            val serverPref = findPreference<EditTextPreference>(getString(R.string.key_park_server_url))
+            serverPref?.setOnBindEditTextListener { editText ->
+                editText.hint = getString(R.string.park_server_input_hint)
+                editText.inputType = InputType.TYPE_TEXT_VARIATION_URI
+            }
+            findPreference<Preference>(getString(R.string.key_third_party_licenses))
+                    ?.setOnPreferenceClickListener {
+                        thirdPartyListener()
+                        true
+                    }
         }
 
         private fun preferenceChanged(key: String) {
-            val pref = findPreference(key)
             when (key) {
-                getString(R.string.key_refresh_interval) -> {
-                    pref as ListPreference
-                    pref.summary = pref.entry
-                }
-                getString(R.string.key_park_server_url) -> {
-                    pref as EditTextPreference
-                    pref.summary = if (pref.text.isEmpty())
-                        getString(R.string.no_server_placeholder_text)
-                    else
-                        pref.text
-                }
                 getString(R.string.key_usage_statistics) -> {
                     ParkApp.storageManager.recordUsageStatisticsConsentChange()
                     ParkApp.analytics.optOutToggled()

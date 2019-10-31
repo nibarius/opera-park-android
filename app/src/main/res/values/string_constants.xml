@@ -34,4 +34,8 @@
     <string name="default_on_wait_list" translatable="false">false</string>
     <string name="default_privacy_on_boarding" translatable="false">false</string>
 
+    <!-- URLs for links in the app -->
+    <string name="url_privacy_statement" translatable="false">https://opera-park.appspot.com/privacy</string>
+    <string name="url_wait_list_endpoint" translatable="false">"https://opera-park.appspot.com/api/v1/waitList</string>
+
 </resources>
