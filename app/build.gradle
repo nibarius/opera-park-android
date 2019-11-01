@@ -114,7 +114,7 @@ dependencies {
     implementation 'com.github.kittinunf.fuel:fuel-android:2.2.1'
     implementation 'com.github.kittinunf.fuel:fuel-json:2.2.1'
     implementation 'com.github.kittinunf.result:result:2.2.0'
-    implementation 'com.google.firebase:firebase-core:17.2.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
     implementation 'de.psdev.licensesdialog:licensesdialog:2.1.0'
