@@ -37,7 +37,7 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         // Make the dialog's TextView clickable
-        (dialog!!.findViewById(android.R.id.message) as TextView).movementMethod = // todo: handle null
+        (requireDialog().findViewById(android.R.id.message) as TextView).movementMethod =
                 LinkMovementMethod.getInstance()
     }
 

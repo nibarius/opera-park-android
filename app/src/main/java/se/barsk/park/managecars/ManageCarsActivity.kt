@@ -182,7 +182,8 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     private fun showCarsPlaceholderIfNeededAfterAnimation() {
         if (manageCarsRecyclerView.isAnimating) {
             // If the recyclerview is animating, try again a bit later
-            manageCarsRecyclerView.itemAnimator!!.isRunning { showCarsPlaceholderIfNeeded() }  // todo: null
+            // If it's animating there is an animator so it's safe to assume itemAnimator exists
+            manageCarsRecyclerView.itemAnimator!!.isRunning { showCarsPlaceholderIfNeeded() }
             return
         }
         val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)

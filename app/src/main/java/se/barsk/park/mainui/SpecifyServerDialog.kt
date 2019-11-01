@@ -58,7 +58,7 @@ class SpecifyServerDialog : DialogFragment() {
                 .setTitle(R.string.specify_server_dialog_title)
                 .setView(dialogView)
                 .setNegativeButton(R.string.dialog_button_cancel) { _, _ ->
-                    dialog!!.cancel() //todo: null
+                    requireDialog().cancel()
                 }
                 .setPositiveButton(R.string.dialog_button_ok) { _, _: Int ->
                     ParkApp.storageManager.setServer(editText.text.toString())
@@ -70,8 +70,12 @@ class SpecifyServerDialog : DialogFragment() {
             false
         }
         editText.setText(ParkApp.storageManager.getServer())
-        dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams .FLAG_ALT_FOCUSABLE_IM) // todo: null
-        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)  // todo: null
+        // The activity is visible when the dialog is created so the window should never be null
+        dialog.window!!.let {
+            it.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams .FLAG_ALT_FOCUSABLE_IM)
+            it.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        }
+
         return dialog
     }
 

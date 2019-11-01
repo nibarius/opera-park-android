@@ -37,7 +37,10 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
         sharedPreferences.registerOnSharedPreferenceChangeListener(internalServerChangeListener)
     }
 
-    private fun readSetting(key: String): String = sharedPreferences.getString(key, context.getString(R.string.the_empty_string))!!  // todo: null
+    private fun readSetting(key: String, defaultValue: String = context.getString(R.string.the_empty_string)): String {
+        // When given a non-null default value getString will not return null
+        return sharedPreferences.getString(key, defaultValue)!!
+    }
     private fun putSetting(key: String, value: String) {
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
@@ -89,8 +92,8 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     fun setServer(server: String) = putSetting(serverUrl, server)
     fun statsEnabled(): Boolean = sharedPreferences.getBoolean(usageStatistics, defaultUsageStatistics)
     fun crashReportingEnabled(): Boolean = sharedPreferences.getBoolean(crashReporting, defaultUsageStatistics)
-    fun getAutomaticUpdateInterval(): Long = sharedPreferences.getString(refreshInterval,
-            context.getString(R.string.default_refresh_interval))!!.toLong()  // todo: null
+    fun getAutomaticUpdateInterval(): Long = readSetting(refreshInterval,
+            context.getString(R.string.default_refresh_interval)).toLong()
 
     fun onWaitList(): Boolean = sharedPreferences.getBoolean(onWaitList, defaultOnWaitList)
     fun setOnWaitList(value: Boolean) = putSetting(onWaitList, value)

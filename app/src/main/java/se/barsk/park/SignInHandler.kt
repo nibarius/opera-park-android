@@ -122,9 +122,13 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
-            val account = completedTask.getResult(ApiException::class.java)
+            // Documentation provides no information on when null is returned by getResult
+            // and it doesn't check for null in any examples. Assume that getResult never
+            // return null in this case.
+            val account = completedTask.getResult(ApiException::class.java)!!
             lastSignedInAccount = account
-            token = account!!.idToken // todo fix null
+
+            token = account.idToken
             listener.onSignedIn()
             ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueYes)
             // Do the success callback as a new message so the sign in process can finish completely

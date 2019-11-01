@@ -83,8 +83,12 @@ abstract class ManageCarDialog : DialogFragment() {
             dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
             false
         }
-        dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) // todo: null
-        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)  // todo: null
+        // The dialog is visible during onCreateDialog so safe to assume that the window is not null
+        dialog.window!!.let {
+            it.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+            it.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        }
+
         return dialog
     }
 

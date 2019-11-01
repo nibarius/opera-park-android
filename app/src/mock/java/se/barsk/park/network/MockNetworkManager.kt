@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import org.joda.time.DateTime
 import se.barsk.park.BuildConfig
+import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 
@@ -20,7 +21,7 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
                 ParkedCar("WNF 766", "Rikard", "2017-10-01 08:21:06"),
                 ParkedCar("AGF 487", "Niklas", "2017-10-01 08:29:53"),
                 ParkedCar("MLB 942", "Per", "2017-10-01 09:01:33"),
-                ParkedCar("MLB 84A", "Peter", "2017-10-29 08:38:14")                )
+                ParkedCar("MLB 84A", "Peter", "2017-10-29 08:38:14"))
                 .subList(0, initialParkedCars).toMutableList()
     }
     private val networkDelay: Long = 300
@@ -47,14 +48,14 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         if (readServerFromStorage().isBlank()) {
             return
         }
-        Handler().postDelayed({ addIfNotExist(ownCar, resultReadyListener) }, networkDelay)
+        Handler().postDelayed({ addIfNotExist(context, ownCar, resultReadyListener) }, networkDelay)
     }
 
     override fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) {
         if (readServerFromStorage().isBlank()) {
             return
         }
-        Handler().postDelayed({ removeIfExists(car, resultReadyListener) }, networkDelay)
+        Handler().postDelayed({ removeIfExists(context, car, resultReadyListener) }, networkDelay)
     }
 
     override fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
@@ -65,27 +66,40 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         Handler().postDelayed({ resultReadyListener(Result.RemovedFromWaitList) }, networkDelay)
     }
 
-    private fun addIfNotExist(ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
+    // Add a car to the parked cars list if it does not already exist, if it does signal a fail
+    // like the real server does.
+    private fun addIfNotExist(context: Context,
+                              ownCar: OwnCar,
+                              resultReadyListener: (Result) -> Unit) {
         if (!hasConnection) {
             return
         }
-        parkedCars
-                .filter { it.regNo == ownCar.regNo }
-                .forEach {// todo: what is this doing, why isn't it using the it parameter?
-                    resultReadyListener(Result.Success(parkedCars))
-                    return
-                }
-        parkedCars.add(ParkedCar(ownCar.regNo, ownCar.owner, DateTime.now().toString("yyyy-MM-dd HH:mm:ss")))
-        resultReadyListener(Result.Success(parkedCars))
+        if (parkedCars.any { it.regNo == ownCar.regNo }) {
+            resultReadyListener(Result.Fail(parkedCars, context.getString(R.string.failed_to_park, ownCar.regNo)))
+        } else {
+            parkedCars.add(ParkedCar(ownCar.regNo, ownCar.owner, DateTime.now().toString("yyyy-MM-dd HH:mm:ss")))
+            resultReadyListener(Result.Success(parkedCars))
+        }
+
     }
 
-    private fun removeIfExists(ownCar: OwnCar, resultReadyListener: (Result) -> Unit) {
+    // Remove a car from the parked cars list if it exist, if it doesn't signal a fail
+    // like the real server does.
+    private fun removeIfExists(context: Context,
+                               ownCar: OwnCar,
+                               resultReadyListener: (Result) -> Unit) {
         if (!hasConnection) {
             return
         }
         (parkedCars.size - 1 downTo 0)
                 .filter { parkedCars[it].regNo == ownCar.regNo }
-                .forEach { parkedCars.removeAt(it) }
-        resultReadyListener(Result.Success(parkedCars))
+                .let { carsToRemove ->
+                    if (carsToRemove.isEmpty()) {
+                        resultReadyListener(Result.Fail(parkedCars, context.getString(R.string.failed_to_unpark, ownCar.regNo)))
+                    } else {
+                        carsToRemove.forEach { parkedCars.removeAt(it) }
+                        resultReadyListener(Result.Success(parkedCars))
+                    }
+                }
     }
 }

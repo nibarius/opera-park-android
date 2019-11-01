@@ -262,7 +262,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun showParkedCarsPlaceholderIfNeededAfterAnimations() {
         if (parkedCarsRecyclerView.isAnimating) {
             // If the recyclerview is animating, try again once current animation has finished
-            parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() } // todo: handle null
+            // If it's animating there is an animator so it's safe to assume itemAnimator exists
+            parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() }
             return
         }
         if (parkingState.showsPlaceholder()) {
