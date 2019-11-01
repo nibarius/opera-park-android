@@ -34,8 +34,17 @@ class Database(context: Context, dbName: String = context.getString(R.string.par
 
         val ownCars: MutableList<OwnCar> = mutableListOf()
         while (cursor.moveToNext()) {
+            var regno = cursor.getString(cursor.getColumnIndexOrThrow(ParkContract.CarCollectionTable.COLUMN_NAME_REGNO))
+            if (regno.isBlank()) {
+                // In version 2.1 and below it was possible to create a car with only whitespace
+                // in the licence plate number. When doing this the app would crash every time
+                // the user enters the mange cars view making it impossible to fix the licence
+                // plate number. When reading from storage replace blank licence plate numbers
+                // with just a '?'
+                regno = "?"
+            }
             ownCars.add(OwnCar(
-                    cursor.getString(cursor.getColumnIndexOrThrow(ParkContract.CarCollectionTable.COLUMN_NAME_REGNO)),
+                    regno,
                     cursor.getString(cursor.getColumnIndexOrThrow(ParkContract.CarCollectionTable.COLUMN_NAME_OWNER)),
                     cursor.getString(cursor.getColumnIndexOrThrow(ParkContract.CarCollectionTable.COLUMN_NAME_NICKNAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(ParkContract.CarCollectionTable.COLUMN_NAME_UUID))
