@@ -17,8 +17,10 @@ open class CarsAdapter(private val type: Type, var cars: List<Car>, val listener
     var recyclerView: RecyclerView? = null
 
     init {
-        setHasStableIds(true) //todo: can this be moved into the onAttachedToRecyclerView instead?
+        setupHasStableIds()
     }
+
+    private fun setupHasStableIds() = setHasStableIds(true)
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
