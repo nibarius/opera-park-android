@@ -31,6 +31,7 @@ import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.analytics.ParkActionEvent
 import se.barsk.park.datatypes.*
+import se.barsk.park.error.ErrorHandler
 import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.settings.SettingsActivity

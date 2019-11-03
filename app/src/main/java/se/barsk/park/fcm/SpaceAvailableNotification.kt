@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import org.json.JSONObject
-import se.barsk.park.ErrorHandler
+import se.barsk.park.error.ErrorHandler
 import se.barsk.park.Injection
 import se.barsk.park.ParkApp
 import se.barsk.park.R

@@ -12,6 +12,10 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import se.barsk.park.analytics.UserProperties
+import se.barsk.park.error.FailedToSignInException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 // Google documentation for sign-in: https://developers.google.com/identity/sign-in/android/start
 // Also useful: https://stackoverflow.com/questions/38737021/how-to-refresh-id-token-after-it-expires-when-integrating-google-sign-in-on-andr
@@ -65,7 +69,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
      * @param activity If onStop is called on the given activity the login will be aborted
      * @param onSuccess function to run once the login has finished successfully
      */
-    open fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)?) {
+    open fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)? = null) {
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity) !=
                 com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
             // If Google play services doesn't exist we know the attempt will fail
@@ -74,6 +78,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         }
 
         check(onSuccess == null || onSignInSuccessCallback == null) {
+            // If this happens multiple sign in attempts are done at once.
             "onSignInSuccessCallback is not null"
         }
         onSignInSuccessCallback = onSuccess
@@ -82,6 +87,9 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         }
     }
 
+    // Normal non-silent sign in is done trough a separate activity and since it's not
+    // easy to pass a callback between activities this property is used to hold the
+    // callback that should be called when the sign in is successful
     private var onSignInSuccessCallback: (() -> Unit)? = null
 
     open fun signIn(activity: Activity, onSuccess: (() -> Unit)?) {
@@ -105,15 +113,17 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
     }
 
     /**
-     * Does a silent sign in and if it succeeds it calls the given function with
-     * the newly updated token (which is guaranteed to be not null).
-     *
-     * @param activity If onStop is called on the given activity the login will be aborted
-     * @param doWith function to run with the token as parameter once the login
-     * has finished successfully
+     * Fetches an up to date id token or throws an exception if the token can't be fetched.
      */
-    fun doWithFreshToken(activity: Activity, doWith: (String) -> Unit) {
-        silentSignIn(activity) { doWith(token!!) }
+    suspend fun getToken(activity: Activity): String = suspendCoroutine { continuation ->
+        silentSignIn(activity) {
+            val idToken = token
+            if (idToken != null) {
+                continuation.resume(idToken)
+            } else {
+                continuation.resumeWithException(FailedToSignInException("Unable to get id token"))
+            }
+        }
     }
 
     fun onSignInResult(data: Intent?) {

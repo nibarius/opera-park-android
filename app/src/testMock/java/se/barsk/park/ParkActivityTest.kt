@@ -483,6 +483,7 @@ class ParkActivityTest : RobolectricTest() {
         ParkApp.networkManager = MockNetworkManager(6)
         val controller = Robolectric.buildActivity(ParkActivity::class.java)
         val activity = controller.create().start().resume().visible().get()
+        ParkApp.theUser.isSignedIn shouldBe true
 
         // wait until we've gotten a response from the "server"
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()

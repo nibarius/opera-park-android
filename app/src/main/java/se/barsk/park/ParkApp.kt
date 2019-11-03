@@ -7,6 +7,7 @@ import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.User
+import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.storage.StorageManager
 
@@ -37,7 +38,7 @@ object ParkApp {
         analytics = Analytics(appContext)
         networkManager = Injection.provideNetworkManager()
         carCollection = Injection.provideCarCollection()
-        theUser = User(appContext)
+        theUser = Injection.provideUser(appContext)
 
         isInitiated = true
     }

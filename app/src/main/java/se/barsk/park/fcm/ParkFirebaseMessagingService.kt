@@ -5,7 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONException
 import org.json.JSONObject
-import se.barsk.park.ErrorHandler
+import se.barsk.park.error.ErrorHandler
 
 
 /**

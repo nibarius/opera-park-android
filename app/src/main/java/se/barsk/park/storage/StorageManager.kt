@@ -26,8 +26,8 @@ open class StorageManager(context: Context) {
     open fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
     open fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
 
-    fun onWaitList(): Boolean = sharedPrefs.onWaitList()
-    fun setOnWaitList(onWaitList: Boolean) = sharedPrefs.setOnWaitList(onWaitList)
+    open fun onWaitList(): Boolean = sharedPrefs.onWaitList()
+    open fun setOnWaitList(onWaitList: Boolean) = sharedPrefs.setOnWaitList(onWaitList)
 
     fun hasSeenPrivacyOnBoarding(): Boolean = sharedPrefs.hasSeenPrivacyOnBoarding()
     fun setPrivacyOnBoardingSeen() = sharedPrefs.setPrivacyOnBoardingSeen()

@@ -1,8 +1,11 @@
-package se.barsk.park
+package se.barsk.park.error
 
 import com.google.android.material.snackbar.Snackbar
 import android.view.View
 import android.widget.TextView
+import se.barsk.park.BuildConfig
+import se.barsk.park.ParkApp
+import se.barsk.park.R
 import se.barsk.park.analytics.ExceptionEvent
 
 /**

@@ -53,6 +53,8 @@
     <!-- Sign in handler -->
     <string name="sign_in_network_error">A network error occurred</string>
     <string name="sign_in_unknown_error">An unknown error occurred (status code %d)</string>
+    <string name="wait_list_register_failed_sign_in_problem">Registering on the wait list failed, make sure you are signed in.</string>
+    <string name="wait_list_unregister_failed_sign_in_problem">Unregistering form the the wait list failed, make sure you are signed in.</string>
 
     <!-- Settings activity -->
     <string name="settings_activity_title">Settings</string>

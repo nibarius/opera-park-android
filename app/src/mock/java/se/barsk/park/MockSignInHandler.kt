@@ -10,9 +10,7 @@ import se.barsk.park.analytics.UserProperties
 class MockSignInHandler(context: Context, listener: StatusChangedListener) : SignInHandler(context, listener) {
 
     override fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)?) {
-        token = "token"
-        listener.onSignedIn()
-        onSuccess?.invoke()
+        signIn(activity, onSuccess)
     }
 
     override fun signIn(activity: Activity, onSuccess: (() -> Unit)?) {

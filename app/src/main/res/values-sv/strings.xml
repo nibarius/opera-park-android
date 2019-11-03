@@ -83,6 +83,8 @@
     <!-- Sign in handler -->
     <string name="sign_in_network_error">Ett nätverksproblem uppstod</string>
     <string name="sign_in_unknown_error">Ett okänt fel inträffade (statuskod %d)</string>
+    <string name="wait_list_register_failed_sign_in_problem">Misslyckades att registrera i väntelistan, se till at du är inloggad.</string>
+    <string name="wait_list_unregister_failed_sign_in_problem">Misslyckades att avregistrera från väntelistan, se till at du är inloggad.</string>
 
     <!-- Sign in dialog -->
     <string name="sign_in_dialog_message">Logga in för att få en notis när garaget blir ledigt.</string>
