@@ -18,7 +18,7 @@ class DeepLink(link: Uri) {
         private const val SCHEME = "https"
         private const val AUTHORITY = "opera-park.appspot.com"
         private const val PATH = ""
-        private const val DYNAMIC_LINK_DOMAIN = "qgy49.app.goo.gl"
+        private const val DYNAMIC_LINK_PREFIX = "https://qgy49.app.goo.gl"
 
         private fun getDeepLinkFor(cars: List<Car>, server: String): Uri {
             val builder = Uri.Builder()
@@ -37,7 +37,7 @@ class DeepLink(link: Uri) {
             val deepLink = getDeepLinkFor(cars, server)
             val dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
                     .setLink(deepLink)
-                    .setDynamicLinkDomain(DYNAMIC_LINK_DOMAIN)
+                    .setDomainUriPrefix(DYNAMIC_LINK_PREFIX)
                     .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
                     .setGoogleAnalyticsParameters(
                             DynamicLink.GoogleAnalyticsParameters.Builder()
