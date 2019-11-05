@@ -511,8 +511,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
 
         override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
-            if (pendingDynamicLinkData == null) return
-            val deepLink = DeepLink(pendingDynamicLinkData.link)
+            val pendingLink = pendingDynamicLinkData?.link ?: return
+            // Todo: fix problem with space in links getting converted to +
+            // https://github.com/firebase/firebase-android-sdk/issues/959
+            val deepLink = DeepLink(pendingLink)
             if (!deepLink.isValid) return
 
             if (!ParkApp.storageManager.hasServer()) {
