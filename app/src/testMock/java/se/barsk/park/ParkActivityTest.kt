@@ -108,6 +108,11 @@ class ParkActivityTest : RobolectricTest() {
     fun parkedCarsListHasServerEmptyPortraitTest() = parkedCarsListHasServerEmptyTest()
 
     private fun parkedCarsListHasServerEmptyTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(0)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
         // First there is a placeholder with an a progress spinner
         loadingPlaceholderShown(activity)
 
@@ -116,6 +121,8 @@ class ParkActivityTest : RobolectricTest() {
 
         // After loading data the garage is empty and the empty placeholder is shown
         emptyGaragePlaceholderShown(activity)
+
+        controller.pause().stop().destroy()
     }
 
     @Test
@@ -153,6 +160,11 @@ class ParkActivityTest : RobolectricTest() {
     fun parkedCarsListNoConnectionEmptyPortraitTest() = parkedCarsListNoConnectionEmptyTest()
 
     private fun parkedCarsListNoConnectionEmptyTest() {
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(0)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
         // First there is a placeholder with an a progress spinner
         loadingPlaceholderShown(activity)
 
@@ -179,6 +191,7 @@ class ParkActivityTest : RobolectricTest() {
 
         // After loading data the garage is empty and the empty placeholder is shown
         emptyGaragePlaceholderShown(activity)
+        controller.pause().stop().destroy()
     }
 
     @Test
@@ -307,6 +320,7 @@ class ParkActivityTest : RobolectricTest() {
 
     private fun parkedCarsListNoServerEmptyTest() {
         ParkApp.storageManager.setServer("")
+        ParkApp.networkManager = MockNetworkManager(0)
         val controller = Robolectric.buildActivity(ParkActivity::class.java)
         val activity = controller.create().start().resume().visible().get()
 
@@ -518,6 +532,10 @@ class ParkActivityTest : RobolectricTest() {
     fun parkCarsEmptyPortraitTest() = parkCarsEmptyTest()
 
     private fun parkCarsEmptyTest() {
+        ParkApp.networkManager = MockNetworkManager(0)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
         // wait until we've gotten a response from the "server"
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         // After loading data the garage have cars and the list of cars is shown
@@ -549,6 +567,8 @@ class ParkActivityTest : RobolectricTest() {
         carIsNotParked(car2)
         activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
         emptyGaragePlaceholderShown(activity)
+
+        controller.pause().stop().destroy()
     }
 
 
