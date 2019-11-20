@@ -7,6 +7,9 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -435,37 +438,48 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateToolbar(freeSpots: Int) {
+        val textColor: Int
         val toolbarColor: Int
         val statusBarColor: Int
         val title: String
         when {
             parkingState.showsPlaceholder() -> {
-                toolbarColor = ContextCompat.getColor(this, R.color.colorPrimary)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryDark)
                 title = getString(R.string.app_name)
-            }
-            parkingState == ParkingState.FULL -> {
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
-                title = getString(R.string.park_status_full)
-            }
-            parkingState == ParkingState.ALMOST_FULL -> {
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
-                title = resources.getQuantityString(R.plurals.park_status_free, freeSpots)
-            }
-            else -> {
+                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFree)
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
+            }
+            parkingState == ParkingState.FULL -> {
+                title = getString(R.string.park_status_full)
+                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFull)
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
+            }
+            parkingState == ParkingState.ALMOST_FULL -> {
+                title = resources.getQuantityString(R.plurals.park_status_free, freeSpots)
+                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextAlmostFull)
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
+            }
+            else -> {
                 title = resources.getQuantityString(R.plurals.park_status_free, freeSpots, freeSpots)
+                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFree)
+                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
+                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
             }
         }
+
         supportActionBar?.setBackgroundDrawable(ColorDrawable(toolbarColor))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = statusBarColor
         }
-        supportActionBar?.title = title
+        val span = SpannableString(title)
+        span.setSpan(ForegroundColorSpan(textColor),
+                0,
+                title.length,
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        supportActionBar?.title = span
     }
 
     private fun showServerDialog() =

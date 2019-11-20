@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/colorGreen200</color>
+    <color name="colorSurface">#ff1f1f1f</color>
+    <color name="colorOnSurface">@color/colorWhite</color>
+    <color name="colorOnSecondary">@color/colorBlack</color>
+    <color name="colorPrimaryDark">@color/colorBlack</color> <!-- black status bar in dark mode -->
+
+    <!-- Toolbar colors in the various states -->
+    <color name="colorToolbarTextFull">@color/colorRed200</color>
+    <color name="colorToolbarFull">@color/colorSurface</color>
+    <color name="colorStatusBarFull">@color/colorPrimaryDark</color>
+    <color name="colorToolbarTextAlmostFull">@color/colorOrange200</color>
+    <color name="colorToolbarAlmostFull">@color/colorSurface</color>
+    <color name="colorStatusBarAlmostFull">@color/colorPrimaryDark</color>
+    <color name="colorToolbarTextFree">@color/colorGreen200</color>
+    <color name="colorToolbarFree">@color/colorSurface</color>
+    <color name="colorStatusBarFree">@color/colorPrimaryDark</color>
+
+    <!-- Colors used for the park/unpark/wait buttons -->
+    <color name="parkButtonColor">@color/colorGreen200</color>
+    <color name="unparkButtonColor">@color/colorRed200</color>
+    <color name="waitButtonColor">@color/colorOrange200</color>
+
+    <!-- Splash screen colors -->
+    <color name="toolbarColor">@color/colorSurface</color>
+    <color name="splashTitleTextColor">@color/colorPrimary</color>
+
+    <!-- Generic UI colors -->
+    <color name="backgroundColor">#ff121212</color>
+    <color name="highEmphasisText">@color/colorWhite87percent</color>
+    <color name="hintText">@color/colorWhite60percent</color>
+    <color name="colorIcon">@color/colorWhite60percent</color>
+    <color name="colorPlaceholderText">@color/colorWhite38percent</color>
+
+    <!-- Avatar colors -->
+    <color name="colorAvatarTextColor">@color/colorBlack70percent</color>
+    <array name="avatar_background_color">
+        <item>@color/colorPink200</item>
+        <item>@color/colorPurple200</item>
+        <item>@color/colorDeepPurple200</item>
+        <item>@color/colorIndigo200</item>
+        <item>@color/colorLightBlue200</item>
+        <item>@color/colorCyan200</item>
+        <item>@color/colorTeal200</item>
+        <item>@color/colorLightGreen200</item>
+        <item>@color/colorLime200</item>
+        <item>@color/colorGray200</item>
+        <item>@color/colorBrown200</item>
+    </array>
+</resources>

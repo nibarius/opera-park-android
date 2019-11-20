@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Park / Wait buttons can't be disabled, no need for different states -->
+    <item android:color="@color/colorTransparent" />
+</selector>

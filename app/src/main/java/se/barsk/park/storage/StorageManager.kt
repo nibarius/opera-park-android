@@ -29,6 +29,8 @@ open class StorageManager(context: Context) {
     open fun onWaitList(): Boolean = sharedPrefs.onWaitList()
     open fun setOnWaitList(onWaitList: Boolean) = sharedPrefs.setOnWaitList(onWaitList)
 
+
+    fun getTheme() = sharedPrefs.getTheme()
     fun hasSeenPrivacyOnBoarding(): Boolean = sharedPrefs.hasSeenPrivacyOnBoarding()
     fun setPrivacyOnBoardingSeen() = sharedPrefs.setPrivacyOnBoardingSeen()
     fun giveStatsConsent() = sharedPrefs.giveAllStatsConsent(true)

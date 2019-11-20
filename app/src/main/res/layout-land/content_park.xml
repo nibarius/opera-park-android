@@ -17,6 +17,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="0dp"
+        android:background="@color/backgroundColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -64,16 +65,13 @@
                 android:textColor="@color/colorPlaceholderText"
                 android:textSize="16sp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/no_park_server_placeholder_button"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/no_server_placeholder_button"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp"/>
+                android:text="@string/no_server_placeholder_button"/>
         </LinearLayout>
     </ViewSwitcher>
 
@@ -81,14 +79,14 @@
         android:id="@+id/my_cars_label"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:background="@color/ownCarsBottomSheet"
+        android:background="@color/colorSurface"
         android:elevation="4dp"
         android:fontFamily="sans-serif"
         android:gravity="center_vertical"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
         android:text="@string/my_cars_label"
-        android:textColor="@color/colorBlack54percent"
+        android:textColor="@color/highEmphasisText"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/own_cars_view_switcher"
         app:layout_constraintLeft_toRightOf="@+id/parked_cars_view_switcher"
@@ -99,7 +97,7 @@
         android:id="@+id/own_cars_view_switcher"
         android:layout_width="@dimen/own_cars_bar_landscape_width"
         android:layout_height="0dp"
-        android:background="@color/ownCarsBottomSheet"
+        android:background="@color/colorSurface"
         android:elevation="4dp"
         android:measureAllChildren="false"
         android:padding="0dp"
@@ -134,16 +132,13 @@
                 android:textColor="@color/colorPlaceholderText"
                 android:textSize="16sp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/no_own_cars_placeholder_button"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/no_cars_add_car_button"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp"/>
+                android:text="@string/no_cars_add_car_button"/>
         </LinearLayout>
 
     </ViewSwitcher>

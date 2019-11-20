@@ -428,21 +428,21 @@ class ParkActivityTest : RobolectricTest() {
 
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
 
         // Park a car
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
         carCanBePutOnWaitList(car2)
-        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
 
         // Unpark it again
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
 
         controller.pause().stop().destroy()
     }
@@ -471,7 +471,7 @@ class ParkActivityTest : RobolectricTest() {
         car.shouldNotBeNull()
         car as OwnCarListEntry
 
-        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
 
         // Register on the wait list while not logged in should trigger the sign in dialog
         car.performClick()
@@ -508,7 +508,7 @@ class ParkActivityTest : RobolectricTest() {
         car.shouldNotBeNull()
         car as OwnCarListEntry
         carCanBePutOnWaitList(car)
-        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
 
         // Register on the wait list
         car.performClick()
@@ -550,14 +550,14 @@ class ParkActivityTest : RobolectricTest() {
 
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
+        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.app_name)
 
         // Park a car
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 5, 5)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 5, 5)
         listOfParkedCarsShown(activity)
 
         // Unpark it again
@@ -565,7 +565,7 @@ class ParkActivityTest : RobolectricTest() {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title shouldEqual activity.getString(R.string.app_name)
+        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.app_name)
         emptyGaragePlaceholderShown(activity)
 
         controller.pause().stop().destroy()
@@ -598,7 +598,7 @@ class ParkActivityTest : RobolectricTest() {
         car as OwnCarListEntry
 
         carIsNotParked(car)
-        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
         /* TODO: Fix the swipe to refresh test
                  Robolectric doesn't seem to support the androidx SwipeRefreshLayout yet
                  so doing a test that relies on swipe to refresh is currently difficult.

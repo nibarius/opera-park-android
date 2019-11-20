@@ -1,5 +1,8 @@
 package se.barsk.park.utils
 
+import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import java.util.*
 
 object Utils {
@@ -37,4 +40,29 @@ object Utils {
             regNo.toUpperCase(Locale.getDefault()).replace("[A-Z][0-9]".toRegex()) {
                 "${it.value[0]} ${it.value[1]}"
             }
+
+    fun setTheme(value: String) {
+        when {
+            value == "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            value == "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            pOrBelow() -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
+    private fun pOrBelow(): Boolean {
+        return android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.P
+    }
+
+    fun isDarkTheme(context: Context): Boolean {
+        return when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> {
+                false
+            }
+            Configuration.UI_MODE_NIGHT_YES -> {
+                true
+            }
+            else -> false
+        }
+    }
 }

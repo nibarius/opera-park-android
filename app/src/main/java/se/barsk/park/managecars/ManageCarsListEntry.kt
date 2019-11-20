@@ -2,13 +2,13 @@ package se.barsk.park.managecars
 
 import android.animation.Animator
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
@@ -24,7 +24,7 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
     private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
     private val avatarCheckView: ImageView by lazy { findViewById<ImageView>(R.id.avatar_check_view) }
     private val selectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
-    private var unselectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
+    private var unselectedColor = ContextCompat.getColor(context, R.color.colorPrimary) // default value not really used
     private var hideAnimation: Animator? = null
     private val animationDuration: Long = 300
 

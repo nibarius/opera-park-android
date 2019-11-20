@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools">
-    <Button
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/park_button"
+        app:strokeWidth="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stateListAnimator="@null"
-        android:fontFamily="sans-serif-medium"
         tools:text="Park\nABC 123"
-        android:textAllCaps="false"
         android:textSize="18sp"
         android:paddingTop="7dp"
         android:paddingBottom="12dp"

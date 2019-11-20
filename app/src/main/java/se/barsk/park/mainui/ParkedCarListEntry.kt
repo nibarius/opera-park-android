@@ -1,17 +1,17 @@
 package se.barsk.park.mainui
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import se.barsk.park.R
-import se.barsk.park.utils.Utils.fixRegnoForDisplay
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.ParkedCar
+import se.barsk.park.utils.Utils.fixRegnoForDisplay
 
 /**
  * One entry in the list of parked cars
@@ -29,14 +29,14 @@ class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEn
         car as ParkedCar
 
         val firstLine = "${fixRegnoForDisplay(car.regNo)} - ${car.owner}"
-        val secondLine = if (car.startTime.length >=19) {
+        val secondLine = if (car.startTime.length >= 19) {
             car.startTime.substring(11, 19) // Skip the date part
         } else {
             car.startTime
         }
         val spannable = SpannableString("$firstLine\n$secondLine")
         spannable.setSpan(AbsoluteSizeSpan(resources.getDimensionPixelSize(R.dimen.parked_cars_text_size)), 0, firstLine.length, 0)
-        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorBlack87percent)), 0, firstLine.length, 0)
+        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.highEmphasisText)), 0, firstLine.length, 0)
         parkTextView.text = spannable
 
         setAvatarColor(car, context, avatarTextView)

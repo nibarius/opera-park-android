@@ -138,7 +138,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
             actionMode?.invalidate()
         }
 
-        actionMode?.title = adapter.numSelectedItems().toString()
+        actionMode?.title = getString(R.string.manage_cars_action_mode_title, adapter.numSelectedItems())
     }
 
     private fun selectAllItems() {

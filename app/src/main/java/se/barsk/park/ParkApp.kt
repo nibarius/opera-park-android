@@ -7,9 +7,9 @@ import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.User
-import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.storage.StorageManager
+import se.barsk.park.utils.Utils
 
 
 /**
@@ -40,6 +40,7 @@ object ParkApp {
         carCollection = Injection.provideCarCollection()
         theUser = Injection.provideUser(appContext)
 
+        Utils.setTheme(storageManager.getTheme())
         isInitiated = true
     }
 

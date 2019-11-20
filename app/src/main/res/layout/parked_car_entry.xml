@@ -27,7 +27,7 @@
         android:lineSpacingExtra="3sp"
         android:paddingEnd="16dp"
         android:paddingStart="72dp"
-        android:textColor="@color/colorBlack38percent"
+        android:textColor="@color/hintText"
         android:textSize="14sp"
         tools:text="AAA 123 - user\n15:38:03">
     </TextView>

@@ -8,6 +8,13 @@
         app:key="@string/key_refresh_interval"
         app:title="@string/refresh_interval"
         app:useSimpleSummaryProvider="true"/>
+    <ListPreference
+        app:defaultValue="@string/default_theme"
+        app:entries="@array/themes"
+        app:entryValues="@array/theme_values"
+        app:key="@string/key_theme"
+        app:title="@string/theme"
+        app:useSimpleSummaryProvider="true"/>
     <EditTextPreference
         app:defaultValue="@string/the_empty_string"
         app:key="@string/key_park_server_url"

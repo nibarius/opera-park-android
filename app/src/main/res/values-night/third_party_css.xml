@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <string name="notices_custom_style" translatable="false">
+        body {
+            background: #424242;
+            color: #ffffff;
+            font-family: sans-serif;
+            overflow-wrap: break-word;
+        }
+        a {
+            color: #43a047;
+        }
+
+        pre {
+            background-color: #121212;
+            padding: 1em;
+            white-space: pre-wrap;
+        }
+    </string>
+</resources>

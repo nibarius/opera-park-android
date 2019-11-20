@@ -57,4 +57,10 @@
         <copyright/>
         <license>Apache Software License 2.0</license>
     </notice>
+    <notice>
+        <name>Android open source project</name>
+        <url>https://source.android.com</url>
+        <copyright/>
+        <license>Apache Software License 2.0</license>
+    </notice>
 </notices>

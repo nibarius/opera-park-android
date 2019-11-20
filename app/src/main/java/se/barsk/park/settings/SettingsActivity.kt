@@ -4,14 +4,12 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
+import se.barsk.park.utils.Utils
 
 
 /**
@@ -34,6 +32,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun showThirdPartyList() {
         val fragment = LicensesDialogFragment.Builder(this)
                 .setNotices(R.raw.notices)
+                .setNoticesCssStyle(R.string.notices_custom_style)
                 .setShowFullLicenseText(false)
                 .setIncludeOwnLicense(true)
                 .build()
@@ -92,6 +91,11 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 getString(R.string.key_crash_reporting) -> {
                     ParkApp.storageManager.recordCrashReportingConsentChange()
+                }
+                getString(R.string.key_theme) -> {
+                    val value = findPreference<ListPreference>(key)
+                            ?.value ?: getString(R.string.default_theme)
+                    Utils.setTheme(value)
                 }
             }
         }

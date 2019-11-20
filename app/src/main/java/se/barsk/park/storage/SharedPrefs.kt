@@ -146,6 +146,9 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
         }
     }
 
+    fun getTheme() =
+        readSetting(context.getString(R.string.key_theme), context.getString(R.string.default_theme))
+
 
     /**
      * Listener used to be notified about changes done to the server via the settings activity

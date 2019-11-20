@@ -15,6 +15,7 @@
     <string name="manage_cars_context_menu_delete">Ta bort</string>
     <string name="manage_cars_list_placeholder">Lägg till en bil genom att trycka på + knappen</string>
     <string name="manage_cars_list_entry">%1$s (ägare: %2$s)</string>
+    <string name="manage_cars_action_mode_title">%d har valts</string>
     <plurals name="share_car_title">
         <item quantity="one">Dela bil med</item>
         <item quantity="other">Dela bilar med</item>
@@ -50,6 +51,7 @@
     <!-- Settings activity -->
     <string name="settings_activity_title">Inställningar</string>
     <string name="notices_title">Tredjepartslicenser</string>
+    <string name="notices_close">Stäng</string>
     <string name="settings_privacy_group_title">Sekretess</string>
     <string name="settings_usage_statistics">Användningsstatistik</string>
     <string name="settings_crash_reporting">Kraschrapportering</string>
@@ -57,9 +59,14 @@
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">Om %s</string>
     <string name="settings_version">Version: %s</string>
+    <string name="refresh_interval">Automatisk uppdatering</string>
     <string name="seconds10">Var 10e sekund</string>
     <string name="seconds30">Var 30e sekund</string>
     <string name="auto_refresh_disabled">Avstängd</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Följ system</string>
+    <string name="theme_light">Ljust</string>
+    <string name="theme_dark">Mörkt</string>
 
     <!-- Network manager errors -->
     <string name="failed_to_update_generic">Misslyckades att uppdatera status: %s</string>
@@ -69,7 +76,6 @@
     <string name="fail_reason_unknown_data">Servern svarade med okänd data</string>
     <string name="fail_reason_unknown_error">Okänt fel</string>
     <string name="dialog_button_ok">OK</string>
-    <string name="refresh_interval">Automatisk uppdatering</string>
     <string name="parking_available_notif_channel_name">Lediga platser</string>
     <string name="parking_available_notif_channel_description">Få aviseringar när det blir ledigt i garaget</string>
     <string name="wait_list_registration_failed">Misslyckades att registrera i väntelistan</string>

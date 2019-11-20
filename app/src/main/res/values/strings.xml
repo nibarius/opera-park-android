@@ -17,6 +17,7 @@
     <string name="manage_cars_context_menu_delete">Delete</string>
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="manage_cars_list_entry">%1$s (owner: %2$s)</string>
+    <string name="manage_cars_action_mode_title">%d selected</string>
     <plurals name="share_car_title">
         <item quantity="one">Share car with</item>
         <item quantity="other">Share cars with</item>
@@ -59,6 +60,7 @@
     <!-- Settings activity -->
     <string name="settings_activity_title">Settings</string>
     <string name="notices_title">Third party licences</string>
+    <string name="notices_close">Close</string>
     <string name="settings_privacy_group_title">Privacy</string>
     <string name="settings_usage_statistics">Usage statistics</string>
     <string name="settings_crash_reporting">Crash reporting</string>
@@ -70,6 +72,10 @@
     <string name="seconds10">Every 10 seconds</string>
     <string name="seconds30">Every 30 seconds</string>
     <string name="auto_refresh_disabled">Disabled</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 
     <!-- Network manager errors -->
     <string name="failed_to_update_generic">Failed to update parking status: %s</string>

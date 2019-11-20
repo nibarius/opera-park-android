@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/colorGreen600</color>
-    <color name="colorPrimaryDark">@color/colorGreen800</color>
-    <color name="colorAccent">@color/colorGreen600</color>
-
-    <color name="colorToolbarFull">@color/colorRed600</color>
-    <color name="colorStatusBarFull">@color/colorRed800</color>
-    <color name="colorToolbarAlmostFull">@color/colorOrange600</color>
-    <color name="colorStatusBarAlmostFull">@color/colorOrange800</color>
-    <color name="colorToolbarFree">@color/colorGreen600</color>
-    <color name="colorStatusBarFree">@color/colorGreen800</color>
-
-    <color name="ownCarsBottomSheet">@color/colorWhite</color>
-
+    <!-- Parking state colors -->
+    <color name="colorRed200">#ffef9a9a</color>
     <color name="colorRed600">#ffe53935</color>
     <color name="colorRed800">#ffc62828</color>
-    <color name="colorOrange600">#ffFB8C00</color>
-    <color name="colorOrange800">#ffEF6C00</color>
+    <color name="colorOrange200">#ffffcc80</color>
+    <color name="colorOrange600">#fffb8C00</color>
+    <color name="colorOrange800">#ffef6C00</color>
+    <color name="colorGreen200">#ffa5d6a7</color>
     <color name="colorGreen600">#ff43a047</color>
     <color name="colorGreen800">#ff2e7d32</color>
 
-    <color name="colorPink200">#fff48fb1</color>
+    <!-- Avatar colors -->
+    <color name="colorPink600">#ffd81b60</color>
     <color name="colorPurple500">#ff9c27b0</color>
     <color name="colorDeepPurple500">#ff673ab7</color>
     <color name="colorIndigo500">#ff3f51b5</color>
@@ -31,25 +23,75 @@
     <color name="colorCyan700">#ff0097a7</color>
     <color name="colorBrown500">#ff795548</color>
 
+    <color name="colorPink200">#fff48fb1</color>
+    <color name="colorPurple200">#ffce93d8</color>
+    <color name="colorDeepPurple200">#ffb39ddb</color>
+    <color name="colorIndigo200">#ff9fa8da</color>
+    <color name="colorLightBlue200">#ff81d4fa</color>
+    <color name="colorLightGreen200">#ffc5e1a5</color>
+    <color name="colorLime200">#ffe6ee9c</color>
+    <color name="colorTeal200">#ffb2dfdb</color>
+    <color name="colorCyan200">#ffb2ebf2</color>
+    <color name="colorBrown200">#ffbcaaa4</color>
+
+    <!-- Other named colors -->
     <color name="colorWhite">#ffffffff</color>
+    <color name="colorWhite38percent">#61ffffff</color>
+    <color name="colorWhite60percent">#99ffffff</color>
+    <color name="colorWhite70percent">#b3ffffff</color>
+    <color name="colorWhite87percent">#deffffff</color>
     <color name="colorGray50">#fffafafa</color>
-    <color name="colorGray100">#fff5f5f5</color>
+    <color name="colorGray200">#ffeeeeee</color>
     <color name="colorGray600">#ff757575</color>
+    <color name="colorBlack">#ff000000</color>
     <color name="colorBlack87percent">#de000000</color>
+    <color name="colorBlack70percent">#b3000000</color>
+    <color name="colorBlack60percent">#99000000</color>
     <color name="colorBlack54percent">#8a000000</color>
     <color name="colorBlack38percent">#61000000</color>
+    <color name="colorTransparent">#00000000</color>
 
+    <!-- Most of the colors below are different in light and dark theme -->
+
+   <!-- Theme colors -->
+    <color name="colorPrimary">@color/colorGreen600</color> <!-- Toolbar, buttons in dialogs -->
+    <color name="colorSurface">@color/colorWhite</color>
+    <color name="colorOnSurface">@color/colorBlack87percent</color>
+    <color name="colorOnSecondary">@color/colorWhite</color> <!-- Used on FAB -->
+    <color name="colorPrimaryDark">@color/colorGreen800</color> <!-- Statusbar -->
+    <color name="colorAccent">@color/colorPrimary</color> <!-- Settings section titles -->
+
+    <!-- Toolbar colors in the various states -->
+    <color name="colorToolbarTextFull">@color/colorWhite</color>
+    <color name="colorToolbarFull">@color/colorRed600</color>
+    <color name="colorStatusBarFull">@color/colorRed800</color>
+    <color name="colorToolbarTextAlmostFull">@color/colorWhite</color>
+    <color name="colorToolbarAlmostFull">@color/colorOrange600</color>
+    <color name="colorStatusBarAlmostFull">@color/colorOrange800</color>
+    <color name="colorToolbarTextFree">@color/colorWhite</color>
+    <color name="colorToolbarFree">@color/colorGreen600</color>
+    <color name="colorStatusBarFree">@color/colorGreen800</color>
+
+    <!-- Colors used for the park/unpark/wait buttons -->
+    <color name="parkButtonColor">@color/colorPrimary</color>
+    <color name="unparkButtonColor">@color/colorRed600</color>
+    <color name="waitButtonColor">@color/colorOrange600</color>
+
+    <!-- Splash screen colors -->
+    <color name="toolbarColor">@color/colorPrimary</color>
+    <color name="splashTitleTextColor">@color/colorWhite</color>
+
+    <!-- Generic UI colors -->
+    <color name="backgroundColor">@color/colorGray50</color>
+    <color name="highEmphasisText">@color/colorBlack87percent</color>
+    <color name="hintText">@color/colorBlack60percent</color>
+    <color name="colorIcon">@color/colorBlack54percent</color>
     <color name="colorPlaceholderText">@color/colorBlack38percent</color>
-    <color name="colorPrimaryDarkText">@color/colorBlack87percent</color>
-    <color name="colorCabBackground">@color/colorGray100</color>
 
-    <color name="colorAvatarTextColor">#b3ffffff</color>
-    <color name="colorFabRippleColor">#b3ffffff</color>
-    <color name="parkButtonRippleColor">#ffdbdbdb</color>
-
-
+    <!-- Avatar colors -->
+    <color name="colorAvatarTextColor">@color/colorWhite70percent</color>
     <array name="avatar_background_color">
-        <item>@color/colorPink200</item>
+        <item>@color/colorPink600</item>
         <item>@color/colorPurple500</item>
         <item>@color/colorDeepPurple500</item>
         <item>@color/colorIndigo500</item>
