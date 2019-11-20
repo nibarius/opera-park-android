@@ -153,7 +153,14 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun deleteSelectedItems() {
-        ParkApp.carCollection.removeCars(adapter.selectedItemsIds)
+        val toDelete = adapter.selectedItemsIds.clone()
+        // Make sure to clear the selection before deleting the items to prevent that
+        // the view has a visible check view later on if the same view gets re-used in
+        // the recycler view. This would lead to a crash when showItem() is called for
+        // the new item being added to the recycler view when it tries to animate the
+        // check view.
+        adapter.clearSelection()
+        ParkApp.carCollection.removeCars(toDelete)
         finishActionMode()
     }
 
