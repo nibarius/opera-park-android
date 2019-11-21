@@ -7,9 +7,9 @@ import android.text.Html
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 
@@ -24,7 +24,7 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = MaterialAlertDialogBuilder(requireContext())
         val url = getString(R.string.url_privacy_statement)
         val message = getString(R.string.ppo_dialog_message, url).fromHtml()
         builder.setTitle(getString(R.string.ppo_dialog_title))

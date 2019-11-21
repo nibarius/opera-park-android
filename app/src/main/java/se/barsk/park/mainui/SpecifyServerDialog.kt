@@ -13,6 +13,7 @@ import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.utils.Utils
@@ -54,7 +55,7 @@ class SpecifyServerDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = AlertDialog.Builder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.specify_server_dialog_title)
                 .setView(dialogView)
                 .setNegativeButton(R.string.dialog_button_cancel) { _, _ ->

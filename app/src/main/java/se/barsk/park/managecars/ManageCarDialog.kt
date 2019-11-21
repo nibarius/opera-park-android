@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
@@ -62,7 +63,7 @@ abstract class ManageCarDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = MaterialAlertDialogBuilder(requireContext())
         regNoView.setText(ownCar.regNo)
         ownerView.setText(ownCar.owner)
 

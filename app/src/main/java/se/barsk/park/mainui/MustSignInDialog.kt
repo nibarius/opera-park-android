@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import se.barsk.park.R
 
 /**
@@ -34,7 +34,7 @@ class MustSignInDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = MaterialAlertDialogBuilder(requireContext())
 
         builder.setTitle(getString(R.string.sign_in_dialog_title))
                 .setMessage(getString(R.string.sign_in_dialog_message))
