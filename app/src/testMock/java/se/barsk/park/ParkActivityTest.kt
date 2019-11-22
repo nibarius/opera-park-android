@@ -536,7 +536,11 @@ class ParkActivityTest : RobolectricTest() {
 
         carIsNotParked(car)
         activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
-/* TODO: Fix the swipe to refresh test
+        /* TODO: Fix the swipe to refresh test
+                 Robolectric doesn't seem to support the androidx SwipeRefreshLayout yet
+                 so doing a test that relies on swipe to refresh is currently difficult.
+                 Hopefully this test can be restored at some point in the future
+
         // Refresh list of parked cars from server, now the garage is full
         ParkApp.networkManager = full
         val pullToRefreshView = Shadows.shadowOf(activity.parked_cars_pull_to_refresh) as ShadowSwipeRefreshLayout
