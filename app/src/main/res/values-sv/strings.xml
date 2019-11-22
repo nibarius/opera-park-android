@@ -35,10 +35,8 @@
     <string name="menu_manage_cars_entry">Hantera bilar</string>
     <string name="my_cars_label">Mina bilar</string>
     <string name="park_status_full">Fullt</string>
-    <plurals name="park_status_free">
-        <item quantity="one">Sista platsen</item>
-        <item quantity="other">%d lediga platser</item>
-    </plurals>
+    <string name="park_status_one_free">Sista platsen</string>
+    <string name="park_status_many_free">%d lediga platser</string>
     <string name="specify_server_dialog_title">Ange server</string>
     <string name="unpark_label">Avparkera</string>
     <string name="park_label">Parkera</string>

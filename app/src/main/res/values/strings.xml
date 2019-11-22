@@ -38,10 +38,8 @@
     <string name="my_cars_label">My cars</string>
     <string name="park_server_input_hint" translatable="false">https://park.example.com/</string>
     <string name="park_status_full">Full</string>
-    <plurals name="park_status_free">
-        <item quantity="one">Last spot</item>
-        <item quantity="other">%d free spots</item>
-    </plurals>
+    <string name="park_status_one_free">Last spot</string>
+    <string name="park_status_many_free">%d free spots</string>
     <string name="specify_server_dialog_title">Specify server</string>
     <string name="unpark_label">Unpark</string>
     <string name="park_label">Park</string>
@@ -55,7 +53,7 @@
     <string name="sign_in_network_error">A network error occurred</string>
     <string name="sign_in_unknown_error">An unknown error occurred (status code %d)</string>
     <string name="wait_list_register_failed_sign_in_problem">Registering on the wait list failed, make sure you are signed in.</string>
-    <string name="wait_list_unregister_failed_sign_in_problem">Unregistering form the the wait list failed, make sure you are signed in.</string>
+    <string name="wait_list_unregister_failed_sign_in_problem">Unregistering form the wait list failed, make sure you are signed in.</string>
 
     <!-- Settings activity -->
     <string name="settings_activity_title">Settings</string>

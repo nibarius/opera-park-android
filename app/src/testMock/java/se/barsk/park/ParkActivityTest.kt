@@ -428,7 +428,7 @@ class ParkActivityTest : RobolectricTest() {
 
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_one_free)
 
         // Park a car
         car1.performClick()
@@ -442,7 +442,7 @@ class ParkActivityTest : RobolectricTest() {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_one_free)
 
         controller.pause().stop().destroy()
     }
@@ -557,7 +557,7 @@ class ParkActivityTest : RobolectricTest() {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 5, 5)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_many_free, 5)
         listOfParkedCarsShown(activity)
 
         // Unpark it again
@@ -598,7 +598,7 @@ class ParkActivityTest : RobolectricTest() {
         car as OwnCarListEntry
 
         carIsNotParked(car)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_one_free)
         /* TODO: Fix the swipe to refresh test
                  Robolectric doesn't seem to support the androidx SwipeRefreshLayout yet
                  so doing a test that relies on swipe to refresh is currently difficult.

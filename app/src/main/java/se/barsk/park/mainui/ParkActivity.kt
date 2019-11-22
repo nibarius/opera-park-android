@@ -456,13 +456,13 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
             }
             parkingState == ParkingState.ALMOST_FULL -> {
-                title = resources.getQuantityString(R.plurals.park_status_free, freeSpots)
+                title = resources.getString(R.string.park_status_one_free)
                 textColor = ContextCompat.getColor(this, R.color.colorToolbarTextAlmostFull)
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
             }
             else -> {
-                title = resources.getQuantityString(R.plurals.park_status_free, freeSpots, freeSpots)
+                title = resources.getString(R.string.park_status_many_free, freeSpots)
                 textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFree)
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
