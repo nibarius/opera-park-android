@@ -12,18 +12,23 @@ import se.barsk.park.datatypes.ParkedCar
  * A mock implementation of the network manager that does not talk to the network
  * and instead uses hard coded well defined content instead.
  */
-class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initialParkedCars) : NetworkManager() {
+class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initialParkedCars,
+                         private val parkedCars: MutableList<ParkedCar> =
+                                 defaultParkedCars(initialParkedCars)) : NetworkManager() {
 
-    private val parkedCars by lazy {
-        listOf(
-                ParkedCar("DZU 241", "Henrik", "2017-10-01 08:05:15"),
-                ParkedCar("CRF 461", "Erik", "2017-10-01 08:16:55"),
-                ParkedCar("WNF 766", "Rikard", "2017-10-01 08:21:06"),
-                ParkedCar("AGF 487", "Niklas", "2017-10-01 08:29:53"),
-                ParkedCar("MLB 942", "Per", "2017-10-01 09:01:33"),
-                ParkedCar("MLB 84A", "Peter", "2017-10-29 08:38:14"))
-                .subList(0, initialParkedCars).toMutableList()
+    companion object {
+        private fun defaultParkedCars(cars: Int): MutableList<ParkedCar> {
+            return listOf(
+                    ParkedCar("DZU 241", "Henrik", "2017-10-01 08:05:15"),
+                    ParkedCar("CRF 461", "Erik", "2017-10-01 08:16:55"),
+                    ParkedCar("WNF 766", "Rikard", "2017-10-01 08:21:06"),
+                    ParkedCar("AGF 487", "Niklas", "2017-10-01 08:29:53"),
+                    ParkedCar("MLB 942", "Per", "2017-10-01 09:01:33"),
+                    ParkedCar("MLB 84A", "Peter", "2017-10-29 08:38:14"))
+                    .subList(0, cars).toMutableList()
+        }
     }
+
     private val networkDelay: Long = 300
 
     var hasConnection = true

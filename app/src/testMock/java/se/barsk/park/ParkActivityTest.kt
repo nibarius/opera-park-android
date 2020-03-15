@@ -17,6 +17,7 @@ import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.datatypes.MockCarCollection
+import se.barsk.park.datatypes.ParkedCar
 import se.barsk.park.mainui.MustSignInDialog
 import se.barsk.park.mainui.OwnCarListEntry
 import se.barsk.park.mainui.ParkActivity
@@ -265,6 +266,40 @@ class ParkActivityTest : RobolectricTest() {
 
         listOfParkedCarsShown(activity)
 
+        controller.pause().stop().destroy()
+    }
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "land")
+    fun difficultParkedCarsLandscapeTest() = difficultParkedCarsTest()
+
+    @Test
+    @org.robolectric.annotation.Config(qualifiers = "port")
+    fun difficultParkedCarsPortraitTest() = difficultParkedCarsTest()
+
+    private fun difficultParkedCarsTest() {
+        val parkedCars = mutableListOf(
+                ParkedCar("", "", "2017-10-01 08:05:15"), // Empty strings
+                ParkedCar("  \t  ", "  \t  ", "2017-10-01 08:16:55"), // whitespace
+                ParkedCar("あいうえお", "名前", "2017-10-01 08:21:06"), // non ascii
+                ParkedCar("\r\n\u000b\u000c\u0085\u00a0\u3000", "\n\r\u000B\u000c\u00a0\u3000", "2017-10-01 08:29:53"), // more whitespace
+                ParkedCar("\u180e\u200b\u200c\u200d\u2060\ufeff", "\u180e\u200b\u200c\u200d\u2060\ufeff", "2017-10-01 09:01:33") // whitespace related, non-whitespace characters
+                )
+
+        // Create a new activity just for this test with a special network manager
+        ParkApp.networkManager = MockNetworkManager(3, parkedCars)
+        val controller = Robolectric.buildActivity(ParkActivity::class.java)
+        val activity = controller.create().start().resume().visible().get()
+
+        // First there is a placeholder with an a progress spinner
+        loadingPlaceholderShown(activity)
+
+        // wait until we've gotten a response from the "server"
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        // After loading data the garage have cars and the list of cars is shown
+        // without crashing due to irregular names or licence plates
+        listOfParkedCarsShown(activity)
         controller.pause().stop().destroy()
     }
 

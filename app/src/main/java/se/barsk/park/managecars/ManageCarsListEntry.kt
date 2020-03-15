@@ -37,7 +37,7 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
         regNoView.text = context.getString(R.string.manage_cars_list_entry, car.regNo, car.owner)
 
         unselectedColor = getColorForCar(car, context)
-        avatarTextView.text = car.regNo.substring(0, 1)
+        avatarTextView.text = if (car.regNo.isNotEmpty()) car.regNo.substring(0, 1) else "?"
         setAvatarColor(unselectedColor, avatarTextView)
         setAvatarColor(selectedColor, avatarCheckView)
 

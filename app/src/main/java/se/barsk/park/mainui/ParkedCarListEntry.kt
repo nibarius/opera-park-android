@@ -40,6 +40,6 @@ class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEn
         parkTextView.text = spannable
 
         setAvatarColor(car, context, avatarTextView)
-        avatarTextView.text = car.regNo.substring(0, 1)
+        avatarTextView.text = if (car.regNo.isNotEmpty()) car.regNo.substring(0, 1) else "?"
     }
 }
