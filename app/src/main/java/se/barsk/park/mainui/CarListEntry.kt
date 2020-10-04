@@ -1,13 +1,11 @@
 package se.barsk.park.mainui
 
 import android.content.Context
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import kotlin.math.abs
@@ -24,14 +22,7 @@ interface CarListEntry {
 
     fun setAvatarColor(color: Int, context: Context, view: View) {
         val drawable = ContextCompat.getDrawable(context, R.drawable.circle_drawable)!!
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            drawable.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP);
-        } else {
-            // Todo: Switch to androidx core library once 1.2 is out of beta
-            // https://stackoverflow.com/a/58314657/1730966
-            @Suppress("DEPRECATION")
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-        }
+        drawable.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_ATOP)
         setBackgroundPreservePadding(view, drawable)
     }
 

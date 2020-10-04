@@ -106,11 +106,11 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.preference:preference:1.1.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.github.kittinunf.fuel:fuel-android:2.2.1'
     implementation 'com.github.kittinunf.fuel:fuel-json:2.2.1'
@@ -122,7 +122,7 @@ dependencies {
     implementation 'de.psdev.licensesdialog:licensesdialog:2.1.0'
     implementation 'net.danlew:android.joda:2.10.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
-    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'androidx.test:core:1.3.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.json:json:20180813'
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
