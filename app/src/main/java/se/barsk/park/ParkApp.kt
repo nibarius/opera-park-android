@@ -33,7 +33,7 @@ object ParkApp {
         val appContext = context.applicationContext
         storageManager = Injection.provideStorageManager(appContext)
         crashlytics = CrashReporting()
-        crashlytics.enableIfAllowed(appContext)
+        crashlytics.enableIfAllowed()
         JodaTimeAndroid.init(appContext)
         analytics = Analytics(appContext)
         networkManager = Injection.provideNetworkManager()

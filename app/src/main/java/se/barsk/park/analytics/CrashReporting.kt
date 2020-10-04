@@ -1,8 +1,6 @@
 package se.barsk.park.analytics
 
-import android.content.Context
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 
@@ -12,10 +10,11 @@ import se.barsk.park.ParkApp
 class CrashReporting {
     private var isStarted = false
 
-    fun enableIfAllowed(context: Context) {
+    fun enableIfAllowed() {
         if (!isStarted && ParkApp.storageManager.crashReportingEnabled()) {
-            Fabric.with(context, Crashlytics())
-            Crashlytics.setBool("public_release", BuildConfig.releaseBuild)
+            val crashlytics = FirebaseCrashlytics.getInstance()
+            crashlytics.setCrashlyticsCollectionEnabled(true)
+            crashlytics.setCustomKey("public_release", BuildConfig.releaseBuild)
             isStarted = true
         }
     }

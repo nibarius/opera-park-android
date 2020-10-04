@@ -49,7 +49,7 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
     private fun accept() {
         ParkApp.storageManager.giveStatsConsent()
         ParkApp.analytics.optOutToggled()
-        ParkApp.crashlytics.enableIfAllowed(requireContext())
+        ParkApp.crashlytics.enableIfAllowed()
         ParkApp.storageManager.setPrivacyOnBoardingSeen()
     }
 
