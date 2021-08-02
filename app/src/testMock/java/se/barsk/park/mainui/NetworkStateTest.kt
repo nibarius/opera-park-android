@@ -4,8 +4,6 @@ import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Test
 
-import org.junit.Assert.*
-
 class NetworkStateTest {
 
     @Test

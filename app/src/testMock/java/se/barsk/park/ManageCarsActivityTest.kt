@@ -3,18 +3,17 @@ package se.barsk.park
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Looper.getMainLooper
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.amshove.kluent.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.robolectric.Robolectric
-import org.robolectric.Shadows
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.LooperMode
@@ -45,33 +44,35 @@ class ManageCarsActivityTest : RobolectricTest() {
     @Test
     fun fabIsVisibleTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.visibility shouldEqual View.VISIBLE
+        fab.visibility shouldBeEqualTo View.VISIBLE
     }
 
     @Test
     fun carListShownWithCarsTest() {
-        val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
+        val manageCarsRecyclerView =
+            activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
         ParkApp.carCollection.getCars().shouldNotBeEmpty()
-        manageCarsRecyclerView.visibility shouldEqual View.VISIBLE
-        placeholderView.visibility shouldEqual View.GONE
+        manageCarsRecyclerView.visibility shouldBeEqualTo View.VISIBLE
+        placeholderView.visibility shouldBeEqualTo View.GONE
     }
 
     @Test
     fun placeholderShownWithNoCarsTest() {
         (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
-        val manageCarsRecyclerView = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
+        val manageCarsRecyclerView =
+            activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
         val placeholderView = activity.findViewById<TextView>(R.id.manage_cars_placeholder)
         shadowOf(getMainLooper()).idle()
         ParkApp.carCollection.getCars().shouldBeEmpty()
-        manageCarsRecyclerView.visibility shouldEqual View.GONE
-        placeholderView.visibility shouldEqual View.VISIBLE
+        manageCarsRecyclerView.visibility shouldBeEqualTo View.GONE
+        placeholderView.visibility shouldBeEqualTo View.VISIBLE
     }
 
     @Test
     fun menuIsGoneWithNoCarsTest() {
         (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
-        val menu = Shadows.shadowOf(activity).optionsMenu
+        val menu = shadowOf(activity).optionsMenu
         val selectAll = menu.findItem(R.id.manage_cars_menu_select_all)
         val choose = menu.findItem(R.id.manage_cars_menu_manage_mode)
         selectAll.isVisible.shouldBeFalse()
@@ -87,7 +88,7 @@ class ManageCarsActivityTest : RobolectricTest() {
     fun hideFabWhenClickingItTest() {
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
         fab.performClick()
-        fab.visibility shouldEqual View.GONE
+        fab.visibility shouldBeEqualTo View.GONE
     }*/
 
     @Test
@@ -110,7 +111,7 @@ class ManageCarsActivityTest : RobolectricTest() {
         dialog as AddCarDialog
         (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE).performClick()
         shadowOf(getMainLooper()).idle()
-        fab.visibility shouldEqual View.VISIBLE
+        fab.visibility shouldBeEqualTo View.VISIBLE
     }
 
     @SuppressLint("SetTextI18n")
@@ -120,7 +121,7 @@ class ManageCarsActivityTest : RobolectricTest() {
         fab.performClick()
         shadowOf(getMainLooper()).idle()
         val addCarDialog =
-                activity.supportFragmentManager.findFragmentByTag("addCar") as AddCarDialog
+            activity.supportFragmentManager.findFragmentByTag("addCar") as AddCarDialog
         val dialog = addCarDialog.dialog as AlertDialog
         val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
         button.isEnabled.shouldBeFalse()
@@ -128,39 +129,39 @@ class ManageCarsActivityTest : RobolectricTest() {
         val userView = dialog.findViewById<EditText>(R.id.owner)
         regnoView.shouldNotBeNull()
         userView.shouldNotBeNull()
-        regnoView?.setText("regno")
+        regnoView.setText("regno")
         button.isEnabled.shouldBeFalse()
-        regnoView?.setText("")
-        userView?.setText("user")
+        regnoView.setText("")
+        userView.setText("user")
         button.isEnabled.shouldBeFalse()
-        regnoView?.setText("regno")
+        regnoView.setText("regno")
         button.isEnabled.shouldBeTrue()
     }
 
     @Test
     fun chooseMenuEntryTest() {
-        val shadowActivity = Shadows.shadowOf(activity)
+        val shadowActivity = shadowOf(activity)
         shadowActivity.clickMenuItem(R.id.manage_cars_menu_manage_mode)
         val actionMode = activity.getActionMode()
         actionMode.shouldNotBeNull()
-        actionMode?.title shouldBe activity.getString(R.string.action_mode_title)
+        actionMode.title shouldBe activity.getString(R.string.action_mode_title)
 
         val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
-                .adapter as SelectableCarsAdapter
-        adapter.numSelectedItems() shouldEqual 0
+            .adapter as SelectableCarsAdapter
+        adapter.numSelectedItems() shouldBeEqualTo 0
     }
 
     @Test
     fun selectAllMenuEntryTest() {
-        val shadowActivity = Shadows.shadowOf(activity)
+        val shadowActivity = shadowOf(activity)
         shadowActivity.clickMenuItem(R.id.manage_cars_menu_select_all)
         val actionMode = activity.getActionMode()
         actionMode.shouldNotBeNull()
 
         val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
-                .adapter as SelectableCarsAdapter
-        actionMode?.title shouldEqual adapter.itemCount.toString()
-        adapter.numSelectedItems() shouldEqual adapter.itemCount
+            .adapter as SelectableCarsAdapter
+        actionMode.title shouldBeEqualTo adapter.itemCount.toString()
+        adapter.numSelectedItems() shouldBeEqualTo adapter.itemCount
     }
 
     @Test
@@ -171,7 +172,7 @@ class ManageCarsActivityTest : RobolectricTest() {
         val intentActivity = intentController.create().start().resume().visible().get()
 
         val fab = intentActivity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.visibility shouldEqual View.GONE
+        fab.visibility shouldBeEqualTo View.GONE
 
         val dialog = intentActivity.supportFragmentManager.findFragmentByTag("addCar")
         dialog.shouldNotBeNull()
@@ -190,7 +191,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
         // Can't test fab visibility, see hideFabWhenClickingItTest()
         //val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        //fab.visibility shouldEqual View.GONE
+        //fab.visibility shouldBeEqualTo View.GONE
 
         val editCarDialog = activity.supportFragmentManager.findFragmentByTag("editCar")
         editCarDialog.shouldNotBeNull()
@@ -201,8 +202,8 @@ class ManageCarsActivityTest : RobolectricTest() {
         val userView = dialog.findViewById<EditText>(R.id.owner)
         regnoView.shouldNotBeNull()
         userView.shouldNotBeNull()
-        regnoView?.text.toString() shouldEqual adapter.cars[0].regNo
-        userView?.text.toString() shouldEqual adapter.cars[0].owner
+        regnoView.text.toString() shouldBeEqualTo adapter.cars[0].regNo
+        userView.text.toString() shouldBeEqualTo adapter.cars[0].owner
     }
 
     @Test
@@ -231,6 +232,6 @@ class ManageCarsActivityTest : RobolectricTest() {
         activity.getActionMode().shouldBeNull()
 
         val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.visibility shouldEqual View.VISIBLE
+        fab.visibility shouldBeEqualTo View.VISIBLE
     }
 }

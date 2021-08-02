@@ -2,7 +2,6 @@ package se.barsk.park
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Looper
 import android.os.Looper.getMainLooper
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -21,14 +20,13 @@ import org.robolectric.annotation.LooperMode
 import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.datatypes.ParkedCar
-import se.barsk.park.mainui.MustSignInDialog
 import se.barsk.park.mainui.OwnCarListEntry
 import se.barsk.park.mainui.ParkActivity
 import se.barsk.park.mainui.SpecifyServerDialog
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.settings.SettingsActivity
-import java.util.concurrent.TimeUnit
+import java.util.*
 
 @LooperMode(LooperMode.Mode.PAUSED)
 class ParkActivityTest : RobolectricTest() {
@@ -57,7 +55,7 @@ class ParkActivityTest : RobolectricTest() {
 
         val expectedIntent = Intent(activity, SettingsActivity::class.java)
         val actualIntent = shadowActivity.nextStartedActivity
-        actualIntent.component shouldEqual expectedIntent.component
+        actualIntent.component shouldBeEqualTo expectedIntent.component
     }
 
     @Test
@@ -67,7 +65,7 @@ class ParkActivityTest : RobolectricTest() {
 
         val expectedIntent = Intent(activity, ManageCarsActivity::class.java)
         val actualIntent = shadowActivity.nextStartedActivity
-        actualIntent.component shouldEqual expectedIntent.component
+        actualIntent.component shouldBeEqualTo expectedIntent.component
     }
 
     @Test
@@ -78,7 +76,7 @@ class ParkActivityTest : RobolectricTest() {
 
         val expectedIntent = Intent(activity, ManageCarsActivity::class.java)
         val actualIntent = shadowActivity.nextStartedActivity
-        actualIntent.component shouldEqual expectedIntent.component
+        actualIntent.component shouldBeEqualTo expectedIntent.component
         actualIntent.extras.shouldNotBeNull()
         val extras = actualIntent.extras as Bundle
         extras.getBoolean(INTENT_EXTRA_ADD_CAR).shouldBeTrue()
@@ -277,12 +275,20 @@ class ParkActivityTest : RobolectricTest() {
 
     private fun difficultParkedCarsTest() {
         val parkedCars = mutableListOf(
-                ParkedCar("", "", "2017-10-01 08:05:15"), // Empty strings
-                ParkedCar("  \t  ", "  \t  ", "2017-10-01 08:16:55"), // whitespace
-                ParkedCar("あいうえお", "名前", "2017-10-01 08:21:06"), // non ascii
-                ParkedCar("\r\n\u000b\u000c\u0085\u00a0\u3000", "\n\r\u000B\u000c\u00a0\u3000", "2017-10-01 08:29:53"), // more whitespace
-                ParkedCar("\u180e\u200b\u200c\u200d\u2060\ufeff", "\u180e\u200b\u200c\u200d\u2060\ufeff", "2017-10-01 09:01:33") // whitespace related, non-whitespace characters
-                )
+            ParkedCar("", "", "2017-10-01 08:05:15"), // Empty strings
+            ParkedCar("  \t  ", "  \t  ", "2017-10-01 08:16:55"), // whitespace
+            ParkedCar("あいうえお", "名前", "2017-10-01 08:21:06"), // non ascii
+            ParkedCar(
+                "\r\n\u000b\u000c\u0085\u00a0\u3000",
+                "\n\r\u000B\u000c\u00a0\u3000",
+                "2017-10-01 08:29:53"
+            ), // more whitespace
+            ParkedCar(
+                "\u180e\u200b\u200c\u200d\u2060\ufeff",
+                "\u180e\u200b\u200c\u200d\u2060\ufeff",
+                "2017-10-01 09:01:33"
+            ) // whitespace related, non-whitespace characters
+        )
 
         // Create a new activity just for this test with a special network manager
         ParkApp.networkManager = MockNetworkManager(3, parkedCars)
@@ -303,11 +309,13 @@ class ParkActivityTest : RobolectricTest() {
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "land")
-    fun parkedCarsListActivityDestroyResumeNotEmptyLandscape() = parkedCarsListActivityDestroyResumeNotEmptyTest()
+    fun parkedCarsListActivityDestroyResumeNotEmptyLandscape() =
+        parkedCarsListActivityDestroyResumeNotEmptyTest()
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "port")
-    fun parkedCarsListActivityDestroyResumeNotEmptyPortrait() = parkedCarsListActivityDestroyResumeNotEmptyTest()
+    fun parkedCarsListActivityDestroyResumeNotEmptyPortrait() =
+        parkedCarsListActivityDestroyResumeNotEmptyTest()
 
     // Test that the pause, stop, destroy, create, start, resume lifecycle works as it should
     // This happens for example when minimizing the app using hardware back
@@ -455,7 +463,7 @@ class ParkActivityTest : RobolectricTest() {
 
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_one_free)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.resources.getString(R.string.park_status_one_free)
 
         // Park a car
         car1.performClick()
@@ -464,14 +472,14 @@ class ParkActivityTest : RobolectricTest() {
         // Todo: restore waitlist part when there is a backend with support for it
         // carCanBePutOnWaitList(car2)
         parkCarButtonIsDisabled(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.park_status_full)
 
         // Unpark it again
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_one_free)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.resources.getString(R.string.park_status_one_free)
 
         controller.pause().stop().destroy()
     }
@@ -501,7 +509,7 @@ class ParkActivityTest : RobolectricTest() {
         car.shouldNotBeNull()
         car as OwnCarListEntry
 
-        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.park_status_full)
 
         // Register on the wait list while not logged in should trigger the sign in dialog
         car.performClick()
@@ -538,7 +546,7 @@ class ParkActivityTest : RobolectricTest() {
         car.shouldNotBeNull()
         car as OwnCarListEntry
         carCanBePutOnWaitList(car)
-        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.park_status_full)
 
         // Register on the wait list
         car.performClick()
@@ -580,14 +588,17 @@ class ParkActivityTest : RobolectricTest() {
 
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.app_name)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.app_name)
 
         // Park a car
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_many_free, 5)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.resources.getString(
+            R.string.park_status_many_free,
+            5
+        )
         listOfParkedCarsShown(activity)
 
         // Unpark it again
@@ -595,7 +606,7 @@ class ParkActivityTest : RobolectricTest() {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsNotParked(car1)
         carIsNotParked(car2)
-        activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.app_name)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.app_name)
         emptyGaragePlaceholderShown(activity)
 
         controller.pause().stop().destroy()
@@ -604,11 +615,13 @@ class ParkActivityTest : RobolectricTest() {
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "land")
-    fun updateOwnCarsListOnServerStateChangeLandscapeTest() = updateOwnCarsListOnServerStateChangeTest()
+    fun updateOwnCarsListOnServerStateChangeLandscapeTest() =
+        updateOwnCarsListOnServerStateChangeTest()
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "port")
-    fun updateOwnCarsListOnServerStateChangePortraitTest() = updateOwnCarsListOnServerStateChangeTest()
+    fun updateOwnCarsListOnServerStateChangePortraitTest() =
+        updateOwnCarsListOnServerStateChangeTest()
 
     private fun updateOwnCarsListOnServerStateChangeTest() {
         // Create a new activity just for this test with a special network manager
@@ -628,7 +641,7 @@ class ParkActivityTest : RobolectricTest() {
         car as OwnCarListEntry
 
         carIsNotParked(car)
-        activity.supportActionBar?.title.toString() shouldEqual activity.resources.getString(R.string.park_status_one_free)
+        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.resources.getString(R.string.park_status_one_free)
         /* TODO: Fix the swipe to refresh test
                  Robolectric doesn't seem to support the androidx SwipeRefreshLayout yet
                  so doing a test that relies on swipe to refresh is currently difficult.
@@ -640,14 +653,14 @@ class ParkActivityTest : RobolectricTest() {
         pullToRefreshView.onRefreshListener.onRefresh()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carCanBePutOnWaitList(car)
-        activity.supportActionBar?.title shouldEqual activity.getString(R.string.park_status_full)
+        activity.supportActionBar?.title shouldBeEqualTo activity.getString(R.string.park_status_full)
 
         // Refresh list of parked cars from server, there is one spot free again
         ParkApp.networkManager = almostFull
         pullToRefreshView.onRefreshListener.onRefresh()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsNotParked(car)
-        activity.supportActionBar?.title shouldEqual activity.resources.getQuantityString(R.plurals.park_status_free, 1)
+        activity.supportActionBar?.title shouldBeEqualTo activity.resources.getQuantityString(R.plurals.park_status_free, 1)
 */
         controller.pause().stop().destroy()
     }
@@ -656,7 +669,7 @@ class ParkActivityTest : RobolectricTest() {
         activity.parked_cars_placeholder.shouldBeVisible()
         activity.loading_spinner.shouldBeVisible()
         activity.no_park_server_placeholder_button.shouldBeGone()
-        activity.parked_cars_placeholder_text_view.text.toString() shouldEqual
+        activity.parked_cars_placeholder_text_view.text.toString() shouldBeEqualTo
                 activity.getString(R.string.updating_status_placeholder)
     }
 
@@ -664,23 +677,26 @@ class ParkActivityTest : RobolectricTest() {
         activity.parked_cars_placeholder.shouldBeVisible()
         activity.loading_spinner.shouldBeGone()
         activity.no_park_server_placeholder_button.shouldBeGone()
-        activity.parked_cars_placeholder_text_view.text.toString() shouldEqual
+        activity.parked_cars_placeholder_text_view.text.toString() shouldBeEqualTo
                 activity.getString(R.string.parked_cars_placeholder)
     }
 
     private fun listOfParkedCarsShown(activity: ParkActivity) {
         activity.parked_cars_placeholder.shouldBeGone()
         activity.parked_cars_recycler_view.shouldBeVisible()
-        activity.supportActionBar?.title shouldNotEqual activity.getString(R.string.app_name)
+        activity.supportActionBar?.title shouldNotBeEqualTo activity.getString(R.string.app_name)
     }
 
     private fun connectionErrorPlaceholderShown(activity: ParkActivity) {
         activity.parked_cars_placeholder.shouldBeVisible()
         activity.loading_spinner.shouldBeGone()
         activity.no_park_server_placeholder_button.shouldBeVisible()
-        activity.parked_cars_placeholder_text_view.text.toString() shouldEqual
-                activity.getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
-        activity.no_park_server_placeholder_button.text.toString() shouldEqual
+        activity.parked_cars_placeholder_text_view.text.toString() shouldBeEqualTo
+                activity.getString(
+                    R.string.unable_to_connect_placeholder_text,
+                    ParkApp.storageManager.getServer()
+                )
+        activity.no_park_server_placeholder_button.text.toString() shouldBeEqualTo
                 activity.getString(R.string.unable_to_connect_placeholder_button)
     }
 
@@ -688,22 +704,31 @@ class ParkActivityTest : RobolectricTest() {
         activity.parked_cars_placeholder.shouldBeVisible()
         activity.loading_spinner.shouldBeGone()
         activity.no_park_server_placeholder_button.shouldBeVisible()
-        activity.parked_cars_placeholder_text_view.text.toString() shouldEqual
-                activity.getString(R.string.no_server_placeholder_text, ParkApp.storageManager.getServer())
-        activity.no_park_server_placeholder_button.text.toString() shouldEqual
+        activity.parked_cars_placeholder_text_view.text.toString() shouldBeEqualTo
+                activity.getString(
+                    R.string.no_server_placeholder_text,
+                    ParkApp.storageManager.getServer()
+                )
+        activity.no_park_server_placeholder_button.text.toString() shouldBeEqualTo
                 activity.getString(R.string.no_server_placeholder_button)
     }
 
     private fun carIsNotParked(car: OwnCarListEntry) {
         val button = car.park_button
         button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(context().getString(R.string.park_label).toUpperCase())
+        button.text.shouldStartWith(
+            context().getString(R.string.park_label)
+                .uppercase(Locale.getDefault())
+        )
     }
 
     private fun carIsParked(car: OwnCarListEntry) {
         val button = car.park_button
         button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(context().getString(R.string.unpark_label).toUpperCase())
+        button.text.shouldStartWith(
+            context().getString(R.string.unpark_label)
+                .uppercase(Locale.getDefault())
+        )
     }
 
     private fun parkCarButtonIsDisabled(car: OwnCarListEntry) {
@@ -714,21 +739,27 @@ class ParkActivityTest : RobolectricTest() {
     private fun carCanBePutOnWaitList(car: OwnCarListEntry) {
         val button = car.park_button
         button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(context().getString(R.string.wait_label).toUpperCase())
+        button.text.shouldStartWith(
+            context().getString(R.string.wait_label)
+                .uppercase(Locale.getDefault())
+        )
     }
 
     private fun carIsOnWaitList(car: OwnCarListEntry) {
         val button = car.park_button
         button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(context().getString(R.string.stop_waiting_label).toUpperCase())
+        button.text.shouldStartWith(
+            context().getString(R.string.stop_waiting_label)
+                .uppercase(Locale.getDefault())
+        )
     }
 
     private fun View.shouldBeGone() {
-        this.visibility shouldEqual View.GONE
+        this.visibility shouldBeEqualTo View.GONE
     }
 
     private fun View.shouldBeVisible() {
-        this.visibility shouldEqual View.VISIBLE
+        this.visibility shouldBeEqualTo View.VISIBLE
     }
 }
 
