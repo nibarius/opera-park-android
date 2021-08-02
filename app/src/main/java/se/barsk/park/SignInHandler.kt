@@ -135,7 +135,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
             // Documentation provides no information on when null is returned by getResult
             // and it doesn't check for null in any examples. Assume that getResult never
             // return null in this case.
-            val account = completedTask.getResult(ApiException::class.java)!!
+            val account = completedTask.getResult(ApiException::class.java)
             lastSignedInAccount = account
 
             token = account.idToken

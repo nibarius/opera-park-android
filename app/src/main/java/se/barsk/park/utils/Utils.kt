@@ -18,8 +18,8 @@ object Utils {
         }
 
         var fixedUrl = url
-                .trim()
-                .toLowerCase(Locale.US)
+            .trim()
+            .lowercase(Locale.US)
                 .replace("http://", "https://")
         if (!fixedUrl.startsWith("https://")) {
             fixedUrl = "https://$fixedUrl"
@@ -37,7 +37,7 @@ object Utils {
      * and numbers.
      */
     fun fixRegnoForDisplay(regNo: String): String =
-            regNo.toUpperCase(Locale.getDefault()).replace("[A-Z][0-9]".toRegex()) {
+            regNo.uppercase(Locale.getDefault()).replace("[A-Z][0-9]".toRegex()) {
                 "${it.value[0]} ${it.value[1]}"
             }
 
