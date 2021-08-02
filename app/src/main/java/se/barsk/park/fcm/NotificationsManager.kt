@@ -2,7 +2,7 @@ package se.barsk.park.fcm
 
 import android.content.Context
 import android.os.Build
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import se.barsk.park.error.FailedToGetFcmTokenException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -27,18 +27,14 @@ class NotificationsManager {
      */
     @Suppress("unused") // Used in prod flavor, but not in mock
     suspend fun getToken(): String = suspendCoroutine { continuation ->
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 continuation.resumeWithException(FailedToGetFcmTokenException(task.exception?.message
                         ?: "Unknown error when getting FCM token"))
                 return@addOnCompleteListener
             }
-            val result = task.result
-            if (result == null) {
-                continuation.resumeWithException(FailedToGetFcmTokenException("FCM task completed without result"))
-            } else {
-                continuation.resume(result.token)
-            }
+            val token = task.result
+            continuation.resume(token)
         }
     }
 }
