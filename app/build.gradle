@@ -14,8 +14,8 @@ android {
     buildToolsVersion '29.0.2'
     testOptions.unitTests.includeAndroidResources true
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     defaultConfig {
         applicationId "se.barsk.park"
@@ -130,8 +130,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20210307'
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    testImplementation "org.robolectric:robolectric:4.3"
-    testImplementation "org.robolectric:shadows-supportv4:4.3"
+    testImplementation "org.robolectric:robolectric:4.4"
+    testImplementation "org.robolectric:shadows-supportv4:4.4"
     testImplementation 'org.amshove.kluent:kluent-android:1.68'
 }
 repositories {

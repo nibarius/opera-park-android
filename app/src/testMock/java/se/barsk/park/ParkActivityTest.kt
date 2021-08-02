@@ -2,6 +2,8 @@ package se.barsk.park
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
+import android.os.Looper.getMainLooper
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.FirebaseApp
@@ -15,6 +17,7 @@ import org.junit.Test
 import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.LooperMode
 import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.datatypes.ParkedCar
@@ -27,7 +30,7 @@ import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.settings.SettingsActivity
 import java.util.concurrent.TimeUnit
 
-
+@LooperMode(LooperMode.Mode.PAUSED)
 class ParkActivityTest : RobolectricTest() {
     private lateinit var controller: ActivityController<ParkActivity>
     private lateinit var activity: ParkActivity
@@ -71,6 +74,7 @@ class ParkActivityTest : RobolectricTest() {
     fun clickAddCarButtonTest() {
         val shadowActivity = Shadows.shadowOf(activity)
         activity.no_own_cars_placeholder_button.performClick()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         val expectedIntent = Intent(activity, ManageCarsActivity::class.java)
         val actualIntent = shadowActivity.nextStartedActivity
@@ -179,10 +183,7 @@ class ParkActivityTest : RobolectricTest() {
 
         (ParkApp.networkManager as MockNetworkManager).hasConnection = true
         activity.no_park_server_placeholder_button.performClick()
-
-        ShadowLooper.pauseMainLooper()
-        Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS)
-        ShadowLooper.unPauseMainLooper()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         // There should now be a placeholder with a spinner
         loadingPlaceholderShown(activity)
@@ -222,10 +223,7 @@ class ParkActivityTest : RobolectricTest() {
 
         (ParkApp.networkManager as MockNetworkManager).hasConnection = true
         activity.no_park_server_placeholder_button.performClick()
-
-        ShadowLooper.pauseMainLooper()
-        Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS)
-        ShadowLooper.unPauseMainLooper()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         // There should now be a placeholder with a spinner
         loadingPlaceholderShown(activity)
@@ -363,6 +361,7 @@ class ParkActivityTest : RobolectricTest() {
         noServerPlaceholderShown(activity)
 
         activity.no_park_server_placeholder_button.performClick()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         val specifyServerDialog = activity.supportFragmentManager.findFragmentByTag("specifyServer")
         specifyServerDialog.shouldNotBeNull()
@@ -371,11 +370,7 @@ class ParkActivityTest : RobolectricTest() {
         val dialog = specifyServerDialog.dialog as AlertDialog
         dialog.server_url_input.setText("http://park.example.com/")
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick()
-
-
-        ShadowLooper.pauseMainLooper()
-        Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS)
-        ShadowLooper.unPauseMainLooper()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         // There should now be a placeholder with a spinner
         loadingPlaceholderShown(activity)
@@ -407,6 +402,7 @@ class ParkActivityTest : RobolectricTest() {
         noServerPlaceholderShown(activity)
 
         activity.no_park_server_placeholder_button.performClick()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         val specifyServerDialog = activity.supportFragmentManager.findFragmentByTag("specifyServer")
         specifyServerDialog.shouldNotBeNull()
@@ -416,11 +412,7 @@ class ParkActivityTest : RobolectricTest() {
         dialog.shouldNotBeNull()
         dialog.server_url_input.setText("http://park.example.com/")
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick()
-
-
-        ShadowLooper.pauseMainLooper()
-        Robolectric.getForegroundThreadScheduler().advanceBy(100, TimeUnit.MILLISECONDS)
-        ShadowLooper.unPauseMainLooper()
+        Shadows.shadowOf(getMainLooper()).idle()
 
         // There should now be a placeholder with a spinner
         loadingPlaceholderShown(activity)

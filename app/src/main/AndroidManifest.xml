@@ -64,8 +64,6 @@
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
-        <!-- Needed in the manifest to be able to run robolectric tests -->
-        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

@@ -500,6 +500,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun getDynamicLink() {
+        if (Build.FINGERPRINT == "robolectric") {
+            // Robolectric doesn't work well with play services ParkActivity tests
+            // works fine if run in isolation, or only the ParkActivityTest class
+            // but if running all tests in the whole project at once it complains
+            // about a missing com.google.android.gms.version in the manifest (even
+            // if it's there. Just pretend Google Play services is not available whenever
+            // running under test. Others seem to have the same issue, but there are no solutions.
+            return
+        }
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) !=
                 com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
             // If there is no Google play services on the device, then there is no
