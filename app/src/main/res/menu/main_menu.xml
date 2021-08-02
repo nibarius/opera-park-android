@@ -11,9 +11,11 @@
         android:title="@string/menu_settings_entry"
         app:showAsAction="collapseActionView">
     </item>
+    <!-- Sign in feature disabled due to no backend.
+         TODO: re-enable sign in menu when there is a backend.
     <item
         android:id="@+id/menu_sign_in"
         android:title="@string/sign_in_menu_entry"
         app:showAsAction="collapseActionView">
-    </item>
+    </item>-->
 </menu>

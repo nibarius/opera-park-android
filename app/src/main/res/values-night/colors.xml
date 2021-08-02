@@ -21,6 +21,7 @@
     <color name="parkButtonColor">@color/colorGreen200</color>
     <color name="unparkButtonColor">@color/colorRed200</color>
     <color name="waitButtonColor">@color/colorOrange200</color>
+    <color name="colorDisabled">@color/colorWhite26percent</color>
 
     <!-- Splash screen colors -->
     <color name="toolbarColor">@color/colorSurface</color>

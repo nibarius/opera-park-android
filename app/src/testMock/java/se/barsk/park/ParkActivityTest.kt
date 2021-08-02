@@ -469,7 +469,9 @@ class ParkActivityTest : RobolectricTest() {
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
-        carCanBePutOnWaitList(car2)
+        // Todo: restore waitlist part when there is a backend with support for it
+        // carCanBePutOnWaitList(car2)
+        parkCarButtonIsDisabled(car2)
         activity.supportActionBar?.title.toString() shouldEqual activity.getString(R.string.park_status_full)
 
         // Unpark it again
@@ -482,6 +484,7 @@ class ParkActivityTest : RobolectricTest() {
         controller.pause().stop().destroy()
     }
 
+    /* Test disabled until there is a backend and wait list support
     @Test
     @org.robolectric.annotation.Config(qualifiers = "land")
     fun waitListNotLoggedInLandscapeTest() = waitListNotLoggedInTest()
@@ -556,7 +559,7 @@ class ParkActivityTest : RobolectricTest() {
         carCanBePutOnWaitList(car)
 
         controller.pause().stop().destroy()
-    }
+    }*/
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "land")
@@ -709,6 +712,11 @@ class ParkActivityTest : RobolectricTest() {
         val button = car.park_button
         button.isEnabled.shouldBeTrue()
         button.text.shouldStartWith(context().getString(R.string.unpark_label).toUpperCase())
+    }
+
+    private fun parkCarButtonIsDisabled(car: OwnCarListEntry) {
+        val button = car.park_button
+        button.isEnabled.shouldBeFalse()
     }
 
     private fun carCanBePutOnWaitList(car: OwnCarListEntry) {

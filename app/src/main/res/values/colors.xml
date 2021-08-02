@@ -36,6 +36,7 @@
 
     <!-- Other named colors -->
     <color name="colorWhite">#ffffffff</color>
+    <color name="colorWhite26percent">#42ffffff</color>
     <color name="colorWhite38percent">#61ffffff</color>
     <color name="colorWhite60percent">#99ffffff</color>
     <color name="colorWhite70percent">#b3ffffff</color>
@@ -49,6 +50,7 @@
     <color name="colorBlack60percent">#99000000</color>
     <color name="colorBlack54percent">#8a000000</color>
     <color name="colorBlack38percent">#61000000</color>
+    <color name="colorBlack26percent">#42000000</color>
     <color name="colorTransparent">#00000000</color>
 
     <!-- Most of the colors below are different in light and dark theme -->
@@ -76,6 +78,7 @@
     <color name="parkButtonColor">@color/colorPrimary</color>
     <color name="unparkButtonColor">@color/colorRed600</color>
     <color name="waitButtonColor">@color/colorOrange600</color>
+    <color name="colorDisabled">@color/colorBlack26percent</color>
 
     <!-- Splash screen colors -->
     <color name="toolbarColor">@color/colorPrimary</color>

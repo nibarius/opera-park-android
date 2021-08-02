@@ -186,7 +186,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
         automaticUpdateTask.start()
         getDynamicLink()
-        user.silentSignIn(this)
+        // TODO: re-enable sign in feature when there is a backend for it.
+        //user.silentSignIn(this)
         showPrivacyDialogIfNeeded()
     }
 
@@ -213,12 +214,14 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private var optionsMenu: Menu? = null
     private fun updateSignInText() {
+        // TODO: re-enable when there's a backend available
+        /*
         val title = if (user.isSignedIn) {
             getString(R.string.sign_out_menu_entry, user.accountName)
         } else {
             getString(R.string.sign_in_menu_entry)
         }
-        optionsMenu?.findItem(R.id.menu_sign_in)?.title = title
+        optionsMenu?.findItem(R.id.menu_sign_in)?.title = title*/
     }
 
 
@@ -362,7 +365,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
-        R.id.menu_sign_in -> consume { signInOrOut() }
+        // R.id.menu_sign_in -> consume { signInOrOut() } // TODO: re-enable when backend is available
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -410,8 +413,11 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Wait()))
             }
             else -> {
+                //TODO: re-enable when there is a backend available. For now do nothing when
+                // clicking the car button on a full garage.
+
                 // Garage is full, but the user is not signed in: show dialog for signing in.
-                MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")
+                // MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")
             }
         }
     }

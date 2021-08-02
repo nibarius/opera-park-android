@@ -34,13 +34,13 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
         car as OwnCar
         val action = if (car.parked) {
             context.getString(R.string.unpark_label)
-        } else if (!garageFull) {
+        } else /*if (!garageFull)*/ {
             context.getString(R.string.park_label)
-        } else if (ParkApp.theUser.isOnWaitList) {
+        } /*else if (ParkApp.theUser.isOnWaitList) {
             context.getString(R.string.stop_waiting_label)
         } else {
             context.getString(R.string.wait_label)
-        }
+        }*/
         val firstLen = action.length
         val spannable = SpannableString("${action.toUpperCase(Locale.getDefault())}\n${car.regNo}")
         spannable.setSpan(RelativeSizeSpan(0.67f), 0, firstLen, 0)
@@ -61,18 +61,24 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
                     parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_ripple_on_primary)
                     parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
                 }
+                parkButton.isEnabled = true
             }
             garageFull -> { // Show wait button
-                parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
+                // Todo: re-enable wait button when backend is available
+                /*parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
                 parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.button_wait_stroke)
                 parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_wait_ripple)
-                parkButton.setTextColor(ContextCompat.getColor(context, R.color.waitButtonColor))
+                parkButton.setTextColor(ContextCompat.getColor(context, R.color.waitButtonColor))*/
+                parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.colorDisabled)
+                parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorDisabled))
+                parkButton.isEnabled = false
             }
             else -> { // Show park button
                 parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
                 parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.button_park_stroke)
                 parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_park_ripple)
                 parkButton.setTextColor(ContextCompat.getColor(context, R.color.parkButtonColor))
+                parkButton.isEnabled = true
             }
         }
     }
