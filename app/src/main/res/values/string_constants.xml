@@ -37,7 +37,7 @@
     <string name="default_theme" translatable="false">system</string>
 
     <!-- URLs for links in the app -->
-    <string name="url_privacy_statement" translatable="false">https://opera-park.appspot.com/privacy</string>
+    <string name="url_privacy_statement" translatable="false">https://barsk.xyz/static/opark/privacy.html</string>
     <string name="url_wait_list_endpoint" translatable="false">"https://opera-park.appspot.com/api/v1/waitList</string>
 
 </resources>
