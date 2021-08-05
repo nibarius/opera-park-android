@@ -8,7 +8,7 @@ repositories {
 
 android {
     def majorVersion = 3
-    def minorVersion = 0
+    def minorVersion = 1
 
     compileSdkVersion 30
     testOptions.unitTests.includeAndroidResources true
@@ -20,7 +20,7 @@ android {
         applicationId "se.barsk.park"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 7
+        versionCode 8
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "releaseBuild", "false"
