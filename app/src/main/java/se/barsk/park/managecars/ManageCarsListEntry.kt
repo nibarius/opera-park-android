@@ -20,9 +20,9 @@ import kotlin.math.max
  * One entry in the manage cars list
  */
 class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.attr.manageCarsEntryStyle), CarListEntry {
-    private val regNoView: TextView by lazy { findViewById<TextView>(R.id.manage_cars_entry) }
-    private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
-    private val avatarCheckView: ImageView by lazy { findViewById<ImageView>(R.id.avatar_check_view) }
+    private val regNoView: TextView by lazy { findViewById(R.id.manage_cars_entry) }
+    private val avatarTextView: TextView by lazy { findViewById(R.id.avatar_text_view) }
+    private val avatarCheckView: ImageView by lazy { findViewById(R.id.avatar_check_view) }
     private val selectedColor = ContextCompat.getColor(context, R.color.colorPrimary)
     private var unselectedColor = ContextCompat.getColor(context, R.color.colorPrimary) // default value not really used
     private var hideAnimation: Animator? = null

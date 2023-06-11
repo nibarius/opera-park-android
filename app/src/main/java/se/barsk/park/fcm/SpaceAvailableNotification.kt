@@ -20,21 +20,17 @@ class SpaceAvailableNotification(context: Context, data: JSONObject) : Notificat
     override val id = SpaceAvailableNotificationChannel.ID
     override val timeout: Long = 3 * 60 * 60 * 1000 // 3 hours
     private val freeSpots = data["free"]
-    private val valid: Boolean
-
-    init {
-        valid = when (freeSpots) {
-            null -> {
-                ErrorHandler.raiseException("Invalid space available notification, free parameter missing")
-                false
-            }
-            "0" -> {
-                ErrorHandler.raiseException("Invalid space available notification, 0 spaces free")
-                false
-            }
-            else ->
-                true
+    private val valid: Boolean = when (freeSpots) {
+        null -> {
+            ErrorHandler.raiseException("Invalid space available notification, free parameter missing")
+            false
         }
+        "0" -> {
+            ErrorHandler.raiseException("Invalid space available notification, 0 spaces free")
+            false
+        }
+        else ->
+            true
     }
 
     override fun show() {

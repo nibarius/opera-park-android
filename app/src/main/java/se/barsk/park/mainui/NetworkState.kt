@@ -55,7 +55,7 @@ class NetworkState {
         updateInProgress = false
         if (success) {
             state = State.HAVE_MADE_SUCCESSFUL_REQUEST
-        } else if (!success && state != State.HAVE_MADE_SUCCESSFUL_REQUEST) {
+        } else if (state != State.HAVE_MADE_SUCCESSFUL_REQUEST) {
             state = State.ONLY_FAILED_REQUESTS
         }
     }

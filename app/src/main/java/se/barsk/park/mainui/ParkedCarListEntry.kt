@@ -17,8 +17,8 @@ import se.barsk.park.utils.Utils.fixRegnoForDisplay
  * One entry in the list of parked cars
  */
 class ParkedCarListEntry(context: Context?) : RelativeLayout(context), CarListEntry {
-    private val parkTextView: TextView by lazy { findViewById<TextView>(R.id.parked_entry_text) }
-    private val avatarTextView: TextView by lazy { findViewById<TextView>(R.id.avatar_text_view) }
+    private val parkTextView: TextView by lazy { findViewById(R.id.parked_entry_text) }
+    private val avatarTextView: TextView by lazy { findViewById(R.id.avatar_text_view) }
 
 
     init {

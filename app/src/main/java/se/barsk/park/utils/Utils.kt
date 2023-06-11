@@ -37,7 +37,7 @@ object Utils {
      * and numbers.
      */
     fun fixRegnoForDisplay(regNo: String): String =
-            regNo.uppercase(Locale.getDefault()).replace("[A-Z][0-9]".toRegex()) {
+            regNo.uppercase(Locale.getDefault()).replace("[A-Z]\\d".toRegex()) {
                 "${it.value[0]} ${it.value[1]}"
             }
 

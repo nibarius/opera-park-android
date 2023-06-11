@@ -1,26 +1,28 @@
 package se.barsk.park.managecars
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ViewSwitcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import se.barsk.park.*
 import se.barsk.park.analytics.ShareCarEvent
+import se.barsk.park.databinding.ActivityManageCarsBinding
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
 
 
-class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener, CarCollectionStatusChangedListener {
+class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogListener,
+    CarCollectionStatusChangedListener {
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCarCollectionStatusChange() {
         adapter.ownCars = ParkApp.carCollection.getCars()
         adapter.notifyDataSetChanged()
@@ -42,16 +44,11 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private var actionMode: ActionMode? = null
+
     @Suppress("unused")  // Used to access actionMode in tests in the mock flavor
     fun getActionMode() = actionMode
     private val adapter: SelectableCarsAdapter by lazy {
         SelectableCarsAdapter(ParkApp.carCollection.getCars()) {}
-    }
-    private val manageCarsRecyclerView: RecyclerView by lazy {
-        findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
-    }
-    private val fab: FloatingActionButton by lazy {
-        findViewById<FloatingActionButton>(R.id.manage_cards_fab)
     }
     private lateinit var optionsMenu: Menu
 
@@ -66,22 +63,26 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         showEditDialog(adapter.ownCars[position].id)
     }
 
+    lateinit var binding: ActivityManageCarsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ParkApp.init(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_manage_cars)
+        binding = ActivityManageCarsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        manageCarsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        manageCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        manageCarsRecyclerView.adapter = adapter
-        val touchListener = RecyclerTouchListener(this, manageCarsRecyclerView,
-                object : RecyclerTouchListener.ClickListener {
-                    override fun onClick(view: View, position: Int) = recyclerOnClick(position)
-                    override fun onLongClick(view: View, position: Int) = recyclerOnLongClick(position)
-                })
-        manageCarsRecyclerView.addOnItemTouchListener(touchListener)
+        binding.manageCarsRecyclerview.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        binding.manageCarsRecyclerview.itemAnimator = DefaultItemAnimator()
+        binding.manageCarsRecyclerview.adapter = adapter
+        val touchListener = RecyclerTouchListener(this, binding.manageCarsRecyclerview,
+            object : RecyclerTouchListener.ClickListener {
+                override fun onClick(view: View, position: Int) = recyclerOnClick(position)
+                override fun onLongClick(view: View, position: Int) = recyclerOnLongClick(position)
+            })
+        binding.manageCarsRecyclerview.addOnItemTouchListener(touchListener)
 
-        fab.setOnClickListener { showAddDialog() }
+        binding.manageCardsFab.setOnClickListener { showAddDialog() }
 
         if (intent.getBooleanExtra(INTENT_EXTRA_ADD_CAR, false)) {
             showAddDialog()
@@ -138,7 +139,8 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
             actionMode?.invalidate()
         }
 
-        actionMode?.title = getString(R.string.manage_cars_action_mode_title, adapter.numSelectedItems())
+        actionMode?.title =
+            getString(R.string.manage_cars_action_mode_title, adapter.numSelectedItems())
     }
 
     private fun selectAllItems() {
@@ -174,7 +176,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun showEditDialog(carId: String) =
-            EditCarDialog.newInstance(carId).show(supportFragmentManager, "editCar")
+        EditCarDialog.newInstance(carId).show(supportFragmentManager, "editCar")
 
     private fun showAddDialog() = AddCarDialog.newInstance().show(supportFragmentManager, "addCar")
 
@@ -187,24 +189,26 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     }
 
     private fun showCarsPlaceholderIfNeededAfterAnimation() {
-        if (manageCarsRecyclerView.isAnimating) {
+        if (binding.manageCarsRecyclerview.isAnimating) {
             // If the recyclerview is animating, try again a bit later
             // If it's animating there is an animator so it's safe to assume itemAnimator exists
-            manageCarsRecyclerView.itemAnimator!!.isRunning { showCarsPlaceholderIfNeeded() }
+            binding.manageCarsRecyclerview.itemAnimator!!.isRunning { showCarsPlaceholderIfNeeded() }
             return
         }
-        val viewSwitcher = findViewById<ViewSwitcher>(R.id.manage_cars_view_switcher)
-        val parkedCarsView = findViewById<View>(R.id.manage_cars_recyclerview)
         val empty = adapter.cars.isEmpty()
-        showPlaceholderIfNeeded(viewSwitcher, parkedCarsView, empty)
+        showPlaceholderIfNeeded(
+            binding.manageCarsViewSwitcher,
+            binding.manageCarsRecyclerview,
+            empty
+        )
     }
 
     private fun shareSelectedItems() {
         val selected = adapter.selectedItemsIds
         val cars: MutableList<Car> = mutableListOf()
         (0 until selected.size())
-                .map { selected.keyAt(it) }
-                .mapTo(cars) { adapter.cars[it] }
+            .map { selected.keyAt(it) }
+            .mapTo(cars) { adapter.cars[it] }
         val linkToShare = DeepLink.getDynamicLinkFor(cars, ParkApp.storageManager.getServer())
         val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
         startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle))
@@ -222,15 +226,16 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
      * Listener for events related to the CAB.
      */
     inner class ActionModeCallback : ActionMode.Callback {
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean = when (item.itemId) {
-            R.id.item_delete -> consume { deleteSelectedItems() }
-            R.id.item_share -> consume { shareSelectedItems() }
-            else -> true
-        }
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean =
+            when (item.itemId) {
+                R.id.item_delete -> consume { deleteSelectedItems() }
+                R.id.item_share -> consume { shareSelectedItems() }
+                else -> true
+            }
 
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             menuInflater.inflate(R.menu.manage_cars_context_menu, menu)
-            fab.hide()
+            binding.manageCardsFab.hide()
             return true
         }
 
@@ -252,7 +257,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         override fun onDestroyActionMode(mode: ActionMode?) {
             adapter.clearSelection()
             actionMode = null
-            fab.show()
+            binding.manageCardsFab.show()
         }
     }
 }

@@ -57,13 +57,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:drawablePadding="16dp"
-                android:drawableTop="@drawable/empty_placeholder"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="@string/parked_cars_placeholder"
                 android:textColor="@color/colorPlaceholderText"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                app:drawableTopCompat="@drawable/empty_placeholder" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/no_park_server_placeholder_button"

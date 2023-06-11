@@ -32,9 +32,9 @@ abstract class ManageCarDialog : DialogFragment() {
     var listener: ManageCarDialogListener? = null
 
     private val dialogView: View by lazy { requireActivity().layoutInflater.inflate(R.layout.manage_car_dialog, null) as View }
-    private val fab: FloatingActionButton by lazy { requireActivity().findViewById<FloatingActionButton>(R.id.manage_cards_fab) }
-    private val regNoView: EditText by lazy { dialogView.findViewById<EditText>(R.id.regno) }
-    private val ownerView: EditText by lazy { dialogView.findViewById<EditText>(R.id.owner) }
+    private val fab: FloatingActionButton by lazy { requireActivity().findViewById(R.id.manage_cards_fab) }
+    private val regNoView: EditText by lazy { dialogView.findViewById(R.id.regno) }
+    private val ownerView: EditText by lazy { dialogView.findViewById(R.id.owner) }
     private val ownCar: OwnCar by lazy { fetchOwnCar() }
 
     override fun onAttach(context: Context) {

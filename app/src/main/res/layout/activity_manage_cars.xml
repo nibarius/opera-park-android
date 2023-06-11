@@ -30,11 +30,11 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:padding="16dp"
-            android:drawableTop="@drawable/ic_directions_car_black_72dp"
             android:drawablePadding="16dp"
             android:text="@string/manage_cars_list_placeholder"
             android:textColor="@color/colorPlaceholderText"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            app:drawableTopCompat="@drawable/ic_directions_car_black_72dp" />
     </ViewSwitcher>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/manage_cards_fab"

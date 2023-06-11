@@ -80,10 +80,6 @@ class SharedPreferencesTest : RobolectricTest() {
 
     @Test
     fun upgradePast5Test() {
-        if (BuildConfig.VERSION_CODE < 6) {
-            // This test can only be run when current version is 6 or higher.
-            return
-        }
         val context = context()
         val sharedPreferences = context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()

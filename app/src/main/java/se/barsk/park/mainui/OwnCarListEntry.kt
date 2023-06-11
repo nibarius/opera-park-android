@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
-import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
@@ -18,11 +17,12 @@ import java.util.*
 /**
  * One entry in the list of own cars
  */
-class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : RelativeLayout(context, null, R.attr.ownCarEntryStyle), CarListEntry {
+class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) :
+    RelativeLayout(context, null, R.attr.ownCarEntryStyle), CarListEntry {
     constructor(context: Context?) : this(context, null)
 
     // Also used by tests
-    val parkButton: MaterialButton by lazy { findViewById<MaterialButton>(R.id.park_button) }
+    val parkButton: MaterialButton by lazy { findViewById(R.id.park_button) }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.own_car_entry, this, true)
@@ -50,16 +50,26 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
 
         when {
             car.parked -> { // Show unpark button
-                parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.button_unpark_bg)
+                parkButton.strokeColor =
+                    ContextCompat.getColorStateList(context, R.color.button_unpark_bg)
                 if (Utils.isDarkTheme(context)) {
                     // Use text button style with transparent background in dark mode
-                    parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
-                    parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_unpark_ripple)
-                    parkButton.setTextColor(ContextCompat.getColor(context, R.color.unparkButtonColor))
+                    parkButton.backgroundTintList =
+                        ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
+                    parkButton.rippleColor =
+                        ContextCompat.getColorStateList(context, R.color.button_unpark_ripple)
+                    parkButton.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.unparkButtonColor
+                        )
+                    )
                 } else {
                     // Normal mode uses a high emphasis button for unparking
-                    parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_unpark_bg)
-                    parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_ripple_on_primary)
+                    parkButton.backgroundTintList =
+                        ContextCompat.getColorStateList(context, R.color.button_unpark_bg)
+                    parkButton.rippleColor =
+                        ContextCompat.getColorStateList(context, R.color.button_ripple_on_primary)
                     parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite))
                 }
                 parkButton.isEnabled = true
@@ -70,14 +80,18 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : Relat
                 parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.button_wait_stroke)
                 parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_wait_ripple)
                 parkButton.setTextColor(ContextCompat.getColor(context, R.color.waitButtonColor))*/
-                parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.colorDisabled)
+                parkButton.strokeColor =
+                    ContextCompat.getColorStateList(context, R.color.colorDisabled)
                 parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorDisabled))
                 parkButton.isEnabled = false
             }
             else -> { // Show park button
-                parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
-                parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.button_park_stroke)
-                parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_park_ripple)
+                parkButton.backgroundTintList =
+                    ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
+                parkButton.strokeColor =
+                    ContextCompat.getColorStateList(context, R.color.button_park_stroke)
+                parkButton.rippleColor =
+                    ContextCompat.getColorStateList(context, R.color.button_park_ripple)
                 parkButton.setTextColor(ContextCompat.getColor(context, R.color.parkButtonColor))
                 parkButton.isEnabled = true
             }

@@ -43,17 +43,12 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
 
     var token: String? = null
 
-    private val gso: GoogleSignInOptions
-    private val client: GoogleSignInClient
+    private val gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestIdToken(CLIENT_ID)
+            .build()
+    private val client: GoogleSignInClient = GoogleSignIn.getClient(context, gso)
     private var lastSignedInAccount: GoogleSignInAccount? = null
-
-    init {
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestIdToken(CLIENT_ID)
-                .build()
-        client = GoogleSignIn.getClient(context, gso)
-    }
 
     open fun isSignedIn() = lastSignedInAccount != null
     open fun getAccountName(): String = lastSignedInAccount?.email ?: ""

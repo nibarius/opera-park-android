@@ -1,5 +1,6 @@
 package se.barsk.park.mainui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.drawable.ColorDrawable
@@ -14,15 +15,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
@@ -296,7 +294,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 // no server set up
                 spinner.visibility = View.GONE
                 text = getString(R.string.no_server_placeholder_text)
-                top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
+                top = AppCompatResources.getDrawable(
+                    applicationContext,
+                    R.drawable.ic_cloud_off_black_72dp
+                )
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.no_server_placeholder_button)
                 parkServerButton.setOnClickListener { showServerDialog() }
@@ -308,7 +309,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                     R.string.unable_to_connect_placeholder_text,
                     ParkApp.storageManager.getServer()
                 )
-                top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
+                top = AppCompatResources.getDrawable(
+                    applicationContext,
+                    R.drawable.ic_cloud_off_black_72dp
+                )
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
                 parkServerButton.setOnClickListener {
@@ -328,7 +332,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 // No parked cars
                 spinner.visibility = View.GONE
                 text = getString(R.string.parked_cars_placeholder)
-                top = getDrawable(R.drawable.empty_placeholder)
+                top =
+                    AppCompatResources.getDrawable(applicationContext, R.drawable.empty_placeholder)
                 parkServerButton.visibility = View.GONE
             }
             else -> {
@@ -427,6 +432,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateListOfParkedCars() {
         val adapter = binding.content.parkedCarsRecyclerView.adapter as CarsAdapter
         adapter.cars = garage.parkedCars
@@ -441,6 +447,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         ParkApp.carCollection.updateParkStatus(garage)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateListOfOwnCars() {
         val adapter = binding.content.ownCarsRecyclerView.adapter as OwnCarsAdapter
         adapter.garageFull = garage.isFull()
@@ -481,10 +488,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
 
         supportActionBar?.setBackgroundDrawable(ColorDrawable(toolbarColor))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = statusBarColor
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = statusBarColor
         val span = SpannableString(title)
         span.setSpan(
             ForegroundColorSpan(textColor),

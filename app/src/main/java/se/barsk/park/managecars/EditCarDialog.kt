@@ -16,7 +16,7 @@ class EditCarDialog : ManageCarDialog() {
 
     override fun fetchOwnCar(): OwnCar {
         // This dialog always have a Bundle with one parameter when set up as expected
-        val carId = arguments!!.getString(ARG_ID)!!
+        val carId = requireArguments().getString(ARG_ID)!!
         return ParkApp.carCollection.getCar(carId)
     }
 
