@@ -35,7 +35,8 @@ class SpecifyServerDialog : DialogFragment() {
     private val dialogView: View by lazy {
         requireActivity().layoutInflater.inflate(R.layout.specify_server_dialog, null) as View
     }
-    private val editText: EditText by lazy { dialogView.findViewById<EditText>(R.id.server_url_input) }
+    // also used by tests
+    val editText: EditText by lazy { dialogView.findViewById<EditText>(R.id.server_url_input) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

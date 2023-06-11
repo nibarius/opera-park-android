@@ -21,7 +21,8 @@ import java.util.*
 class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) : RelativeLayout(context, null, R.attr.ownCarEntryStyle), CarListEntry {
     constructor(context: Context?) : this(context, null)
 
-    private val parkButton: MaterialButton by lazy { findViewById<MaterialButton>(R.id.park_button) }
+    // Also used by tests
+    val parkButton: MaterialButton by lazy { findViewById<MaterialButton>(R.id.park_button) }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.own_car_entry, this, true)

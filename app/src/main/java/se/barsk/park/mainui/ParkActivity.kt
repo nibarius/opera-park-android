@@ -17,9 +17,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.ViewSwitcher
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,6 +31,7 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import se.barsk.park.*
 import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.analytics.ParkActionEvent
+import se.barsk.park.databinding.ActivityParkBinding
 import se.barsk.park.datatypes.*
 import se.barsk.park.error.ErrorHandler
 import se.barsk.park.fcm.NotificationsManager
@@ -43,8 +42,8 @@ import se.barsk.park.utils.TimeUtils
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
-        CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener,
-        MustSignInDialog.MustSignInDialogListener {
+    CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener,
+    MustSignInDialog.MustSignInDialogListener {
 
     override fun onSignInDialogPositiveClick() {
         user.signIn(this) { user.addToWaitList(this) }
@@ -66,7 +65,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
         networkState.requestFinished(success)
 
-        pullToRefreshView.isRefreshing = false
+        binding.content.parkedCarsPullToRefresh.isRefreshing = false
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
         if (!success) {
@@ -76,7 +75,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             showParkedCarsPlaceholderIfNeeded()
         }
         if (errorMessage != null) {
-            ErrorHandler.showMessage(containerView, errorMessage)
+            ErrorHandler.showMessage(binding.content.containerView, errorMessage)
         }
     }
 
@@ -105,46 +104,43 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private var lastGarageUpdateTime = TimeUtils.now()
     private val user: User by lazy { ParkApp.theUser }
     private val userListener = UserChangeListener()
-    private val pullToRefreshView: SwipeRefreshLayout by lazy {
-        findViewById<SwipeRefreshLayout>(R.id.parked_cars_pull_to_refresh)
-    }
-    private val parkedCarsRecyclerView: RecyclerView by lazy {
-        findViewById<RecyclerView>(R.id.parked_cars_recycler_view)
-    }
 
-    private val ownCarsRecyclerView: RecyclerView by lazy {
-        findViewById<RecyclerView>(R.id.own_cars_recycler_view)
-    }
-
-    private val containerView: View by lazy {
-        findViewById<View>(R.id.container_view)
-    }
     private lateinit var automaticUpdateTask: RepeatableTask
+
+    // Also used by tests
+    lateinit var binding: ActivityParkBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ParkApp.init(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_park)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        binding = ActivityParkBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        parkedCarsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        setSupportActionBar(binding.toolbar)
+
+        val parkedCarsRecyclerView = binding.content.parkedCarsRecyclerView
+        parkedCarsRecyclerView.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        parkedCarsRecyclerView.adapter = CarsAdapter(CarsAdapter.Type.PARKED_CARS,
-                garage.parkedCars) { /*listener that does nothing */ }
+        parkedCarsRecyclerView.adapter = CarsAdapter(
+            CarsAdapter.Type.PARKED_CARS,
+            garage.parkedCars
+        ) { /*listener that does nothing */ }
 
+        val ownCarsRecyclerView = binding.content.ownCarsRecyclerView
         ownCarsRecyclerView.layoutManager =
-                if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
-                    LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-                else
-                    LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+            if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
+                LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            else
+                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        ownCarsRecyclerView.adapter = OwnCarsAdapter(ParkApp.carCollection.getCars(), this::onOwnCarClicked)
+        ownCarsRecyclerView.adapter =
+            OwnCarsAdapter(ParkApp.carCollection.getCars(), this::onOwnCarClicked)
 
-        val addCarButton = findViewById<Button>(R.id.no_own_cars_placeholder_button)
-        addCarButton.setOnClickListener { navigateToManageCarsAndAddCar() }
+        binding.content.noOwnCarsPlaceholderButton.setOnClickListener { navigateToManageCarsAndAddCar() }
 
-        pullToRefreshView.setOnRefreshListener { updateGarageFromServer() }
+        binding.content.parkedCarsPullToRefresh.setOnRefreshListener { updateGarageFromServer() }
 
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
@@ -183,7 +179,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         // state before we've gotten the first response from the server.
         onGarageStatusChange()
         serverBeforePause = null
-        automaticUpdateTask = RepeatableTask({ automaticUpdate() }, ParkApp.storageManager.getAutomaticUpdateInterval())
+        automaticUpdateTask = RepeatableTask(
+            { automaticUpdate() },
+            ParkApp.storageManager.getAutomaticUpdateInterval()
+        )
         automaticUpdateTask.start()
         getDynamicLink()
         // TODO: re-enable sign in feature when there is a backend for it.
@@ -242,8 +241,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * Show list of own cars if there are any own cars, otherwise show the placeholder.
      */
     private fun showOwnCarsPlaceholderIfNeeded() {
-        val viewSwitcher = findViewById<ViewSwitcher>(R.id.own_cars_view_switcher)
-        val ownCarsView = findViewById<View>(R.id.own_cars_recycler_view)
+        val viewSwitcher = binding.content.ownCarsViewSwitcher
+        val ownCarsView = binding.content.ownCarsRecyclerView
         val empty = ParkApp.carCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
     }
@@ -267,26 +266,29 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * again.
      */
     private fun showParkedCarsPlaceholderIfNeededAfterAnimations() {
-        if (parkedCarsRecyclerView.isAnimating) {
+        if (binding.content.parkedCarsRecyclerView.isAnimating) {
             // If the recyclerview is animating, try again once current animation has finished
             // If it's animating there is an animator so it's safe to assume itemAnimator exists
-            parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() }
+            binding.content.parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() }
             return
         }
         if (parkingState.showsPlaceholder()) {
             setCorrectParkedCarsPlaceholder()
         }
-        val viewSwitcher = findViewById<ViewSwitcher>(R.id.parked_cars_view_switcher)
-        showPlaceholderIfNeeded(viewSwitcher, pullToRefreshView, garage.isEmpty())
+        showPlaceholderIfNeeded(
+            binding.content.parkedCarsViewSwitcher,
+            binding.content.parkedCarsPullToRefresh,
+            garage.isEmpty()
+        )
     }
 
     /**
      * Sets the current placeholder view for the parked cars view depending on circumstances
      */
     private fun setCorrectParkedCarsPlaceholder() {
-        val textView = findViewById<TextView>(R.id.parked_cars_placeholder_text_view)
-        val parkServerButton = findViewById<Button>(R.id.no_park_server_placeholder_button)
-        val spinner = findViewById<ProgressBar>(R.id.loading_spinner)
+        val textView = binding.content.parkedCarsPlaceholderTextView
+        val parkServerButton = binding.content.noParkServerPlaceholderButton
+        val spinner = binding.content.loadingSpinner
         val text: String
         val top: Drawable?
         when (parkingState) {
@@ -302,7 +304,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             ParkingState.REQUEST_FAILED -> {
                 // failed to communicate with server
                 spinner.visibility = View.GONE
-                text = getString(R.string.unable_to_connect_placeholder_text, ParkApp.storageManager.getServer())
+                text = getString(
+                    R.string.unable_to_connect_placeholder_text,
+                    ParkApp.storageManager.getServer()
+                )
                 top = getDrawable(R.drawable.ic_cloud_off_black_72dp)
                 parkServerButton.visibility = View.VISIBLE
                 parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
@@ -423,7 +428,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateListOfParkedCars() {
-        val adapter = parkedCarsRecyclerView.adapter as CarsAdapter
+        val adapter = binding.content.parkedCarsRecyclerView.adapter as CarsAdapter
         adapter.cars = garage.parkedCars
         adapter.notifyDataSetChanged()
     }
@@ -437,7 +442,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
     private fun updateListOfOwnCars() {
-        val adapter = ownCarsRecyclerView.adapter as OwnCarsAdapter
+        val adapter = binding.content.ownCarsRecyclerView.adapter as OwnCarsAdapter
         adapter.garageFull = garage.isFull()
         adapter.cars = ParkApp.carCollection.getCars()
         adapter.notifyDataSetChanged()
@@ -481,20 +486,23 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             window.statusBarColor = statusBarColor
         }
         val span = SpannableString(title)
-        span.setSpan(ForegroundColorSpan(textColor),
-                0,
-                title.length,
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        span.setSpan(
+            ForegroundColorSpan(textColor),
+            0,
+            title.length,
+            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+        )
         supportActionBar?.title = span
     }
 
     private fun showServerDialog() =
-            SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
+        SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
 
     private fun showPrivacyDialogIfNeeded() {
         val tag = "privacyDialog"
         if (supportFragmentManager.findFragmentByTag(tag) == null &&
-                !ParkApp.storageManager.hasSeenPrivacyOnBoarding()) {
+            !ParkApp.storageManager.hasSeenPrivacyOnBoarding()
+        ) {
             PrivacyPolicyOnBoardingDialog.newInstance().show(supportFragmentManager, tag)
         }
     }
@@ -510,25 +518,31 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             return
         }
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) !=
-                com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
+            com.google.android.gms.common.api.CommonStatusCodes.SUCCESS
+        ) {
             // If there is no Google play services on the device, then there is no
             // dynamic link either
             return
         }
         val listener = DynamicLinkListener()
         FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(intent)
-                .addOnSuccessListener(this, listener)
-                .addOnFailureListener(this, listener)
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this, listener)
+            .addOnFailureListener(this, listener)
     }
 
     inner class UserChangeListener : User.ChangeListener {
         override fun onWaitListStatusChanged() = updateListOfOwnCars()
-        override fun onWaitListFailed(message: String) = ErrorHandler.showMessage(containerView, message)
+        override fun onWaitListFailed(message: String) =
+            ErrorHandler.showMessage(binding.content.containerView, message)
+
         override fun onSignInStatusChanged() = updateSignInText()
         override fun onSignInFailed(statusCode: Int) {
             val message = SignInHandler.getMessageForStatusCode(applicationContext, statusCode)
-            ErrorHandler.showMessage(containerView, getString(R.string.sign_in_failed, message))
+            ErrorHandler.showMessage(
+                binding.content.containerView,
+                getString(R.string.sign_in_failed, message)
+            )
             if (statusCode != com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR) {
                 ErrorHandler.raiseException("Failed to sign in: $message")
             }
@@ -537,7 +551,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
         override fun onFailure(exception: java.lang.Exception) =
-                ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
+            ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
 
         override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
             val pendingLink = pendingDynamicLinkData?.link ?: return

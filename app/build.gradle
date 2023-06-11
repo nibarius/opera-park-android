@@ -68,6 +68,9 @@ android {
             debuggable true
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
 
     flavorDimensions "build"
     productFlavors {
