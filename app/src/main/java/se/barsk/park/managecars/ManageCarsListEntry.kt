@@ -67,10 +67,10 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
         val circularReveal = ViewAnimationUtils.createCircularReveal(view, 0, 0, 0f, finalRadius * 1.4f)
         circularReveal.duration = animationDuration
         circularReveal.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationEnd(p0: Animator?) = Unit
-            override fun onAnimationRepeat(p0: Animator?) = Unit
-            override fun onAnimationCancel(p0: Animator?) = Unit
-            override fun onAnimationStart(p0: Animator?) {
+            override fun onAnimationEnd(p0: Animator) = Unit
+            override fun onAnimationRepeat(p0: Animator) = Unit
+            override fun onAnimationCancel(p0: Animator) = Unit
+            override fun onAnimationStart(p0: Animator) {
                 if (hideAnimation != null) {
                     // Cancel the hide animation if it's currently animating so that the
                     // check view don't get hidden again when the old hide animation finishes.
@@ -94,7 +94,7 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
         animation.duration = animationDuration
         animation.addListener(object : Animator.AnimatorListener {
             var cancelled = false
-            override fun onAnimationEnd(p0: Animator?) {
+            override fun onAnimationEnd(p0: Animator) {
                 // If the animation hasn't been cancelled the check view should be hidden
                 // now that the animation has been completed.
                 if (!cancelled) {
@@ -103,12 +103,12 @@ class ManageCarsListEntry(context: Context) : RelativeLayout(context, null, R.at
                 hideAnimation = null
             }
 
-            override fun onAnimationCancel(p0: Animator?) {
+            override fun onAnimationCancel(p0: Animator) {
                 cancelled = true
             }
 
-            override fun onAnimationRepeat(p0: Animator?) = Unit
-            override fun onAnimationStart(p0: Animator?) = Unit
+            override fun onAnimationRepeat(p0: Animator) = Unit
+            override fun onAnimationStart(p0: Animator) = Unit
         })
 
         animation.start()
