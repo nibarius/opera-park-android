@@ -12,8 +12,8 @@ android {
     compileSdkVersion 33
     testOptions.unitTests.includeAndroidResources true
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     defaultConfig {
         applicationId "se.barsk.park"
@@ -102,6 +102,7 @@ android {
             storeFile file('debug.keystore')
         }
     }
+    namespace 'se.barsk.park'
 }
 
 dependencies {
