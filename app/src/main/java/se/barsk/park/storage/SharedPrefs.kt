@@ -154,7 +154,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
      * Listener used to be notified about changes done to the server via the settings activity
      */
     inner class InternalServerChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             if (key == serverUrl) {
                 settingsChangeListener?.onSettingsChanged(SettingsChangeListener.Setting.SERVER)
             }

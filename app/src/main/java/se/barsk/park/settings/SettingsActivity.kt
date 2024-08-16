@@ -49,8 +49,12 @@ class SettingsActivity : AppCompatActivity() {
             setPreferencesFromResource(R.xml.preferences, rootKey)
         }
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) =
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+            if (key != null) {
                 preferenceChanged(key)
+            }
+        }
+
 
         override fun onResume() {
             super.onResume()
