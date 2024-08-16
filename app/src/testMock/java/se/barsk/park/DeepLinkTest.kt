@@ -72,9 +72,9 @@ class DeepLinkTest : RobolectricTest() {
         val longException =
             "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
         val event = DynamicLinkFailedEvent(shortException)
-        event.parameters[AnalyticsEvent.Param.EXCEPTION] shouldBeEqualTo shortException
+        event.parameters.getString(AnalyticsEvent.Param.EXCEPTION) shouldBeEqualTo shortException
         val event2 = DynamicLinkFailedEvent(longException)
-        event2.parameters[AnalyticsEvent.Param.EXCEPTION] shouldBeEqualTo longException.substring(
+        event2.parameters.getString(AnalyticsEvent.Param.EXCEPTION) shouldBeEqualTo longException.substring(
             0,
             100
         )

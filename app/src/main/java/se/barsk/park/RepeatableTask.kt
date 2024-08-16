@@ -1,6 +1,7 @@
 package se.barsk.park
 
 import android.os.Handler
+import android.os.Looper
 
 /**
  * A task that is run every {@code delay} seconds. When the start() method is called
@@ -10,7 +11,7 @@ import android.os.Handler
  * @param delay The delay in seconds between runs. If 0 is specified the task will not
  *              be run at all.
  */
-class RepeatableTask(private val task: () -> Unit, private val delay: Long) : Handler() {
+class RepeatableTask(private val task: () -> Unit, private val delay: Long) : Handler(Looper.getMainLooper()) {
     private val automaticUpdateRunnable: Runnable = Runnable{ run() }
     fun start() = reschedule()
     fun stop() = removeCallbacks(automaticUpdateRunnable)

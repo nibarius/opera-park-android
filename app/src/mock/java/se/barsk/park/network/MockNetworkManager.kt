@@ -2,6 +2,7 @@ package se.barsk.park.network
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import org.joda.time.DateTime
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
@@ -38,7 +39,7 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
             resultReadyListener(Result.NoServer)
             return
         }
-        Handler().postDelayed({ resultReady(resultReadyListener) }, networkDelay)
+        Handler(Looper.getMainLooper()).postDelayed({ resultReady(resultReadyListener) }, networkDelay)
     }
 
     private fun resultReady(resultReadyListener: (Result) -> Unit) {
@@ -53,22 +54,22 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         if (readServerFromStorage().isBlank()) {
             return
         }
-        Handler().postDelayed({ addIfNotExist(context, ownCar, resultReadyListener) }, networkDelay)
+        Handler(Looper.getMainLooper()).postDelayed({ addIfNotExist(context, ownCar, resultReadyListener) }, networkDelay)
     }
 
     override fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) {
         if (readServerFromStorage().isBlank()) {
             return
         }
-        Handler().postDelayed({ removeIfExists(context, car, resultReadyListener) }, networkDelay)
+        Handler(Looper.getMainLooper()).postDelayed({ removeIfExists(context, car, resultReadyListener) }, networkDelay)
     }
 
     override fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
-        Handler().postDelayed({ resultReadyListener(Result.AddedToWaitList) }, networkDelay)
+        Handler(Looper.getMainLooper()).postDelayed({ resultReadyListener(Result.AddedToWaitList) }, networkDelay)
     }
 
     override fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
-        Handler().postDelayed({ resultReadyListener(Result.RemovedFromWaitList) }, networkDelay)
+        Handler(Looper.getMainLooper()).postDelayed({ resultReadyListener(Result.RemovedFromWaitList) }, networkDelay)
     }
 
     // Add a car to the parked cars list if it does not already exist, if it does signal a fail

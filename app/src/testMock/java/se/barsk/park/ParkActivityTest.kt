@@ -622,7 +622,7 @@ class ParkActivityTest : RobolectricTest() {
     private fun updateOwnCarsListOnServerStateChangeTest() {
         // Create a new activity just for this test with a special network manager
         val almostFull = MockNetworkManager(5)
-        val full = MockNetworkManager(6)
+        //val full = MockNetworkManager(6)
         ParkApp.networkManager = almostFull
         val controller = Robolectric.buildActivity(ParkActivity::class.java)
         val activity = controller.create().start().resume().visible().get()

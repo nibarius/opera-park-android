@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -254,7 +255,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         // the recyclerview have started animating the changes. Post a message on the message
         // queue to continue after the recycler view have started animations so we can detect
         // if they are still going
-        Handler().post { showParkedCarsPlaceholderIfNeededAfterAnimations() }
+        Handler(Looper.getMainLooper()).post { showParkedCarsPlaceholderIfNeededAfterAnimations() }
     }
 
     /**

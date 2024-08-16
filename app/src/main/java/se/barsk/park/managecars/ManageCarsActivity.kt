@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -185,7 +186,7 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         // the recyclerview have started animating the changes. Post a message on the message
         // queue to continue after the recycler view have started animations so we can detect
         // if they are still going
-        Handler().post { showCarsPlaceholderIfNeededAfterAnimation() }
+        Handler(Looper.getMainLooper()).post { showCarsPlaceholderIfNeededAfterAnimation() }
     }
 
     private fun showCarsPlaceholderIfNeededAfterAnimation() {

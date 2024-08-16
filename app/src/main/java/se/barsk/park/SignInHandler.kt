@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -139,7 +140,7 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
             // Do the success callback as a new message so the sign in process can finish completely
             val callback = onSignInSuccessCallback
             if (callback != null) {
-                Handler().post { callback.invoke() }
+                Handler(Looper.getMainLooper()).post { callback.invoke() }
             }
         } catch (e: ApiException) {
             lastSignedInAccount = null
