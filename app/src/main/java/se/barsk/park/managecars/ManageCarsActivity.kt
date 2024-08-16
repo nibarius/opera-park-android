@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import se.barsk.park.*
-import se.barsk.park.analytics.ShareCarEvent
 import se.barsk.park.databinding.ActivityManageCarsBinding
-import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
 
@@ -204,24 +202,6 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         )
     }
 
-    private fun shareSelectedItems() {
-        val selected = adapter.selectedItemsIds
-        val cars: MutableList<Car> = mutableListOf()
-        (0 until selected.size())
-            .map { selected.keyAt(it) }
-            .mapTo(cars) { adapter.cars[it] }
-        val linkToShare = DeepLink.getDynamicLinkFor(cars, ParkApp.storageManager.getServer())
-        val shareTitle = resources.getQuantityString(R.plurals.share_car_title, selected.size())
-        startActivity(Intent.createChooser(createShareIntent(linkToShare), shareTitle))
-        ParkApp.analytics.logEvent(ShareCarEvent(selected.size()))
-    }
-
-    private fun createShareIntent(url: String): Intent {
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.type = "text/plain"
-        shareIntent.putExtra(Intent.EXTRA_TEXT, url)
-        return shareIntent
-    }
 
     /**
      * Listener for events related to the CAB.
@@ -230,7 +210,6 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean =
             when (item.itemId) {
                 R.id.item_delete -> consume { deleteSelectedItems() }
-                R.id.item_share -> consume { shareSelectedItems() }
                 else -> true
             }
 
@@ -246,11 +225,6 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
             if (delete != null) {
                 delete.isEnabled = enabled
                 delete.isVisible = enabled
-            }
-            val share = menu?.findItem(R.id.item_share)
-            if (share != null) {
-                share.isEnabled = enabled
-                share.isVisible = enabled
             }
             return true
         }

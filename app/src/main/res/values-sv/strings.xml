@@ -11,7 +11,6 @@
     <string name="manage_cars_select_option">Välj</string>
     <string name="manage_cars_select_all_option">Välj alla</string>
     <string name="action_mode_title">Välj bilar</string>
-    <string name="manage_cars_context_menu_share">Dela</string>
     <string name="manage_cars_context_menu_delete">Ta bort</string>
     <string name="manage_cars_list_placeholder">Lägg till en bil genom att trycka på + knappen</string>
     <string name="manage_cars_list_entry">%1$s (ägare: %2$s)</string>

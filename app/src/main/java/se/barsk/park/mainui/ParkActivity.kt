@@ -22,13 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import se.barsk.park.*
-import se.barsk.park.analytics.DynamicLinkFailedEvent
 import se.barsk.park.analytics.ParkActionEvent
 import se.barsk.park.databinding.ActivityParkBinding
 import se.barsk.park.datatypes.*
@@ -183,7 +177,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             ParkApp.storageManager.getAutomaticUpdateInterval()
         )
         automaticUpdateTask.start()
-        getDynamicLink()
         // TODO: re-enable sign in feature when there is a backend for it.
         //user.silentSignIn(this)
         showPrivacyDialogIfNeeded()
@@ -514,30 +507,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
-    private fun getDynamicLink() {
-        if (Build.FINGERPRINT == "robolectric") {
-            // Robolectric doesn't work well with play services ParkActivity tests
-            // works fine if run in isolation, or only the ParkActivityTest class
-            // but if running all tests in the whole project at once it complains
-            // about a missing com.google.android.gms.version in the manifest (even
-            // if it's there. Just pretend Google Play services is not available whenever
-            // running under test. Others seem to have the same issue, but there are no solutions.
-            return
-        }
-        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) !=
-            com.google.android.gms.common.api.CommonStatusCodes.SUCCESS
-        ) {
-            // If there is no Google play services on the device, then there is no
-            // dynamic link either
-            return
-        }
-        val listener = DynamicLinkListener()
-        FirebaseDynamicLinks.getInstance()
-            .getDynamicLink(intent)
-            .addOnSuccessListener(this, listener)
-            .addOnFailureListener(this, listener)
-    }
-
     inner class UserChangeListener : User.ChangeListener {
         override fun onWaitListStatusChanged() = updateListOfOwnCars()
         override fun onWaitListFailed(message: String) =
@@ -553,25 +522,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             if (statusCode != com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR) {
                 ErrorHandler.raiseException("Failed to sign in: $message")
             }
-        }
-    }
-
-    inner class DynamicLinkListener : OnSuccessListener<PendingDynamicLinkData>, OnFailureListener {
-        override fun onFailure(exception: java.lang.Exception) =
-            ParkApp.analytics.logEvent(DynamicLinkFailedEvent(exception.toString()))
-
-        override fun onSuccess(pendingDynamicLinkData: PendingDynamicLinkData?) {
-            val pendingLink = pendingDynamicLinkData?.link ?: return
-            // Todo: fix problem with space in links getting converted to +
-            // https://github.com/firebase/firebase-android-sdk/issues/959
-            val deepLink = DeepLink(pendingLink)
-            if (!deepLink.isValid) return
-
-            if (!ParkApp.storageManager.hasServer()) {
-                ParkApp.storageManager.setServer(deepLink.server)
-                parkServerChanged()
-            }
-            ParkApp.carCollection.addCarsThatDoesNotExist(deepLink.cars)
         }
     }
 

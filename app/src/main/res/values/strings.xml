@@ -13,7 +13,6 @@
     <string name="manage_cars_select_option">Select</string>
     <string name="manage_cars_select_all_option">Select all</string>
     <string name="action_mode_title">Select cars</string>
-    <string name="manage_cars_context_menu_share">Share</string>
     <string name="manage_cars_context_menu_delete">Delete</string>
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="manage_cars_list_entry">%1$s (owner: %2$s)</string>
