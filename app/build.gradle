@@ -9,7 +9,7 @@ android {
     def majorVersion = 3
     def minorVersion = 2
 
-    compileSdkVersion 34
+    compileSdk 34
     testOptions.unitTests.includeAndroidResources true
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -95,7 +95,7 @@ android {
         }
     }
 
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
     }
     signingConfigs {
