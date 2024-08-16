@@ -201,6 +201,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     }
 
 
+    @Deprecated("Passing data should be done in a different way, but this is for an unused feature so I'm not fixing it yet")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
