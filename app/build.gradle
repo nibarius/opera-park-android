@@ -9,7 +9,6 @@ android {
     def majorVersion = 3
     def minorVersion = 3
 
-    compileSdk 34
     testOptions.unitTests.includeAndroidResources true
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -21,7 +20,8 @@ android {
     defaultConfig {
         applicationId "se.barsk.park"
         minSdkVersion 21
-        targetSdkVersion 34
+        compileSdkVersion 36
+        targetSdkVersion 36
         versionCode 10
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
