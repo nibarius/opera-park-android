@@ -10,7 +10,6 @@
     <string name="key_refresh_interval" translatable="false">refresh_interval</string>
     <string name="key_theme" translatable="false">theme</string>
     <string name="key_park_server_url" translatable="false">park_server_url</string>
-    <string name="key_usage_statistics" translatable="false">usage_statistics</string>
     <string name="key_crash_reporting" translatable="false">key_crash_reporting</string>
     <string name="key_about_group" translatable="false">about_group</string>
     <string name="key_privacy_group" translatable="false">privacy_group</string>
@@ -23,14 +22,12 @@
     <string name="key_previous_version_code" translatable="false">pvc</string>
     <string name="key_on_wait_list" translatable="false">owl</string>
     <string name="key_privacy_on_boarding" translatable="false">pob</string>
-    <string name="key_usage_stats_consent" translatable="false">cus</string>
-    <string name="key_usage_stats_consent_timestamp" translatable="false">cust</string>
     <string name="key_crash_reporting_consent" translatable="false">ccr</string>
     <string name="key_crash_reporting_consent_timestamp" translatable="false">ccrt</string>
 
     <!-- Default values -->
     <string name="the_empty_string" translatable="false"/>
-    <string name="default_usage_statistics" translatable="false">false</string>
+    <string name="default_crash_reporting" translatable="false">false</string>
     <string name="default_refresh_interval" translatable="false">10</string>
     <string name="default_on_wait_list" translatable="false">false</string>
     <string name="default_privacy_on_boarding" translatable="false">false</string>

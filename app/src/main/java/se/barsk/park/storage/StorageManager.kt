@@ -22,7 +22,6 @@ open class StorageManager(context: Context) {
     open fun getServer() = sharedPrefs.getServer()
     open fun setServer(server: String) = sharedPrefs.setServer(server)
 
-    open fun statsEnabled(): Boolean = sharedPrefs.statsEnabled()
     open fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
     open fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
 
@@ -36,7 +35,6 @@ open class StorageManager(context: Context) {
     fun giveStatsConsent() = sharedPrefs.giveAllStatsConsent(true)
     fun withdrawStatsConsent() = sharedPrefs.giveAllStatsConsent(false)
     fun recordCrashReportingConsentChange() = sharedPrefs.recordCrashReportingConsentChange()
-    fun recordUsageStatisticsConsentChange() = sharedPrefs.recordUsageStatisticsConsentChange()
 
     // Database interaction functions
     open fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()

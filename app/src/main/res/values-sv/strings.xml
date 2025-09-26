@@ -50,7 +50,6 @@
     <string name="notices_title">Tredjepartslicenser</string>
     <string name="notices_close">Stäng</string>
     <string name="settings_privacy_group_title">Sekretess</string>
-    <string name="settings_usage_statistics">Användningsstatistik</string>
     <string name="settings_crash_reporting">Kraschrapportering</string>
     <string name="settings_privacy_statement">Sekretessmeddelande</string>
     <string name="settings_server">Server</string>
@@ -97,7 +96,7 @@
 
     <!-- Privacy policy on boarding dialog -->
     <string name="ppo_dialog_title">Hjälp till att förbättra Opark?</string>
-    <string name="ppo_dialog_message"><![CDATA[För att kunna förbättra Opark så används Firebase för att inhämta kraschrapporter samt begränsad användningsstatistik. Om du vill veta mer om vilken data som inhämtas se Oparks <a href="%s">sekretessmedelande</a>.<br><br>Tillåter du att denna data inhämtas?]]></string>
+    <string name="ppo_dialog_message"><![CDATA[För att kunna förbättra Opark så används Firebase för att inhämta kraschrapporter. Om du vill veta mer om vilken data som inhämtas se Oparks <a href="%s">sekretessmedelande</a>.<br><br>Tillåter du att denna data inhämtas?]]></string>
     <string name="ppo_dialog_positive">Ja</string>
     <string name="ppo_dialog_negative">Nej</string>
 </resources>

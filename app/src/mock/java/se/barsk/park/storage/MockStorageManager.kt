@@ -23,9 +23,7 @@ class MockStorageManager(context: Context) : StorageManager(context) {
         this.onWaitList = onWaitList
     }
 
-    // No stats or crash reporting when mocking.
-    override fun statsEnabled(): Boolean = false
-
+    // No crash reporting when mocking.
     override fun crashReportingEnabled(): Boolean = false
     override fun getAutomaticUpdateInterval(): Long = 0
 

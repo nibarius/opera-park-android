@@ -12,7 +12,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import se.barsk.park.analytics.UserProperties
 import se.barsk.park.error.FailedToSignInException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -33,10 +32,13 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
 
     companion object {
         const val REQUEST_CODE_SIGN_IN = 1
-        private const val CLIENT_ID = "536672052707-hil8ei6h2m1e6aktfqhva5cjmpk6raoj.apps.googleusercontent.com"
+        private const val CLIENT_ID =
+            "536672052707-hil8ei6h2m1e6aktfqhva5cjmpk6raoj.apps.googleusercontent.com"
+
         fun getMessageForStatusCode(context: Context, statusCode: Int): String = when (statusCode) {
             com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR ->
                 context.getString(R.string.sign_in_network_error)
+
             else ->
                 context.getString(R.string.sign_in_unknown_error, statusCode)
         }
@@ -44,7 +46,8 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
 
     var token: String? = null
 
-    private val gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    private val gso: GoogleSignInOptions =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestIdToken(CLIENT_ID)
             .build()
@@ -67,7 +70,8 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
      */
     open fun silentSignIn(activity: Activity, onSuccess: (() -> Unit)? = null) {
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity) !=
-                com.google.android.gms.common.api.CommonStatusCodes.SUCCESS) {
+            com.google.android.gms.common.api.CommonStatusCodes.SUCCESS
+        ) {
             // If Google play services doesn't exist we know the attempt will fail
             // so don't do anything in that case
             return
@@ -105,7 +109,6 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
         lastSignedInAccount = null
         token = null
         listener.onSignedOut()
-        ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueNo)
     }
 
     /**
@@ -136,7 +139,6 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
 
             token = account.idToken
             listener.onSignedIn()
-            ParkApp.analytics.setProperty(UserProperties.propertySignedIn, UserProperties.valueYes)
             // Do the success callback as a new message so the sign in process can finish completely
             val callback = onSignInSuccessCallback
             if (callback != null) {
@@ -150,10 +152,12 @@ open class SignInHandler(context: Context, protected val listener: StatusChanged
                     // Silent sign in attempt and user is not signed in. No need to
                     // notify user about that.
                 }
+
                 com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes.SIGN_IN_CANCELLED,
                 com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes.SIGN_IN_CURRENTLY_IN_PROGRESS -> {
                     // Failures during sign in that can be silently ignored.
                 }
+
                 else -> {
                     // Normal sign in attempt failed
                     listener.onSignInFailed(e.statusCode)

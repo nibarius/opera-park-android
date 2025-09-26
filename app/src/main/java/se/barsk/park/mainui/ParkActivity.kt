@@ -33,7 +33,6 @@ import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.RepeatableTask
 import se.barsk.park.SignInHandler
-import se.barsk.park.analytics.ParkActionEvent
 import se.barsk.park.consume
 import se.barsk.park.databinding.ActivityParkBinding
 import se.barsk.park.datatypes.Car
@@ -461,26 +460,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
         when {
-            garage.isParked(car) -> {
-                garage.unparkCar(applicationContext, car)
-                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Unpark()))
-            }
-
-            !garage.isFull() -> {
-                garage.parkCar(applicationContext, car)
-                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Park()))
-            }
-
-            user.isOnWaitList -> {
-                user.removeFromWaitList(this)
-                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.StopWaiting()))
-            }
-
-            user.isSignedIn -> {
-                user.addToWaitList(this)
-                ParkApp.analytics.logEvent(ParkActionEvent(ParkActionEvent.Action.Wait()))
-            }
-
+            garage.isParked(car) -> garage.unparkCar(applicationContext, car)
+            !garage.isFull() -> garage.parkCar(applicationContext, car)
+            user.isOnWaitList -> user.removeFromWaitList(this)
+            user.isSignedIn -> user.addToWaitList(this)
             else -> {
                 //TODO: re-enable when there is a backend available. For now do nothing when
                 // clicking the car button on a full garage.

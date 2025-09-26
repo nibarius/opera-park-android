@@ -17,9 +17,8 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val currentVersionCode = context.getString(R.string.key_current_version_code)
     private val previousVersionCode = context.getString(R.string.key_previous_version_code)
     private val serverUrl = context.getString(R.string.key_park_server_url)
-    private val usageStatistics = context.getString(R.string.key_usage_statistics)
     private val crashReporting = context.getString(R.string.key_crash_reporting)
-    private val defaultUsageStatistics = context.getString(R.string.default_usage_statistics).toBoolean()
+    private val defaultCrashReporting = context.getString(R.string.default_crash_reporting).toBoolean()
     private val refreshInterval = context.getString(R.string.key_refresh_interval)
     private val onWaitList = context.getString(R.string.key_on_wait_list)
     private val defaultOnWaitList = context.getString(R.string.default_on_wait_list).toBoolean()
@@ -90,8 +89,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     fun getServer() = Utils.fixUrl(readSetting(serverUrl))
 
     fun setServer(server: String) = putSetting(serverUrl, server)
-    fun statsEnabled(): Boolean = sharedPreferences.getBoolean(usageStatistics, defaultUsageStatistics)
-    fun crashReportingEnabled(): Boolean = sharedPreferences.getBoolean(crashReporting, defaultUsageStatistics)
+    fun crashReportingEnabled(): Boolean = sharedPreferences.getBoolean(crashReporting, defaultCrashReporting)
     fun getAutomaticUpdateInterval(): Long = readSetting(refreshInterval,
             context.getString(R.string.default_refresh_interval)).toLong()
 
@@ -102,10 +100,8 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
 
     fun giveAllStatsConsent(value: Boolean) {
         val editor = sharedPreferences.edit()
-        editor.putBoolean(usageStatistics, value)
         editor.putBoolean(crashReporting, value)
         recordCrashReportingConsentChange(value, editor)
-        recordUsageStatisticsConsentChange(value, editor)
         editor.apply()
     }
 
@@ -119,19 +115,6 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
         recordConsentChange(value ?: crashReportingEnabled(),
                 context.getString(R.string.key_crash_reporting_consent),
                 context.getString(R.string.key_crash_reporting_consent_timestamp),
-                editor)
-    }
-
-    /**
-     * Record that the user have given / withdrawn their consent for sending usage statistics.
-     * @param value The new consent value, if null the value is read from SharedPreferences.
-     * @param editor The editor to use to update the data with (without calling apply),
-     * if null a new editor will be created and apply will be called after the update.
-     */
-    fun recordUsageStatisticsConsentChange(value: Boolean? = null, editor: SharedPreferences.Editor? = null) {
-        recordConsentChange(value ?: statsEnabled(),
-                context.getString(R.string.key_usage_stats_consent),
-                context.getString(R.string.key_usage_stats_consent_timestamp),
                 editor)
     }
 

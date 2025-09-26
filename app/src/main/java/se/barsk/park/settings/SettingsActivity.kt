@@ -89,10 +89,6 @@ class SettingsActivity : AppCompatActivity() {
 
         private fun preferenceChanged(key: String) {
             when (key) {
-                getString(R.string.key_usage_statistics) -> {
-                    ParkApp.storageManager.recordUsageStatisticsConsentChange()
-                    ParkApp.analytics.optOutToggled()
-                }
                 getString(R.string.key_crash_reporting) -> {
                     ParkApp.storageManager.recordCrashReportingConsentChange()
                 }

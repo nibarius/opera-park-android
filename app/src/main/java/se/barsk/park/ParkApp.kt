@@ -2,7 +2,6 @@ package se.barsk.park
 
 import android.content.Context
 import android.content.SharedPreferences
-import se.barsk.park.analytics.Analytics
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.datatypes.User
@@ -18,7 +17,6 @@ import se.barsk.park.utils.Utils
  */
 object ParkApp {
     private var isInitiated = false
-    lateinit var analytics: Analytics
     lateinit var crashlytics: CrashReporting
     lateinit var carCollection: CarCollection
     lateinit var networkManager: NetworkManager
@@ -33,7 +31,6 @@ object ParkApp {
         storageManager = Injection.provideStorageManager(appContext)
         crashlytics = CrashReporting()
         crashlytics.enableIfAllowed()
-        analytics = Analytics(appContext)
         networkManager = Injection.provideNetworkManager()
         carCollection = Injection.provideCarCollection()
         theUser = Injection.provideUser(appContext)
