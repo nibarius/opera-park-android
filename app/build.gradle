@@ -19,7 +19,7 @@ android {
     }
     defaultConfig {
         applicationId "se.barsk.park"
-        minSdkVersion 21
+        minSdkVersion 23
         compileSdkVersion 36
         targetSdkVersion 36
         versionCode 10
@@ -111,7 +111,7 @@ android {
 
 dependencies {
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:33.1.2')
+    implementation platform('com.google.firebase:firebase-bom:34.3.0')
     // Declare the dependencies for the desired Firebase products without specifying versions
     implementation 'com.google.firebase:firebase-crashlytics'
 
@@ -143,6 +143,5 @@ repositories {
     }
 
 }
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
