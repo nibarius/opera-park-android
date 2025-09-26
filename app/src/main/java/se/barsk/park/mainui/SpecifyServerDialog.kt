@@ -5,14 +5,14 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import se.barsk.park.ParkApp
 import se.barsk.park.R

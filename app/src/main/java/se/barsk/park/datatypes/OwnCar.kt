@@ -1,6 +1,6 @@
 package se.barsk.park.datatypes
 
-import java.util.*
+import java.util.UUID
 
 /**
  * A representation of the users own car

@@ -4,7 +4,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp

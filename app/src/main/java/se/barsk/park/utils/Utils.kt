@@ -3,7 +3,7 @@ package se.barsk.park.utils
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import java.util.*
+import java.util.Locale
 
 object Utils {
     /**

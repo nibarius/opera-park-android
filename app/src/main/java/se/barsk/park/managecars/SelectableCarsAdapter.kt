@@ -1,7 +1,7 @@
 package se.barsk.park.managecars
 
-import androidx.recyclerview.widget.RecyclerView
 import android.util.SparseBooleanArray
+import androidx.recyclerview.widget.RecyclerView
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.mainui.CarsAdapter

@@ -9,6 +9,4 @@ sealed class Result {
     data class Success(val parkedCars: List<ParkedCar>) : Result()
     data class Fail(val parkedCars: List<ParkedCar>?, val message: String) : Result()
     object NoServer : Result()
-    object AddedToWaitList : Result()
-    object RemovedFromWaitList : Result()
 }

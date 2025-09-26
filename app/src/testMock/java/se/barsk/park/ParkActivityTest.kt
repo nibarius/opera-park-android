@@ -465,8 +465,6 @@ class ParkActivityTest : RobolectricTest() {
         car1.performClick()
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         carIsParked(car1)
-        // Todo: restore waitlist part when there is a backend with support for it
-        // carCanBePutOnWaitList(car2)
         parkCarButtonIsDisabled(car2)
         activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.park_status_full)
 
@@ -479,83 +477,6 @@ class ParkActivityTest : RobolectricTest() {
 
         controller.pause().stop().destroy()
     }
-
-    /* Test disabled until there is a backend and wait list support
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "land")
-    fun waitListNotLoggedInLandscapeTest() = waitListNotLoggedInTest()
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "port")
-    fun waitListNotLoggedInPortraitTest() = waitListNotLoggedInTest()
-
-    private fun waitListNotLoggedInTest() {
-        // Create a new activity just for this test with a special network manager
-        ParkApp.networkManager = MockNetworkManager(6)
-        val controller = Robolectric.buildActivity(ParkActivity::class.java)
-        val activity = controller.create().start().resume().visible().get()
-        ParkApp.theUser.signOut(activity)
-
-        // wait until we've gotten a response from the "server"
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        // After loading data the garage have cars and the list of cars is shown
-        listOfParkedCarsShown(activity)
-
-        val car = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1)?.itemView
-        car.shouldNotBeNull()
-        car as OwnCarListEntry
-
-        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.park_status_full)
-
-        // Register on the wait list while not logged in should trigger the sign in dialog
-        car.performClick()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-
-        val dialog = activity.supportFragmentManager.findFragmentByTag("signIn")
-        dialog.shouldNotBeNull()
-        dialog shouldBeInstanceOf MustSignInDialog::class
-
-        controller.pause().stop().destroy()
-    }
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "land")
-    fun waitListLandscapeTest() = waitListTest()
-
-    @Test
-    @org.robolectric.annotation.Config(qualifiers = "port")
-    fun waitListPortraitTest() = waitListTest()
-
-    private fun waitListTest() {
-        // Create a new activity just for this test with a special network manager
-        ParkApp.networkManager = MockNetworkManager(6)
-        val controller = Robolectric.buildActivity(ParkActivity::class.java)
-        val activity = controller.create().start().resume().visible().get()
-        ParkApp.theUser.isSignedIn shouldBe true
-
-        // wait until we've gotten a response from the "server"
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        // After loading data the garage have cars and the list of cars is shown
-        listOfParkedCarsShown(activity)
-
-        val car = activity.own_cars_recycler_view.findViewHolderForAdapterPosition(1)?.itemView
-        car.shouldNotBeNull()
-        car as OwnCarListEntry
-        carCanBePutOnWaitList(car)
-        activity.supportActionBar?.title.toString() shouldBeEqualTo activity.getString(R.string.park_status_full)
-
-        // Register on the wait list
-        car.performClick()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        carIsOnWaitList(car)
-
-        //Remove from the wait list
-        car.performClick()
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        carCanBePutOnWaitList(car)
-
-        controller.pause().stop().destroy()
-    }*/
 
     @Test
     @org.robolectric.annotation.Config(qualifiers = "land")
@@ -730,24 +651,6 @@ class ParkActivityTest : RobolectricTest() {
     private fun parkCarButtonIsDisabled(car: OwnCarListEntry) {
         val button = car.parkButton
         button.isEnabled.shouldBeFalse()
-    }
-
-    private fun carCanBePutOnWaitList(car: OwnCarListEntry) {
-        val button = car.parkButton
-        button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(
-            context().getString(R.string.wait_label)
-                .uppercase(Locale.getDefault())
-        )
-    }
-
-    private fun carIsOnWaitList(car: OwnCarListEntry) {
-        val button = car.parkButton
-        button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(
-            context().getString(R.string.stop_waiting_label)
-                .uppercase(Locale.getDefault())
-        )
     }
 
     private fun View.shouldBeGone() {

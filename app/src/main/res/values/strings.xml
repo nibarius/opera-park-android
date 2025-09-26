@@ -17,10 +17,6 @@
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="manage_cars_list_entry">%1$s (owner: %2$s)</string>
     <string name="manage_cars_action_mode_title">%d selected</string>
-    <plurals name="share_car_title">
-        <item quantity="one">Share car with</item>
-        <item quantity="other">Share cars with</item>
-    </plurals>
 
     <!-- Main UI activity -->
     <string name="no_cars_add_car_button">Add a car</string>
@@ -42,22 +38,10 @@
     <string name="specify_server_dialog_title">Specify server</string>
     <string name="unpark_label">Unpark</string>
     <string name="park_label">Park</string>
-    <string name="wait_label">Wait</string>
-    <string name="stop_waiting_label">Stop waiting</string>
-    <string name="sign_in_menu_entry">Sign in</string>
-    <string name="sign_out_menu_entry">Sign out (%s)</string>
-    <string name="sign_in_failed">Failed to sign in:\n%s</string>
 
-    <!-- Sign in handler -->
-    <string name="sign_in_network_error">A network error occurred</string>
-    <string name="sign_in_unknown_error">An unknown error occurred (status code %d)</string>
-    <string name="wait_list_register_failed_sign_in_problem">Registering on the wait list failed, make sure you are signed in.</string>
-    <string name="wait_list_unregister_failed_sign_in_problem">Unregistering form the wait list failed, make sure you are signed in.</string>
-
-    <!-- Settings activity -->
+     <!-- Settings activity -->
     <string name="settings_activity_title">Settings</string>
     <string name="notices_title">Third party licences</string>
-    <string name="notices_close">Close</string>
     <string name="settings_privacy_group_title">Privacy</string>
     <string name="settings_crash_reporting">Crash reporting</string>
     <string name="settings_privacy_statement">Privacy statement</string>
@@ -80,20 +64,6 @@
     <string name="failed_to_unpark">Failed to unpark %s</string>
     <string name="fail_reason_unknown_data">The server returned unknown data</string>
     <string name="fail_reason_unknown_error">Unknown error</string>
-    <string name="parking_available_notif_channel_name">Parking availability</string>
-    <string name="parking_available_notif_channel_description">Get notifications when the parking becomes available</string>
-    <string name="wait_list_registration_failed">Failed to register on the wait list</string>
-    <string name="wait_list_unregistration_failed">Failed to unregister from the wait list</string>
-
-    <!-- Notifications -->
-    <string name="free_spots_notification_title">There are %s free spots!</string>
-    <string name="free_spots_notification_body">Move your car while you can</string>
-    <string name="can_not_get_fcm_token">Unable to get the FCM token</string>
-
-    <!-- Sign in dialog -->
-    <string name="sign_in_dialog_message">Sign in to Opark to get a notification when the garage frees up.</string>
-    <string name="sign_in_dialog_title">Sign in?</string>
-    <string name="sign_in_dialog_positive_button">Sign in</string>
 
     <!-- Privacy statement on boarding dialog -->
     <string name="ppo_dialog_title">Help improving Opark?</string>

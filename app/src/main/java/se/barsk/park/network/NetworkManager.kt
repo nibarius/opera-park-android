@@ -2,7 +2,6 @@ package se.barsk.park.network
 
 import android.content.Context
 import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.extensions.authentication
 import com.github.kittinunf.fuel.json.FuelJson
 import com.github.kittinunf.fuel.json.responseJson
 import com.github.kittinunf.result.getAs
@@ -154,56 +153,4 @@ open class NetworkManager {
     open fun unparkCar(context: Context, car: OwnCar, resultReadyListener: (Result) -> Unit) =
             doAction(context, car, Action.UNPARK, resultReadyListener)
 
-    /**
-     * Makes a request to the Opark backend to register on the wait list.
-     * @param context the context to use to get resources for error messages
-     * @param token the IdToken used to authenticate the user
-     * @param resultReadyListener callback function to be called when the result is ready
-     */
-    open fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
-        val body = "{\"pushToken\": \"$pushToken\"}"
-        Fuel.post(context.getString(R.string.url_wait_list_endpoint))
-                .authentication()
-                .basic(token, "")
-                .header(mapOf("Content-Type" to "application/json", "User-Agent" to userAgent))
-                .body(body).response { _, response, result ->
-                    when (result) {
-                        is com.github.kittinunf.result.Result.Success -> {
-                            resultReadyListener(Result.AddedToWaitList)
-                        }
-                        is com.github.kittinunf.result.Result.Failure -> {
-                            val errorMessage = context.getString(R.string.wait_list_registration_failed)
-                            val msg = "$errorMessage\n" +
-                                    "${response.statusCode}: ${response.responseMessage}"
-                            resultReadyListener(Result.Fail(null, msg))
-                        }
-                    }
-                }
-    }
-
-    /**
-     * Makes a request to the Opark backend to remove the user from the wait list.
-     * @param context the context to use to get resources for error messages
-     * @param token the IdToken used to authenticate the user
-     * @param resultReadyListener callback function to be called when the result is ready
-     */
-    open fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
-        Fuel.delete(context.getString(R.string.url_wait_list_endpoint))
-                .authentication()
-                .basic(token, "")
-                .header(mapOf("User-Agent" to userAgent))
-                .response { _, response, result ->
-                    when (result) {
-                        is com.github.kittinunf.result.Result.Success -> {
-                            resultReadyListener(Result.RemovedFromWaitList)
-                        }
-                        is com.github.kittinunf.result.Result.Failure -> {
-                            val errorMessage = context.getString(R.string.wait_list_unregistration_failed)
-                            val msg = "$errorMessage\n" +
-                                    "${response.statusCode}: ${response.responseMessage}"
-                            resultReadyListener(Result.Fail(null, msg))
-                        }
-                    }
-                }
-    }
 }

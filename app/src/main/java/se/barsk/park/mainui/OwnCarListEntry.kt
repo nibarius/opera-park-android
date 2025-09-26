@@ -11,7 +11,7 @@ import se.barsk.park.R
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.utils.Utils
-import java.util.*
+import java.util.Locale
 
 
 /**
@@ -35,13 +35,9 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) :
         car as OwnCar
         val action = if (car.parked) {
             context.getString(R.string.unpark_label)
-        } else /*if (!garageFull)*/ {
-            context.getString(R.string.park_label)
-        } /*else if (ParkApp.theUser.isOnWaitList) {
-            context.getString(R.string.stop_waiting_label)
         } else {
-            context.getString(R.string.wait_label)
-        }*/
+            context.getString(R.string.park_label)
+        }
         val firstLen = action.length
         val spannable = SpannableString("${action.uppercase(Locale.getDefault())}\n${car.regNo}")
         spannable.setSpan(RelativeSizeSpan(0.67f), 0, firstLen, 0)
@@ -74,12 +70,7 @@ class OwnCarListEntry(context: Context?, val listener: ((Car) -> Unit)?) :
                 }
                 parkButton.isEnabled = true
             }
-            garageFull -> { // Show wait button
-                // Todo: re-enable wait button when backend is available
-                /*parkButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.button_transparent_bg)
-                parkButton.strokeColor = ContextCompat.getColorStateList(context, R.color.button_wait_stroke)
-                parkButton.rippleColor = ContextCompat.getColorStateList(context, R.color.button_wait_ripple)
-                parkButton.setTextColor(ContextCompat.getColor(context, R.color.waitButtonColor))*/
+            garageFull -> {
                 parkButton.strokeColor =
                     ContextCompat.getColorStateList(context, R.color.colorDisabled)
                 parkButton.setTextColor(ContextCompat.getColor(context, R.color.colorDisabled))

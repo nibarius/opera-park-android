@@ -17,10 +17,9 @@
     <color name="colorToolbarFree">@color/colorSurface</color>
     <color name="colorStatusBarFree">@color/colorPrimaryDark</color>
 
-    <!-- Colors used for the park/unpark/wait buttons -->
+    <!-- Colors used for the park/unpark buttons -->
     <color name="parkButtonColor">@color/colorGreen200</color>
     <color name="unparkButtonColor">@color/colorRed200</color>
-    <color name="waitButtonColor">@color/colorOrange200</color>
     <color name="colorDisabled">@color/colorWhite26percent</color>
 
     <!-- Splash screen colors -->

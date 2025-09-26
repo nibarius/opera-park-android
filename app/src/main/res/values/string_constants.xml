@@ -20,7 +20,6 @@
     <string name="key_first_version_name" translatable="false">fvn</string>
     <string name="key_current_version_code" translatable="false">cvc</string>
     <string name="key_previous_version_code" translatable="false">pvc</string>
-    <string name="key_on_wait_list" translatable="false">owl</string>
     <string name="key_privacy_on_boarding" translatable="false">pob</string>
     <string name="key_crash_reporting_consent" translatable="false">ccr</string>
     <string name="key_crash_reporting_consent_timestamp" translatable="false">ccrt</string>
@@ -29,12 +28,10 @@
     <string name="the_empty_string" translatable="false"/>
     <string name="default_crash_reporting" translatable="false">false</string>
     <string name="default_refresh_interval" translatable="false">10</string>
-    <string name="default_on_wait_list" translatable="false">false</string>
     <string name="default_privacy_on_boarding" translatable="false">false</string>
     <string name="default_theme" translatable="false">system</string>
 
     <!-- URLs for links in the app -->
     <string name="url_privacy_statement" translatable="false">https://barsk.xyz/static/opark/privacy.html</string>
-    <string name="url_wait_list_endpoint" translatable="false">"https://opera-park.appspot.com/api/v1/waitList</string>
 
 </resources>

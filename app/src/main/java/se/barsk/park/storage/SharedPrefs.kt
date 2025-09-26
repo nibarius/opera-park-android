@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
-import se.barsk.park.utils.Utils
 import se.barsk.park.utils.TimeUtils
+import se.barsk.park.utils.Utils
 
 /**
  * Class for handing all interactions with the SharedPreferences
@@ -20,8 +20,6 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val crashReporting = context.getString(R.string.key_crash_reporting)
     private val defaultCrashReporting = context.getString(R.string.default_crash_reporting).toBoolean()
     private val refreshInterval = context.getString(R.string.key_refresh_interval)
-    private val onWaitList = context.getString(R.string.key_on_wait_list)
-    private val defaultOnWaitList = context.getString(R.string.default_on_wait_list).toBoolean()
     private val privacyOnBoarding = context.getString(R.string.key_privacy_on_boarding)
     private val defaultPrivacyOnBoarding = context.getString(R.string.default_privacy_on_boarding).toBoolean()
 
@@ -93,8 +91,6 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     fun getAutomaticUpdateInterval(): Long = readSetting(refreshInterval,
             context.getString(R.string.default_refresh_interval)).toLong()
 
-    fun onWaitList(): Boolean = sharedPreferences.getBoolean(onWaitList, defaultOnWaitList)
-    fun setOnWaitList(value: Boolean) = putSetting(onWaitList, value)
     fun hasSeenPrivacyOnBoarding(): Boolean = sharedPreferences.getBoolean(privacyOnBoarding, defaultPrivacyOnBoarding)
     fun setPrivacyOnBoardingSeen() = putSetting(privacyOnBoarding, true)
 

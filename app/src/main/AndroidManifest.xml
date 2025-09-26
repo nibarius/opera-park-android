@@ -36,13 +36,6 @@
             android:launchMode="singleTask"
             android:parentActivityName=".mainui.ParkActivity" />
 
-        <service
-            android:name=".fcm.ParkFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
         <!-- Disable crashlytics by default, and only enable it if the user wants to -->
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"

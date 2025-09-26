@@ -1,8 +1,8 @@
 package se.barsk.park.mainui
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import se.barsk.park.datatypes.Car
 import se.barsk.park.managecars.ManageCarsListEntry
 

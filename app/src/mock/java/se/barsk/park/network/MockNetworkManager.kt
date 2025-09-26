@@ -64,14 +64,6 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         Handler(Looper.getMainLooper()).postDelayed({ removeIfExists(context, car, resultReadyListener) }, networkDelay)
     }
 
-    override fun addToWaitList(context: Context, token: String, pushToken: String, resultReadyListener: (Result) -> Unit) {
-        Handler(Looper.getMainLooper()).postDelayed({ resultReadyListener(Result.AddedToWaitList) }, networkDelay)
-    }
-
-    override fun removeFromWaitList(context: Context, token: String, resultReadyListener: (Result) -> Unit) {
-        Handler(Looper.getMainLooper()).postDelayed({ resultReadyListener(Result.RemovedFromWaitList) }, networkDelay)
-    }
-
     // Add a car to the parked cars list if it does not already exist, if it does signal a fail
     // like the real server does.
     private fun addIfNotExist(context: Context,

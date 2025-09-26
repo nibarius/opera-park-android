@@ -32,7 +32,6 @@ import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.RepeatableTask
-import se.barsk.park.SignInHandler
 import se.barsk.park.consume
 import se.barsk.park.databinding.ActivityParkBinding
 import se.barsk.park.datatypes.Car
@@ -40,9 +39,7 @@ import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.Garage
 import se.barsk.park.datatypes.GarageStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.datatypes.User
 import se.barsk.park.error.ErrorHandler
-import se.barsk.park.fcm.NotificationsManager
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.showPlaceholderIfNeeded
@@ -51,12 +48,7 @@ import se.barsk.park.utils.TimeUtils
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
-    CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener,
-    MustSignInDialog.MustSignInDialogListener {
-
-    override fun onSignInDialogPositiveClick() {
-        user.signIn(this) { user.addToWaitList(this) }
-    }
+    CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
 
     override fun parkServerChanged() {
         networkState.resetState()
@@ -111,8 +103,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private var parkingState: ParkingState = ParkingState.NO_SERVER
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
-    private val user: User by lazy { ParkApp.theUser }
-    private val userListener = UserChangeListener()
 
     private lateinit var automaticUpdateTask: RepeatableTask
 
@@ -156,7 +146,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         ParkApp.carCollection.addListener(this)
         ParkApp.storageManager.settingsChangeListener = ServerChangeFromSettingsListener()
         showOwnCarsPlaceholderIfNeeded()
-        NotificationsManager().createNotificationChannels(applicationContext)
 
         // Handle edge-to-edge so that parts of the UI doesn't get covered under system bars
         // Toolbar
@@ -195,16 +184,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             v.updatePadding(left = systemBars.left)
             WindowInsetsCompat.CONSUMED
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        user.addListener(userListener)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        user.removeListener(userListener)
     }
 
     override fun onResume() {
@@ -248,28 +227,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         super.onDestroy()
     }
 
-
-    @Deprecated("Passing data should be done in a different way, but this is for an unused feature so I'm not fixing it yet")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == SignInHandler.REQUEST_CODE_SIGN_IN) {
-            user.onSignInResult(data)
-        }
-    }
-
     private var optionsMenu: Menu? = null
-    private fun updateSignInText() {
-        // TODO: re-enable when there's a backend available
-        /*
-        val title = if (user.isSignedIn) {
-            getString(R.string.sign_out_menu_entry, user.accountName)
-        } else {
-            getString(R.string.sign_in_menu_entry)
-        }
-        optionsMenu?.findItem(R.id.menu_sign_in)?.title = title*/
-    }
 
 
     private fun automaticUpdate() {
@@ -422,14 +380,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         optionsMenu = menu
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main_menu, menu)
-        updateSignInText()
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.menu_manage_cars -> consume { navigateToManageCars() }
         R.id.menu_settings -> consume { navigateToSettings() }
-        // R.id.menu_sign_in -> consume { signInOrOut() } // TODO: re-enable when backend is available
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -449,28 +405,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         startActivity(intent)
     }
 
-    private fun signInOrOut() {
-        if (user.isSignedIn) {
-            user.signOut(this)
-        } else {
-            user.signIn(this)
-        }
-    }
-
     private fun onOwnCarClicked(car: Car) {
         car as OwnCar
         when {
             garage.isParked(car) -> garage.unparkCar(applicationContext, car)
             !garage.isFull() -> garage.parkCar(applicationContext, car)
-            user.isOnWaitList -> user.removeFromWaitList(this)
-            user.isSignedIn -> user.addToWaitList(this)
-            else -> {
-                //TODO: re-enable when there is a backend available. For now do nothing when
-                // clicking the car button on a full garage.
-
-                // Garage is full, but the user is not signed in: show dialog for signing in.
-                // MustSignInDialog.newInstance().show(supportFragmentManager, "signIn")
-            }
+            else -> Unit // Do nothing when the garage is full
         }
     }
 
@@ -555,24 +495,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             !ParkApp.storageManager.hasSeenPrivacyOnBoarding()
         ) {
             PrivacyPolicyOnBoardingDialog.newInstance().show(supportFragmentManager, tag)
-        }
-    }
-
-    inner class UserChangeListener : User.ChangeListener {
-        override fun onWaitListStatusChanged() = updateListOfOwnCars()
-        override fun onWaitListFailed(message: String) =
-            ErrorHandler.showMessage(binding.content.containerView, message)
-
-        override fun onSignInStatusChanged() = updateSignInText()
-        override fun onSignInFailed(statusCode: Int) {
-            val message = SignInHandler.getMessageForStatusCode(applicationContext, statusCode)
-            ErrorHandler.showMessage(
-                binding.content.containerView,
-                getString(R.string.sign_in_failed, message)
-            )
-            if (statusCode != com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR) {
-                ErrorHandler.raiseException("Failed to sign in: $message")
-            }
         }
     }
 

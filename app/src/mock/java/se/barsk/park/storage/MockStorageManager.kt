@@ -8,7 +8,6 @@ import se.barsk.park.datatypes.OwnCar
  */
 class MockStorageManager(context: Context) : StorageManager(context) {
     private var server = "https://park.example.com/"
-    private var onWaitList = false
 
     // Shared preferences interaction functions
     override fun hasServer() = server.isNotEmpty()
@@ -16,11 +15,6 @@ class MockStorageManager(context: Context) : StorageManager(context) {
     override fun getServer() = server
     override fun setServer(server: String) {
         this.server = server
-    }
-
-    override fun onWaitList() = onWaitList
-    override fun setOnWaitList(onWaitList: Boolean) {
-        this.onWaitList = onWaitList
     }
 
     // No crash reporting when mocking.

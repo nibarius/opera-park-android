@@ -1,10 +1,10 @@
 package se.barsk.park.managecars
 
-import android.view.MotionEvent
-import androidx.recyclerview.widget.RecyclerView
 import android.content.Context
 import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 
 /**
