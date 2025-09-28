@@ -1,0 +1,54 @@
+[versions]
+androidJoda = "2.13.1"
+appcompat = "1.7.1"
+constraintlayout = "2.2.1"
+core = "1.7.0"
+firebaseBom = "34.3.0"
+firebaseCrashlyticsGradle = "3.0.6"
+fuelAndroid = "2.3.1"
+fuelJson = "2.3.1"
+gradle = "8.13.0"
+junit = "4.13.2"
+json = "20250517"
+kluentAndroid = "1.73"
+kotlin = "2.2.20"
+kotlinxCoroutinesAndroid = "1.10.2"
+licensesdialog = "2.2.0"
+playServicesAuth = "21.4.0"
+preferenceKtx = "1.2.1"
+result = "3.1.0"
+robolectric = "4.16"
+swiperefreshlayout = "1.1.0"
+material = "1.13.0"
+
+[libraries]
+android-joda = { module = "net.danlew:android.joda", version.ref = "androidJoda" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+core = { module = "androidx.test:core", version.ref = "core" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
+fuel-json = { module = "com.github.kittinunf.fuel:fuel-json", version.ref = "fuelJson" }
+fuel-android = { module = "com.github.kittinunf.fuel:fuel-android", version.ref = "fuelAndroid" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+json = { module = "org.json:json", version.ref = "json" }
+junit = { module = "junit:junit", version.ref = "junit" }
+kluent-android = { module = "org.amshove.kluent:kluent-android", version.ref = "kluentAndroid" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+licensesdialog = { module = "de.psdev.licensesdialog:licensesdialog", version.ref = "licensesdialog" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+result = { module = "com.github.kittinunf.result:result", version.ref = "result" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "gradle" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+firebase-crashlitycs = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle"}
