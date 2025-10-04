@@ -35,6 +35,9 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "releaseBuild", "true"
+            ndk {
+                debugSymbolLevel "FULL"
+            }
         }
         mock_6 {
             buildConfigField "int", "initialParkedCars", "6"
