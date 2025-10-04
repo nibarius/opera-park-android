@@ -7,6 +7,7 @@ firebaseBom = "34.3.0"
 firebaseCrashlyticsGradle = "3.0.6"
 fuelAndroid = "2.3.1"
 fuelJson = "2.3.1"
+googlePlayServices = "4.4.3"
 gradle = "8.13.0"
 junit = "4.13.2"
 json = "20250517"
@@ -52,3 +53,4 @@ android-application = { id = "com.android.application", version.ref = "gradle" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 firebase-crashlitycs = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle"}
+google-services = { id = "com.google.gms.google-services", version.ref="googlePlayServices"}

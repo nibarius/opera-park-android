@@ -13,7 +13,7 @@ class CrashReporting {
     fun enableIfAllowed() {
         if (!isStarted && ParkApp.storageManager.crashReportingEnabled()) {
             val crashlytics = FirebaseCrashlytics.getInstance()
-            crashlytics.setCrashlyticsCollectionEnabled(true)
+            crashlytics.isCrashlyticsCollectionEnabled = true
             crashlytics.setCustomKey("public_release", BuildConfig.releaseBuild)
             isStarted = true
         }
