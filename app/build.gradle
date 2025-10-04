@@ -7,8 +7,8 @@ plugins{
 }
 
 android {
-    def majorVersion = 3
-    def minorVersion = 3
+    def majorVersion = 4
+    def minorVersion = 0
 
     testOptions.unitTests.includeAndroidResources true
     compileOptions {
@@ -23,7 +23,7 @@ android {
         minSdkVersion 23
         compileSdkVersion 36
         targetSdkVersion 36
-        versionCode 10
+        versionCode 11
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "releaseBuild", "false"
