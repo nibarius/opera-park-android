@@ -4,8 +4,10 @@
 
     <!-- Manage cars activity -->
     <string name="manage_cars_activity_title">Hantera bilar</string>
-    <string name="manage_car_dialog_license_plate_hint">Registreringsnummer (t.ex. ABC 123)</string>
-    <string name="manage_car_dialog_owner_hint">Ägare (t.ex. användarnamn)</string>
+    <string name="manage_car_dialog_license_plate_hint">ABC 123</string>
+    <string name="manage_car_dialog_license_plate_label">Registreringsnummer</string>
+    <string name="manage_car_dialog_owner_hint">användarnamn</string>
+    <string name="manage_car_dialog_owner_label">Ägare</string>
     <string name="edit_car_dialog_title">Redigera bil</string>
     <string name="add_car_dialog_title">Lägg till bil</string>
     <string name="manage_cars_select_option">Välj</string>
@@ -15,9 +17,12 @@
     <string name="manage_cars_list_placeholder">Lägg till en bil genom att trycka på + knappen</string>
     <string name="manage_cars_list_entry">%1$s (ägare: %2$s)</string>
     <string name="manage_cars_action_mode_title">%d har valts</string>
+    <string name="manage_cars_close">Stäng</string>
+    <string name="manage_cars_navigate_up">Navigera uppåt</string>
+    <string name="manage_cars_more_options">Fler alternativ</string>
 
     <!-- Main UI activity -->
-    <string name="no_cars_add_car_button">Lägg till bil</string>
+    <string name="add_car_button">Lägg till bil</string>
     <string name="no_cars_placeholder_message">Du har inte lagt till någon bil än</string>
     <string name="no_cars_placeholder_message_short">Du har ingen bil</string>
     <string name="parked_cars_placeholder">Alla platser är lediga</string>

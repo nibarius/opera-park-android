@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import se.barsk.park.datatypes.Car
-import se.barsk.park.managecars.ManageCarsListEntry
 
 
 /**
@@ -12,7 +11,7 @@ import se.barsk.park.managecars.ManageCarsListEntry
  */
 open class CarsAdapter(private val type: Type, var cars: List<Car>, val listener: (Car) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    enum class Type { PARKED_CARS, OWN_CARS, MANAGE_CARS }
+    enum class Type { PARKED_CARS, OWN_CARS }
 
     var recyclerView: RecyclerView? = null
 
@@ -34,9 +33,6 @@ open class CarsAdapter(private val type: Type, var cars: List<Car>, val listener
             }
             Type.PARKED_CARS -> {
                 ViewHolder(ParkedCarListEntry(parent.context))
-            }
-            Type.MANAGE_CARS -> {
-                ViewHolder(ManageCarsListEntry(parent.context))
             }
         }
         vh.onClick(listener)

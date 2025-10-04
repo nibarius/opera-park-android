@@ -5,6 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import se.barsk.park.ParkApp
 
 /**
@@ -16,7 +18,10 @@ open class CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
     @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
-    protected var ownCars: MutableList<OwnCar>  = mutableListOf()
+    var ownCars: MutableList<OwnCar>  = mutableListOf()
+
+    protected val _ownCars = MutableStateFlow<List<OwnCar>>(emptyList())
+    val ownCarsFlow = _ownCars.asStateFlow()
 
     // A scope for collecting the flow from the database
     private val scope = CoroutineScope(Dispatchers.Main)
@@ -29,8 +34,12 @@ open class CarCollection {
     protected open fun readCarsFromStorage() {
         ParkApp.storageManager.fetchAllCars()
             .onEach { updatedCars ->
+                // old listeners based part
                 ownCars = updatedCars.toMutableList()
                 notifyListeners()
+
+                //flow part:
+                _ownCars.value = updatedCars
             }.launchIn(scope)
     }
 
@@ -51,6 +60,7 @@ open class CarCollection {
      */
     fun updateParkStatus(garage: Garage): Boolean {
         var anyChange = false
+        // listener based:
         for (car in ownCars) {
             val newValue = garage.isParked(car)
             if (newValue != car.parked) {
@@ -58,7 +68,18 @@ open class CarCollection {
                 anyChange = true
             }
         }
+        // flow based
+        val currentCars = _ownCars.value.toMutableList()
+        for (car in currentCars) {
+            val newValue = garage.isParked(car)
+            if (newValue != car.parked) {
+                car.parked = newValue
+                anyChange = true
+            }
+        }
+
         if (anyChange) {
+            _ownCars.value = currentCars // Emit the updated list
             notifyListeners()
         }
         return anyChange
@@ -101,6 +122,17 @@ open class CarCollection {
     suspend fun removeCars(which: SparseBooleanArray) {
         for (index in which.size() - 1 downTo 0) {
             removeCarAt(which.keyAt(index))
+        }
+        notifyListeners()
+    }
+
+    /**
+     * Remove all cars in the given collection and persists the removal to persistent storage
+     */
+    suspend fun removeCars(cars: Collection<OwnCar>) {
+        for (car in cars) {
+            ownCars.remove(car)
+            persistRemoval(car)
         }
         notifyListeners()
     }

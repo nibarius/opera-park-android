@@ -34,4 +34,7 @@
     <!-- URLs for links in the app -->
     <string name="url_privacy_statement" translatable="false">https://barsk.xyz/static/opark/privacy.html</string>
 
+    <!-- For cars with empty license plate created in old versions of the app -->
+    <string name="missing_placeholder" translatable="false">?</string>
+
 </resources>

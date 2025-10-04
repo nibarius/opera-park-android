@@ -6,8 +6,10 @@
 
     <!-- Manage cars activity -->
     <string name="manage_cars_activity_title">Manage cars</string>
-    <string name="manage_car_dialog_license_plate_hint">Licence plate (e.g. ABC 123)</string>
-    <string name="manage_car_dialog_owner_hint">Owner (e.g. username)</string>
+    <string name="manage_car_dialog_license_plate_hint">ABC 123</string>
+    <string name="manage_car_dialog_license_plate_label">Licence plate</string>
+    <string name="manage_car_dialog_owner_hint">username</string>
+    <string name="manage_car_dialog_owner_label">Owner</string>
     <string name="edit_car_dialog_title">Edit car</string>
     <string name="add_car_dialog_title">Add car</string>
     <string name="manage_cars_select_option">Select</string>
@@ -17,9 +19,12 @@
     <string name="manage_cars_list_placeholder">Add a car by tapping the + button</string>
     <string name="manage_cars_list_entry">%1$s (owner: %2$s)</string>
     <string name="manage_cars_action_mode_title">%d selected</string>
+    <string name="manage_cars_close">Close</string>
+    <string name="manage_cars_navigate_up">Navigate up</string>
+    <string name="manage_cars_more_options">More options</string>
 
     <!-- Main UI activity -->
-    <string name="no_cars_add_car_button">Add a car</string>
+    <string name="add_car_button">Add car</string>
     <string name="no_cars_placeholder_message">You haven\'t added any cars yet</string>
     <string name="no_cars_placeholder_message_short">You have no cars</string>
     <string name="parked_cars_placeholder">All spots free</string>

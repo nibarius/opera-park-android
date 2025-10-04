@@ -1,8 +1,8 @@
 plugins{
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.firebase.crashlitycs)
     alias(libs.plugins.google.services)
-    //alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
 }
@@ -79,6 +79,7 @@ android {
     buildFeatures {
         viewBinding true
         buildConfig true
+        compose true
     }
 
     flavorDimensions "build"
@@ -120,8 +121,22 @@ dependencies {
     // Declare the dependencies for the desired Firebase products without specifying versions
     implementation libs.firebase.crashlytics
 
+    // Import BoM for Compose and other Compose dependencies
+    def composeBom = platform(libs.compose.bom)
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation libs.material3
+    implementation libs.material.icons.extended
+    implementation libs.runtime
+    implementation libs.runtime.lifecycle
+    implementation libs.activity.compose
+    implementation libs.navigation.compose
+    implementation libs.ui.tooling.preview
+    implementation libs.animation
+
     //Room:
     implementation libs.room.runtime
+    debugImplementation libs.ui.tooling
     ksp libs.room.compiler
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')

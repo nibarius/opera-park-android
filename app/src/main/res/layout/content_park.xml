@@ -138,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/no_cars_add_car_button"/>
+                android:text="@string/add_car_button"/>
         </LinearLayout>
 
     </ViewSwitcher>

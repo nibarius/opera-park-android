@@ -9,10 +9,17 @@ class MockCarCollection(private var numCars: Int = 2) : CarCollection() {
         val car1 = OwnCar("ALP 110", "Margaretha")
         val car2 = OwnCar("MLB 803", "Margaretha")
         ownCars = mutableListOf(car1, car2)
+        _ownCars.value = ownCars.toList()
     }
 
-    override suspend fun persistRemoval(ownCar: OwnCar) = Unit
-    override suspend fun persistUpdate(ownCar: OwnCar, position: Int) = Unit
+    override suspend fun persistRemoval(ownCar: OwnCar) {
+        // The ones calling this method updates ownCars before persisting the change
+        _ownCars.value = ownCars.toList()
+    }
+    override suspend fun persistUpdate(ownCar: OwnCar, position: Int) {
+        // The ones calling this method updates ownCars before persisting the change
+        _ownCars.value = ownCars.toList()
+    }
 
     /**
      * Method intended to only be run by unit tests. Replaces the entire content
@@ -22,6 +29,7 @@ class MockCarCollection(private var numCars: Int = 2) : CarCollection() {
     fun replaceContent(newCars: MutableList<OwnCar>) {
         ownCars.clear()
         ownCars.addAll(newCars)
+        _ownCars.value = ownCars.toList()
         notifyListeners()
     }
 

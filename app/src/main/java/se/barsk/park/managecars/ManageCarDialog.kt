@@ -1,110 +1,112 @@
 package se.barsk.park.managecars
 
-import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.Context
-import android.content.DialogInterface
-import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.WindowManager
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
-// OK to ignore on Alert dialogs
-// https://wundermanthompsonmobile.com/2013/05/layout-inflation-as-intended/
-@SuppressLint("InflateParams")
-abstract class ManageCarDialog : DialogFragment() {
-    interface ManageCarDialogListener {
-        fun onDialogPositiveClick(newCar: OwnCar, dialogType: DialogType)
+// A private, reusable base composable for both adding and editing a car.
+@Composable
+private fun BaseManageCarDialog(
+    title: String,
+    initialCar: OwnCar?,
+    onDismissRequest: () -> Unit,
+    onConfirmation: (OwnCar) -> Unit
+) {
+    // Initialize state with the car's current data, or empty if it's a new car.
+    var regNo by rememberSaveable { mutableStateOf(initialCar?.regNo ?: "") }
+    var owner by rememberSaveable { mutableStateOf(initialCar?.owner ?: "") }
+
+    // Derived state to control button enabled/disabled status.
+    val isFormValid by remember(regNo, owner) {
+        mutableStateOf(regNo.isNotBlank() && owner.isNotBlank())
     }
 
-    abstract val dialogTitle: Int
-    abstract val dialogType: DialogType
-    abstract fun fetchOwnCar(): OwnCar
-
-    var listener: ManageCarDialogListener? = null
-
-    private val dialogView: View by lazy { requireActivity().layoutInflater.inflate(R.layout.manage_car_dialog, null) as View }
-    private val fab: FloatingActionButton by lazy { requireActivity().findViewById(R.id.manage_cards_fab) }
-    private val regNoView: EditText by lazy { dialogView.findViewById(R.id.regno) }
-    private val ownerView: EditText by lazy { dialogView.findViewById(R.id.owner) }
-    private val ownCar: OwnCar by lazy { fetchOwnCar() }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            activity as ManageCarDialogListener
-        } catch (e: ClassCastException) {
-            // The activity doesn't implement the interface, throw exception
-            throw ClassCastException(activity.toString() + " must implement ManageCarDialogListener")
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(title) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = regNo,
+                    onValueChange = { regNo = it.uppercase() },
+                    label = { Text(stringResource(R.string.manage_car_dialog_license_plate_label)) },
+                    placeholder = { Text(stringResource(R.string.manage_car_dialog_license_plate_hint)) },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    modifier = Modifier.padding(top = 8.dp),
+                    value = owner,
+                    onValueChange = { owner = it },
+                    label = { Text(stringResource(R.string.manage_car_dialog_owner_label)) },
+                    placeholder = { Text(stringResource(R.string.manage_car_dialog_owner_hint)) },
+                    singleLine = true
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val finalRegNo = regNo.trim()
+                    val finalOwner = owner.trim()
+                    @Suppress("IfThenToElvis") // Suppressing elvis makes the code more clear
+                    val resultCar = if (initialCar != null) {
+                        // Editing an existing car, preserve its ID
+                        initialCar.copy(regNo = finalRegNo, owner = finalOwner)
+                    } else {
+                        // Creating a new car, let the ID be generated
+                        OwnCar(regNo = finalRegNo, owner = finalOwner)
+                    }
+                    onConfirmation(resultCar)
+                },
+                enabled = isFormValid
+            ) {
+                Text(stringResource(R.string.dialog_button_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(R.string.dialog_button_cancel))
+            }
         }
-    }
+    )
+}
 
-    override fun onStart() {
-        super.onStart()
-        updatePositiveButton()
-        val dialogWatcher = DialogTextWatcher()
-        regNoView.addTextChangedListener(dialogWatcher)
-        ownerView.addTextChangedListener(dialogWatcher)
-        fab.hide()
-    }
+@Composable
+fun AddCarDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: (OwnCar) -> Unit
+) {
+    BaseManageCarDialog(
+        title = stringResource(id = R.string.add_car_dialog_title),
+        initialCar = null, // No initial car data for "add"
+        onDismissRequest = onDismissRequest,
+        onConfirmation = onConfirmation
+    )
+}
 
-    override fun onStop() {
-        super.onStop()
-        fab.show()
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        regNoView.setText(ownCar.regNo)
-        ownerView.setText(ownCar.owner)
-
-        builder.setView(dialogView)
-                .setTitle(dialogTitle)
-                .setNegativeButton(R.string.dialog_button_cancel) { _, _ -> }
-                .setPositiveButton(R.string.dialog_button_save) { _, _ ->
-                    val newCar = OwnCar(
-                            regNoView.text.toString().trim(),
-                            ownerView.text.toString().trim(),
-                            ownCar.nickName,
-                            ownCar.id
-                    )
-                    listener?.onDialogPositiveClick(newCar, dialogType)
-                }
-        val dialog = builder.create()
-        ownerView.setOnEditorActionListener { _, _, _ ->
-            dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
-            false
-        }
-        // The dialog is visible during onCreateDialog so safe to assume that the window is not null
-        dialog.window!!.let {
-            it.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-            it.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        }
-
-        return dialog
-    }
-
-    private fun updatePositiveButton() {
-        val canSave = regNoView.text.isNotBlank() && ownerView.text.isNotBlank()
-        (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = canSave
-    }
-
-    inner class DialogTextWatcher : TextWatcher {
-        override fun afterTextChanged(s: Editable?) = updatePositiveButton()
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-    }
-
-    enum class DialogType {
-        EDIT, ADD
-    }
+@Composable
+fun EditCarDialog(
+    car: OwnCar,
+    onDismissRequest: () -> Unit,
+    onConfirmation: (OwnCar) -> Unit
+) {
+    BaseManageCarDialog(
+        title = stringResource(id = R.string.edit_car_dialog_title),
+        initialCar = car, // Pass the existing car data for "edit"
+        onDismissRequest = onDismissRequest,
+        onConfirmation = onConfirmation
+    )
 }
