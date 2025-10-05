@@ -15,9 +15,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.R
@@ -42,12 +44,16 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
     override fun onDialogPositiveClick(newCar: OwnCar, dialogType: ManageCarDialog.DialogType) {
         when (dialogType) {
             ManageCarDialog.DialogType.EDIT -> {
-                ParkApp.carCollection.updateCar(newCar)
+                lifecycleScope.launch {
+                    ParkApp.carCollection.updateCar(newCar)
+                }
                 finishActionMode()
             }
 
             ManageCarDialog.DialogType.ADD -> {
-                ParkApp.carCollection.addCar(newCar)
+                lifecycleScope.launch {
+                    ParkApp.carCollection.addCar(newCar)
+                }
             }
         }
     }
@@ -205,7 +211,9 @@ class ManageCarsActivity : AppCompatActivity(), ManageCarDialog.ManageCarDialogL
         // the new item being added to the recycler view when it tries to animate the
         // check view.
         adapter.clearSelection()
-        ParkApp.carCollection.removeCars(toDelete)
+        lifecycleScope.launch {
+            ParkApp.carCollection.removeCars(toDelete)
+        }
         finishActionMode()
     }
 

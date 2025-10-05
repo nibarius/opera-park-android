@@ -1,6 +1,10 @@
 package se.barsk.park.datatypes
 
 import android.util.SparseBooleanArray
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import se.barsk.park.ParkApp
 
 /**
@@ -12,9 +16,23 @@ open class CarCollection {
 
     private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
     @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
-    protected val ownCars: MutableList<OwnCar> by lazy { readCarsFromStorage() }
+    protected var ownCars: MutableList<OwnCar>  = mutableListOf()
 
-    protected open fun readCarsFromStorage() = ParkApp.storageManager.fetchAllCars()
+    // A scope for collecting the flow from the database
+    private val scope = CoroutineScope(Dispatchers.Main)
+
+    init {
+        // Start collecting the flow as soon as the class is instantiated
+        readCarsFromStorage()
+    }
+
+    protected open fun readCarsFromStorage() {
+        ParkApp.storageManager.fetchAllCars()
+            .onEach { updatedCars ->
+                ownCars = updatedCars.toMutableList()
+                notifyListeners()
+            }.launchIn(scope)
+    }
 
     @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
     protected fun notifyListeners() {
@@ -49,7 +67,7 @@ open class CarCollection {
     /**
      * Adds a new car to the car collection and persists it to persistent storage
      */
-    fun addCar(ownCar: OwnCar, notify: Boolean = true) {
+    suspend fun addCar(ownCar: OwnCar, notify: Boolean = true) {
         ownCars.add(ownCar)
         persistUpdate(ownCar, ownCars.lastIndex)
         if (notify) {
@@ -61,17 +79,17 @@ open class CarCollection {
      * Adds all cars in the given list that isn't already present in the car collection
      * and persists it to persistent storage. If there are no cars, nothing is done.
      */
-    fun addCarsThatDoesNotExist(carsToAdd: List<OwnCar>) {
+    /*fun addCarsThatDoesNotExist(carsToAdd: List<OwnCar>) {
         carsToAdd
                 .filterNot { hasCar(it) }
                 .forEach { addCar(it, false) }
         notifyListeners()
-    }
+    }*/
 
     /**
      * Removes the car at the given index and persists the removal to persistent storage
      */
-    private fun removeCarAt(index: Int) {
+    private suspend fun removeCarAt(index: Int) {
         val ownCar = ownCars[index]
         ownCars.remove(ownCar)
         persistRemoval(ownCar)
@@ -80,7 +98,7 @@ open class CarCollection {
     /**
      * Remove all cars at the positions indicated by the given sparse boolean array.
      */
-    fun removeCars(which: SparseBooleanArray) {
+    suspend fun removeCars(which: SparseBooleanArray) {
         for (index in which.size() - 1 downTo 0) {
             removeCarAt(which.keyAt(index))
         }
@@ -90,15 +108,15 @@ open class CarCollection {
     /**
      * Updates a car and persists the change to persistent storage
      */
-    fun updateCar(ownCar: OwnCar) {
+    suspend fun updateCar(ownCar: OwnCar) {
         val position = positionOf(ownCar)
         ownCars[position] = ownCar
         persistUpdate(ownCar, position)
         notifyListeners()
     }
 
-    open fun persistRemoval(ownCar: OwnCar) = ParkApp.storageManager.remove(ownCar)
-    open fun persistUpdate(ownCar: OwnCar, position: Int) = ParkApp.storageManager.insertOrReplace(ownCar, position)
+    open suspend fun persistRemoval(ownCar: OwnCar) = ParkApp.storageManager.remove(ownCar)
+    open suspend fun persistUpdate(ownCar: OwnCar, position: Int) = ParkApp.storageManager.insertOrReplace(ownCar, position)
 
     /**
      * Returns true if the car collection already has a car with the same license plate

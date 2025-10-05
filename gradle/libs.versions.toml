@@ -14,11 +14,13 @@ json = "20250517"
 kluentAndroid = "1.73"
 kotlin = "2.2.20"
 kotlinxCoroutinesAndroid = "1.10.2"
+ksp = "2.2.10-2.0.2"
 licensesdialog = "2.2.0"
 playServicesAuth = "21.4.0"
 preferenceKtx = "1.2.1"
 result = "3.1.0"
 robolectric = "4.16"
+room = "2.8.1"
 swiperefreshlayout = "1.1.0"
 material = "1.13.0"
 
@@ -45,6 +47,9 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 result = { module = "com.github.kittinunf.result:result", version.ref = "result" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+room-compiler = { module= "androidx.room:room-compiler", version.ref ="room"}
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 
@@ -52,5 +57,6 @@ preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = 
 android-application = { id = "com.android.application", version.ref = "gradle" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 firebase-crashlitycs = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle"}
 google-services = { id = "com.google.gms.google-services", version.ref="googlePlayServices"}

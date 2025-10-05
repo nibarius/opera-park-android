@@ -8,7 +8,7 @@ import se.barsk.park.datatypes.OwnCar
 open class StorageManager(context: Context) {
 
     private val sharedPrefs: SharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences(context))
-    private val database: Database = Database(context)
+    private val database = ParkDatabase.createDatabase(context)
 
     var settingsChangeListener: SettingsChangeListener?
         get() = sharedPrefs.settingsChangeListener
@@ -34,13 +34,13 @@ open class StorageManager(context: Context) {
     fun recordCrashReportingConsentChange() = sharedPrefs.recordCrashReportingConsentChange()
 
     // Database interaction functions
-    open fun fetchAllCars(): MutableList<OwnCar> = database.fetchAllCars()
+    open fun fetchAllCars() = database.fetchAllCars()
 
     /**
      * Adds a car to persistent storage if it doesn't already exist. If it exists the data
      * for the car is updated. The id of the car is used to check if the car already exists.
      */
-    open fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
+    open suspend fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
 
-    open fun remove(ownCar: OwnCar) = database.remove(ownCar)
+    open suspend fun remove(ownCar: OwnCar) = database.remove(ownCar)
 }

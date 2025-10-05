@@ -4,6 +4,7 @@ plugins{
     //alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -118,6 +119,10 @@ dependencies {
     implementation platform(libs.firebase.bom)
     // Declare the dependencies for the desired Firebase products without specifying versions
     implementation libs.firebase.crashlytics
+
+    //Room:
+    implementation libs.room.runtime
+    ksp libs.room.compiler
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation libs.kotlin.stdlib.jdk7
