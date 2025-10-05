@@ -14,7 +14,7 @@ json = "20250517"
 kluentAndroid = "1.73"
 kotlin = "2.2.20"
 kotlinxCoroutinesAndroid = "1.10.2"
-ksp = "2.2.10-2.0.2"
+ksp = "2.2.20-2.0.3"
 licensesdialog = "2.2.0"
 playServicesAuth = "21.4.0"
 preferenceKtx = "1.2.1"
@@ -42,6 +42,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesAndroid"}
 licensesdialog = { module = "de.psdev.licensesdialog:licensesdialog", version.ref = "licensesdialog" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }

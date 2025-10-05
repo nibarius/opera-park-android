@@ -34,13 +34,13 @@ open class StorageManager(context: Context) {
     fun recordCrashReportingConsentChange() = sharedPrefs.recordCrashReportingConsentChange()
 
     // Database interaction functions
-    open fun fetchAllCars() = database.fetchAllCars()
+    fun fetchAllCars() = database.fetchAllCars()
 
     /**
      * Adds a car to persistent storage if it doesn't already exist. If it exists the data
      * for the car is updated. The id of the car is used to check if the car already exists.
      */
-    open suspend fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
+    suspend fun insertOrReplace(ownCar: OwnCar, position: Int) = database.insertOrReplace(ownCar, position)
 
-    open suspend fun remove(ownCar: OwnCar) = database.remove(ownCar)
+    suspend fun remove(ownCar: OwnCar) = database.remove(ownCar)
 }

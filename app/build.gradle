@@ -142,6 +142,7 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.json
     testImplementation libs.kotlin.reflect
+    testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.robolectric
     testImplementation libs.kluent.android
 }

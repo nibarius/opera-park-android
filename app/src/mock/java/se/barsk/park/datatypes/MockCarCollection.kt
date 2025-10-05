@@ -5,14 +5,14 @@ package se.barsk.park.datatypes
  * get well defined data and stable data. It does not persist any changes to storage.
  */
 class MockCarCollection(private var numCars: Int = 2) : CarCollection() {
-    override fun readCarsFromStorage(): MutableList<OwnCar> {
+    override fun readCarsFromStorage() {
         val car1 = OwnCar("ALP 110", "Margaretha")
         val car2 = OwnCar("MLB 803", "Margaretha")
-        return listOf(car1, car2).subList(0, numCars).toMutableList()
+        ownCars = mutableListOf(car1, car2)
     }
 
-    override fun persistRemoval(ownCar: OwnCar) = Unit
-    override fun persistUpdate(ownCar: OwnCar, position: Int) = Unit
+    override suspend fun persistRemoval(ownCar: OwnCar) = Unit
+    override suspend fun persistUpdate(ownCar: OwnCar, position: Int) = Unit
 
     /**
      * Method intended to only be run by unit tests. Replaces the entire content

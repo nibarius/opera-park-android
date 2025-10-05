@@ -1,6 +1,7 @@
 package se.barsk.park
 
 import android.util.SparseBooleanArray
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.barsk.park.datatypes.Garage
@@ -88,8 +89,9 @@ class CarCollectionTest : RobolectricTest() {
         carCollection.positionOf(OwnCar("uuu444", "me"))
     }
 
+
     @Test
-    fun testRemoveFirstCar() {
+    fun testRemoveFirstCar() = runTest {
         val car1 = OwnCar("uuu444", "me")
         val car2 = OwnCar("vvv555", "me")
         val car3 = OwnCar("www666", "me")
@@ -103,7 +105,7 @@ class CarCollectionTest : RobolectricTest() {
     }
 
     @Test
-    fun testRemoveLastCar() {
+    fun testRemoveLastCar() = runTest {
         val car1 = OwnCar("uuu444", "me")
         val car2 = OwnCar("vvv555", "me")
         val car3 = OwnCar("www666", "me")
@@ -117,7 +119,7 @@ class CarCollectionTest : RobolectricTest() {
     }
 
     @Test
-    fun testRemoveTwoCars() {
+    fun testRemoveTwoCars() = runTest {
         val car1 = OwnCar("uuu444", "me")
         val car2 = OwnCar("vvv555", "me")
         val car3 = OwnCar("www666", "me")
@@ -131,7 +133,7 @@ class CarCollectionTest : RobolectricTest() {
     }
 
     @Test
-    fun testRemoveAllCars() {
+    fun testRemoveAllCars() = runTest {
         val car1 = OwnCar("uuu444", "me")
         val car2 = OwnCar("vvv555", "me")
         val car3 = OwnCar("www666", "me")
