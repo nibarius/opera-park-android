@@ -12,6 +12,11 @@ class MockCarCollection(private var numCars: Int = 2) : CarCollection() {
         _ownCars.value = ownCars.toList()
     }
 
+    //only to be used from tests
+    fun reset() {
+        readCarsFromStorage()
+    }
+
     override suspend fun persistRemoval(ownCar: OwnCar) {
         // The ones calling this method updates ownCars before persisting the change
         _ownCars.value = ownCars.toList()
@@ -30,7 +35,6 @@ class MockCarCollection(private var numCars: Int = 2) : CarCollection() {
         ownCars.clear()
         ownCars.addAll(newCars)
         _ownCars.value = ownCars.toList()
-        notifyListeners()
     }
 
     /**

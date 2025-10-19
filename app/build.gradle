@@ -160,5 +160,8 @@ dependencies {
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.robolectric
     testImplementation libs.kluent.android
+    testImplementation(libs.ui.test.junit4)
+    debugImplementation(libs.ui.test.manifest) // For running on devices/emulators
+
 }
 

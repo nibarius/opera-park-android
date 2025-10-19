@@ -1,167 +1,230 @@
 package se.barsk.park
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Looper.getMainLooper
-import android.view.View
-import android.widget.EditText
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.amshove.kluent.*
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.robolectric.Robolectric
-import org.robolectric.Shadows.shadowOf
-import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.LooperMode
 import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.managecars.ManageCarsActivity
 
 @LooperMode(LooperMode.Mode.PAUSED)
 class ManageCarsActivityTest : RobolectricTest() {
-    private lateinit var controller: ActivityController<ManageCarsActivity>
-    private lateinit var activity: ManageCarsActivity
+
+    // A single, standard rule for the entire test class. This is the correct pattern.
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<ManageCarsActivity>()
 
     @Before
     fun setUp() {
-        controller = Robolectric.buildActivity(ManageCarsActivity::class.java)
-        activity = controller.create().start().resume().visible().get()
+        // Reset the car collection at the test of each test to have a clean state.
+        (ParkApp.carCollection as MockCarCollection).reset()
     }
 
     @After
     fun tearDown() {
-        // Destroy activity after every test
-        controller.pause().stop().destroy()
-        ParkApp.carCollection = MockCarCollection()
-    }
-
-    @Test
-    fun fabIsVisibleTest() {
-
+        // No particular cleanup is needed
     }
 
     @Test
     fun carListShownWithCarsTest() {
+        // 1. Verify both unique registration numbers are on the screen.
+        composeTestRule.onNodeWithText("ALP 110").assertIsDisplayed()
+        composeTestRule.onNodeWithText("MLB 803").assertIsDisplayed()
 
+        // 2. Verify that there are exactly two instances of the owner's name.
+        composeTestRule.onAllNodesWithText("Margaretha").assertCountEquals(2)
+
+        val placeholderText =
+            composeTestRule.activity.getString(R.string.manage_cars_list_placeholder)
+        composeTestRule.onNodeWithText(placeholderText).assertDoesNotExist()
     }
 
     @Test
     fun placeholderShownWithNoCarsTest() {
+        val carCollection = ParkApp.carCollection as MockCarCollection
+        carCollection.replaceContent(mutableListOf())
 
+        val placeholderText =
+            composeTestRule.activity.getString(R.string.manage_cars_list_placeholder)
+
+        composeTestRule.onNodeWithText(placeholderText).assertIsDisplayed()
+        composeTestRule.onNodeWithText("ALP 110").assertDoesNotExist()
     }
-
-    @Test
-    fun menuIsGoneWithNoCarsTest() {
-        (ParkApp.carCollection as MockCarCollection).replaceContent(mutableListOf())
-        val menu = shadowOf(activity).optionsMenu
-        val selectAll = menu.findItem(R.id.manage_cars_menu_select_all)
-        val choose = menu.findItem(R.id.manage_cars_menu_manage_mode)
-        selectAll.isVisible.shouldBeFalse()
-        choose.isVisible.shouldBeFalse()
-    }
-
-    /*
-     * Checking for fab visibility stopped working when upgrading from  support library 26.1.0
-     * to 27.1.1 can't figure out why or how to make it work so disabling the test for now.
-     * Relevant:
-     * https://stackoverflow.com/questions/36793404/checking-android-fab-visibility-always-returns-visible-from-robolectric-test-cas
-    @Test
-    fun hideFabWhenClickingItTest() {
-        val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.performClick()
-        fab.visibility shouldBeEqualTo View.GONE
-    }*/
 
     @Test
     fun openAddDialogWhenClickingFabTest() {
-        /*val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.performClick()
-        shadowOf(getMainLooper()).idle()
-        val dialog = activity.supportFragmentManager.findFragmentByTag("addCar")
-        dialog.shouldNotBeNull()
-        dialog shouldBeInstanceOf AddCarDialog::class*/
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        composeTestRule.onNodeWithText(dialogTitle).assertIsDisplayed()
     }
 
     @Test
     fun cancelAddDialogFabShouldBeVisibleTest() {
-        /*val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.performClick()
-        shadowOf(getMainLooper()).idle()
-        val dialog = activity.supportFragmentManager.findFragmentByTag("addCar")
-        dialog.shouldNotBeNull()
-        dialog as AddCarDialog
-        (dialog.dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE).performClick()
-        shadowOf(getMainLooper()).idle()
-        fab.visibility shouldBeEqualTo View.VISIBLE*/
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val cancelButtonText = activity.getString(R.string.dialog_button_cancel)
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        composeTestRule.onNodeWithText(cancelButtonText).performClick()
+        composeTestRule.onNodeWithContentDescription(fabDescription).assertIsDisplayed()
     }
 
-    @SuppressLint("SetTextI18n")
     @Test
     fun disabledAddButtonInCreateDialogTest() {
-        /*val fab = activity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.performClick()
-        shadowOf(getMainLooper()).idle()
-        val addCarDialog =
-            activity.supportFragmentManager.findFragmentByTag("addCar") as AddCarDialog
-        val dialog = addCarDialog.dialog as AlertDialog
-        val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        button.isEnabled.shouldBeFalse()
-        val regnoView = dialog.findViewById<EditText>(R.id.regno)
-        val userView = dialog.findViewById<EditText>(R.id.owner)
-        regnoView.shouldNotBeNull()
-        userView.shouldNotBeNull()
-        regnoView.setText("regno")
-        button.isEnabled.shouldBeFalse()
-        regnoView.setText("")
-        userView.setText("user")
-        button.isEnabled.shouldBeFalse()
-        regnoView.setText("regno")
-        button.isEnabled.shouldBeTrue()*/
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val saveButtonText = activity.getString(R.string.dialog_button_save)
+        val regNoLabel = activity.getString(R.string.manage_car_dialog_license_plate_label)
+        val ownerLabel = activity.getString(R.string.manage_car_dialog_owner_label)
+
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        val saveButton = composeTestRule.onNodeWithText(saveButtonText)
+        val regNoField = composeTestRule.onNodeWithText(regNoLabel)
+        val ownerField = composeTestRule.onNodeWithText(ownerLabel)
+
+        saveButton.assertIsNotEnabled()
+        regNoField.performTextInput("REGNO")
+        saveButton.assertIsNotEnabled()
+        regNoField.performTextClearance()
+        ownerField.performTextInput("owner")
+        saveButton.assertIsNotEnabled()
+        regNoField.performTextInput("REGNO")
+        saveButton.assertIsEnabled()
     }
 
     @Test
     fun chooseMenuEntryTest() {
-        /*val shadowActivity = shadowOf(activity)
-        shadowActivity.clickMenuItem(R.id.manage_cars_menu_manage_mode)
-        val actionMode = activity.getActionMode()
-        actionMode.shouldNotBeNull()
-        actionMode.title shouldBe activity.getString(R.string.action_mode_title)
-
-        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
-            .adapter as SelectableCarsAdapter
-        adapter.numSelectedItems() shouldBeEqualTo 0*/
+        val activity = composeTestRule.activity
+        val menuDescription = activity.getString(R.string.manage_cars_more_options)
+        val selectOption = activity.getString(R.string.manage_cars_select_option)
+        val contextualTitle = activity.getString(R.string.manage_cars_action_mode_title, 0)
+        composeTestRule.onNodeWithContentDescription(menuDescription).performClick()
+        composeTestRule.onNodeWithText(selectOption, useUnmergedTree = true).performClick()
+        composeTestRule.onNodeWithText(contextualTitle).assertIsDisplayed()
+        val normalTitle = activity.getString(R.string.manage_cars_activity_title)
+        composeTestRule.onNodeWithText(normalTitle).assertDoesNotExist()
     }
 
     @Test
     fun selectAllMenuEntryTest() {
-        /*val shadowActivity = shadowOf(activity)
-        shadowActivity.clickMenuItem(R.id.manage_cars_menu_select_all)
-        val actionMode = activity.getActionMode()
-        actionMode.shouldNotBeNull()
-
-        val adapter = activity.findViewById<RecyclerView>(R.id.manage_cars_recyclerview)
-            .adapter as SelectableCarsAdapter
-        actionMode.title shouldBeEqualTo adapter.itemCount.toString()
-        adapter.numSelectedItems() shouldBeEqualTo adapter.itemCount*/
+        val activity = composeTestRule.activity
+        val menuDescription = activity.getString(R.string.manage_cars_more_options)
+        val selectAllOption = activity.getString(R.string.manage_cars_select_all_option)
+        val carCount = ParkApp.carCollection.getCars().size
+        val contextualTitle = activity.getString(R.string.manage_cars_action_mode_title, carCount)
+        composeTestRule.onNodeWithContentDescription(menuDescription).performClick()
+        composeTestRule.onNodeWithText(selectAllOption, useUnmergedTree = true).performClick()
+        composeTestRule.onNodeWithText(contextualTitle).assertIsDisplayed()
     }
 
     @Test
-    fun startWithIntentTest() {
-        val intent = Intent(context(), ManageCarsActivity::class.java)
-        intent.putExtra(INTENT_EXTRA_ADD_CAR, true)
-        val intentController = Robolectric.buildActivity(ManageCarsActivity::class.java, intent)
-        val intentActivity = intentController.create().start().resume().visible().get()
+    fun menuSelectionThenTogglingExitsActionMode() {
+        val activity = composeTestRule.activity
+        val menuDescription = activity.getString(R.string.manage_cars_more_options)
+        val selectOption = activity.getString(R.string.manage_cars_select_option)
+        val carToSelect = "ALP 110"
 
-        /*val fab = intentActivity.findViewById<FloatingActionButton>(R.id.manage_cards_fab)
-        fab.visibility shouldBeEqualTo View.GONE*/
+        val titleZeroSelected = activity.getString(R.string.manage_cars_action_mode_title, 0)
+        val titleOneSelected = activity.getString(R.string.manage_cars_action_mode_title, 1)
+        val normalTitle = activity.getString(R.string.manage_cars_activity_title)
 
-      /*  val dialog = intentActivity.supportFragmentManager.findFragmentByTag("addCar")
-        dialog.shouldNotBeNull()
-        dialog shouldBeInstanceOf AddCarDialog::class*/
+        // 1. Enter selection mode from the menu.
+        composeTestRule.onNodeWithContentDescription(menuDescription).performClick()
+        composeTestRule.onNodeWithText(selectOption, useUnmergedTree = true).performClick()
+        composeTestRule.onNodeWithText(titleZeroSelected).assertIsDisplayed()
 
-        intentController.pause().stop().destroy()
+        // 2. Select one car.
+        composeTestRule.onNodeWithText(carToSelect).performClick()
+        composeTestRule.onNodeWithText(titleOneSelected).assertIsDisplayed()
+
+        // 3. Deselect the same car.
+        composeTestRule.onNodeWithText(carToSelect).performClick()
+
+        // 4. Assert that action mode is exited and the normal title is displayed.
+        composeTestRule.onNodeWithText(normalTitle).assertIsDisplayed()
+        composeTestRule.onNodeWithText(titleOneSelected).assertDoesNotExist()
+    }
+
+    @Test
+    fun clickingCarEntersEditModeTest() {
+        val carToClick = "ALP 110"
+        val editDialogTitle = composeTestRule.activity.getString(R.string.edit_car_dialog_title)
+        composeTestRule.onNodeWithText(carToClick).performClick()
+        composeTestRule.onNodeWithText(editDialogTitle).assertIsDisplayed()
+        // 3 nodes, the two list entries and the owner text field in the edit dialog
+        composeTestRule.onAllNodesWithText("Margaretha").assertCountEquals(3)
+        // 2 nodes, one list entry and one in the edit dialog
+        composeTestRule.onAllNodesWithText("ALP 110").assertCountEquals(2)
+    }
+
+    @Test
+    fun longClickEntersActionModeAndSelectsItem() {
+        val activity = composeTestRule.activity
+        val carToLongClick = "MLB 803"
+        val contextualTitleOneSelected =
+            activity.getString(R.string.manage_cars_action_mode_title, 1)
+        composeTestRule.onNodeWithText(carToLongClick).performTouchInput { longClick() }
+        composeTestRule.onNodeWithText(contextualTitleOneSelected).assertIsDisplayed()
+        val normalTitle = activity.getString(R.string.manage_cars_activity_title)
+        composeTestRule.onNodeWithText(normalTitle).assertDoesNotExist()
+        val fabDescription = activity.getString(R.string.add_car_button)
+        composeTestRule.onNodeWithContentDescription(fabDescription).assertDoesNotExist()
+    }
+
+    @Test
+    fun clickInActionModeTogglesSelection() {
+        val activity = composeTestRule.activity
+        val car1 = "ALP 110"
+        val car2 = "MLB 803"
+        val titleOneSelected = activity.getString(R.string.manage_cars_action_mode_title, 1)
+        val titleTwoSelected = activity.getString(R.string.manage_cars_action_mode_title, 2)
+        val normalTitle = activity.getString(R.string.manage_cars_activity_title)
+
+        // 1. Long click car1 to enter action mode with one selection
+        composeTestRule.onNodeWithText(car1).performTouchInput { longClick() }
+        composeTestRule.onNodeWithText(titleOneSelected).assertIsDisplayed()
+
+        // 2. Click car2 to add it to the selection
+        composeTestRule.onNodeWithText(car2).performClick()
+        composeTestRule.onNodeWithText(titleTwoSelected).assertIsDisplayed()
+
+        // 3. CORRECTED STEP: Click car2 again to deselect it, leaving one selected
+        composeTestRule.onNodeWithText(car2).performClick()
+        composeTestRule.onNodeWithText(titleOneSelected).assertIsDisplayed()
+
+        // 4. CORRECTED STEP: Click car1 to deselect the last item, exiting action mode
+        composeTestRule.onNodeWithText(car1).performClick()
+
+        // 5. Assert that we are back to the normal state
+        composeTestRule.onNodeWithText(normalTitle).assertIsDisplayed()
+    }
+
+    @Test
+    fun closeButtonExitsActionMode() {
+        val activity = composeTestRule.activity
+        val carToLongClick = "ALP 110"
+        val closeButtonDescription = activity.getString(R.string.manage_cars_close)
+        val normalTitle = activity.getString(R.string.manage_cars_activity_title)
+        composeTestRule.onNodeWithText(carToLongClick).performTouchInput { longClick() }
+        composeTestRule.onNodeWithContentDescription(closeButtonDescription).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(closeButtonDescription).performClick()
+        composeTestRule.onNodeWithText(normalTitle).assertIsDisplayed()
+        val fabDescription = activity.getString(R.string.add_car_button)
+        composeTestRule.onNodeWithContentDescription(fabDescription).assertIsDisplayed()
     }
 }
