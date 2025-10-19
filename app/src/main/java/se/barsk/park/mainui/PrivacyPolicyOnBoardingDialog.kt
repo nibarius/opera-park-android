@@ -47,13 +47,13 @@ class PrivacyPolicyOnBoardingDialog : DialogFragment() {
     }
 
     private fun accept() {
-        ParkApp.storageManager.giveStatsConsent()
+        ParkApp.storageManager.setCrashReportingEnabled(true)
         ParkApp.crashlytics.enableIfAllowed()
         ParkApp.storageManager.setPrivacyOnBoardingSeen()
     }
 
     private fun decline() {
-        ParkApp.storageManager.withdrawStatsConsent()
+        ParkApp.storageManager.setCrashReportingEnabled(false)
         ParkApp.storageManager.setPrivacyOnBoardingSeen()
     }
 

@@ -34,6 +34,7 @@
     <string name="menu_settings_entry">Inställningar</string>
     <string name="menu_manage_cars_entry">Hantera bilar</string>
     <string name="my_cars_label">Mina bilar</string>
+    <string name="park_server_input_label">Server URL</string>
     <string name="park_status_full">Fullt</string>
     <string name="park_status_one_free">Sista platsen</string>
     <string name="park_status_many_free">%d lediga platser</string>
@@ -46,10 +47,12 @@
     <string name="notices_title">Tredjepartslicenser</string>
     <string name="settings_privacy_group_title">Sekretess</string>
     <string name="settings_crash_reporting">Kraschrapportering</string>
+    <string name="settings_crash_reporting_summary">Skicka anonyma kraschrapporter</string>
     <string name="settings_privacy_statement">Sekretessmeddelande</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">Om %s</string>
     <string name="settings_version">Version: %s</string>
+    <string name="settings_general_group_title">Allmänt</string>
     <string name="refresh_interval">Automatisk uppdatering</string>
     <string name="seconds10">Var 10e sekund</string>
     <string name="seconds30">Var 30e sekund</string>

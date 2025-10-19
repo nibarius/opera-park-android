@@ -27,7 +27,7 @@ object ParkApp {
         }
         val appContext = context.applicationContext
         storageManager = Injection.provideStorageManager(appContext)
-        crashlytics = CrashReporting()
+        crashlytics = Injection.provideCrashReporting()
         crashlytics.enableIfAllowed()
         networkManager = Injection.provideNetworkManager()
         carCollection = Injection.provideCarCollection()

@@ -155,7 +155,10 @@ fun CarIcon(car: OwnCar) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = if (regNo.isNotEmpty()) regNo.substring(0, 1) else stringResource(R.string.missing_placeholder),
+            text = if (regNo.isNotEmpty()) regNo.substring(
+                0,
+                1
+            ) else stringResource(R.string.missing_placeholder),
             style = MaterialTheme.typography.titleMedium,
             color = colorResource(R.color.colorAvatarTextColor)
         )

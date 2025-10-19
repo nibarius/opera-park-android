@@ -3,6 +3,7 @@ package se.barsk.park.storage
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
 import se.barsk.park.utils.TimeUtils
@@ -18,10 +19,12 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     private val previousVersionCode = context.getString(R.string.key_previous_version_code)
     private val serverUrl = context.getString(R.string.key_park_server_url)
     private val crashReporting = context.getString(R.string.key_crash_reporting)
-    private val defaultCrashReporting = context.getString(R.string.default_crash_reporting).toBoolean()
+    private val defaultCrashReporting =
+        context.getString(R.string.default_crash_reporting).toBoolean()
     private val refreshInterval = context.getString(R.string.key_refresh_interval)
     private val privacyOnBoarding = context.getString(R.string.key_privacy_on_boarding)
-    private val defaultPrivacyOnBoarding = context.getString(R.string.default_privacy_on_boarding).toBoolean()
+    private val defaultPrivacyOnBoarding =
+        context.getString(R.string.default_privacy_on_boarding).toBoolean()
 
     var settingsChangeListener: SettingsChangeListener? = null
     private val internalServerChangeListener = InternalServerChangeListener()
@@ -34,20 +37,24 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
         sharedPreferences.registerOnSharedPreferenceChangeListener(internalServerChangeListener)
     }
 
-    private fun readSetting(key: String, defaultValue: String = context.getString(R.string.the_empty_string)): String {
+    private fun readSetting(
+        key: String,
+        defaultValue: String = context.getString(R.string.the_empty_string)
+    ): String {
         // When given a non-null default value getString will not return null
         return sharedPreferences.getString(key, defaultValue)!!
     }
+
     private fun putSetting(key: String, value: String) {
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        editor.apply()
+        sharedPreferences.edit {
+            putString(key, value)
+        }
     }
 
     private fun putSetting(key: String, value: Boolean) {
-        val editor = sharedPreferences.edit()
-        editor.putBoolean(key, value)
-        editor.apply()
+        sharedPreferences.edit {
+            putBoolean(key, value)
+        }
     }
 
     private fun putSettingIfNotExist(key: String, value: String) {
@@ -58,14 +65,14 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
 
     private fun upgradeIfNeeded() {
         val storedVersionCode = readSetting(currentVersionCode)
-        val currentVersionCode = BuildConfig.VERSION_CODE.toString()
-        if (storedVersionCode != currentVersionCode) {
-            val editor = sharedPreferences.edit()
-            editor.putString(previousVersionCode, storedVersionCode)
-            editor.putString(this.currentVersionCode, currentVersionCode)
-            editor.apply()
+        val newCurrentVersionCode = BuildConfig.VERSION_CODE.toString()
+        if (storedVersionCode != newCurrentVersionCode) {
+            sharedPreferences.edit {
+                putString(previousVersionCode, storedVersionCode)
+                putString(currentVersionCode, newCurrentVersionCode)
+            }
 
-            upgradePast5(storedVersionCode.toInt(), currentVersionCode.toInt())
+            upgradePast5(storedVersionCode.toInt(), newCurrentVersionCode.toInt())
         }
     }
 
@@ -77,28 +84,39 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
      */
     private fun upgradePast5(previous: Int, current: Int) {
         if (previous < 6 && current >= 6) {
-            giveAllStatsConsent(false)
+            setCrashReporting(false)
         }
     }
 
     fun hasServer() = getServer().isNotEmpty()
+
     // Need to fix url when reading from storage, rather than writing to storage
     // since the settings view write to settings directly without a chance to modify the value before.
     fun getServer() = Utils.fixUrl(readSetting(serverUrl))
 
     fun setServer(server: String) = putSetting(serverUrl, server)
-    fun crashReportingEnabled(): Boolean = sharedPreferences.getBoolean(crashReporting, defaultCrashReporting)
-    fun getAutomaticUpdateInterval(): Long = readSetting(refreshInterval,
-            context.getString(R.string.default_refresh_interval)).toLong()
+    fun crashReportingEnabled(): Boolean =
+        sharedPreferences.getBoolean(crashReporting, defaultCrashReporting)
 
-    fun hasSeenPrivacyOnBoarding(): Boolean = sharedPreferences.getBoolean(privacyOnBoarding, defaultPrivacyOnBoarding)
+    fun getAutomaticUpdateInterval(): Long = readSetting(
+        refreshInterval,
+        context.getString(R.string.default_refresh_interval)
+    ).toLong()
+
+    fun setAutomaticUpdateInterval(interval: Long) {
+        putSetting(refreshInterval, interval.toString())
+    }
+
+    fun hasSeenPrivacyOnBoarding(): Boolean =
+        sharedPreferences.getBoolean(privacyOnBoarding, defaultPrivacyOnBoarding)
+
     fun setPrivacyOnBoardingSeen() = putSetting(privacyOnBoarding, true)
 
-    fun giveAllStatsConsent(value: Boolean) {
-        val editor = sharedPreferences.edit()
-        editor.putBoolean(crashReporting, value)
-        recordCrashReportingConsentChange(value, editor)
-        editor.apply()
+    fun setCrashReporting(isEnabled: Boolean) {
+        sharedPreferences.edit {
+            putBoolean(crashReporting, isEnabled)
+            recordCrashReportingConsentChange(isEnabled, this)
+        }
     }
 
     /**
@@ -107,16 +125,23 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
      * @param editor The editor to use to update the data with (without calling apply),
      * if null a new editor will be created and apply will be called after the update.
      */
-    fun recordCrashReportingConsentChange(value: Boolean? = null, editor: SharedPreferences.Editor? = null) {
-        recordConsentChange(value ?: crashReportingEnabled(),
-                context.getString(R.string.key_crash_reporting_consent),
-                context.getString(R.string.key_crash_reporting_consent_timestamp),
-                editor)
+    fun recordCrashReportingConsentChange(
+        value: Boolean? = null,
+        editor: SharedPreferences.Editor? = null
+    ) {
+        recordConsentChange(
+            value ?: crashReportingEnabled(),
+            context.getString(R.string.key_crash_reporting_consent),
+            context.getString(R.string.key_crash_reporting_consent_timestamp),
+            editor
+        )
     }
 
     @SuppressLint("CommitPrefEdits")
-    private fun recordConsentChange(value: Boolean, consentKey: String, timestampKey: String,
-                                    editor: SharedPreferences.Editor?) {
+    private fun recordConsentChange(
+        value: Boolean, consentKey: String, timestampKey: String,
+        editor: SharedPreferences.Editor?
+    ) {
         val e = editor ?: sharedPreferences.edit()
         e.putBoolean(consentKey, value)
         e.putLong(timestampKey, TimeUtils.now().millis)
@@ -126,14 +151,21 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     }
 
     fun getTheme() =
-        readSetting(context.getString(R.string.key_theme), context.getString(R.string.default_theme))
+        readSetting(
+            context.getString(R.string.key_theme),
+            context.getString(R.string.default_theme)
+        )
 
+    fun setTheme(theme: String) = putSetting(context.getString(R.string.key_theme), theme)
 
     /**
      * Listener used to be notified about changes done to the server via the settings activity
      */
     inner class InternalServerChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        override fun onSharedPreferenceChanged(
+            sharedPreferences: SharedPreferences?,
+            key: String?
+        ) {
             if (key == serverUrl) {
                 settingsChangeListener?.onSettingsChanged(SettingsChangeListener.Setting.SERVER)
             }

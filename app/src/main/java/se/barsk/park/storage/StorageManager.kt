@@ -22,16 +22,16 @@ open class StorageManager(context: Context) {
     open fun getServer() = sharedPrefs.getServer()
     open fun setServer(server: String) = sharedPrefs.setServer(server)
 
-    open fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
-    open fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
-
+    fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
+    fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
+    fun setAutomaticUpdateInterval(interval: Long) =
+        sharedPrefs.setAutomaticUpdateInterval(interval)
 
     fun getTheme() = sharedPrefs.getTheme()
+    fun setTheme(theme: String) = sharedPrefs.setTheme(theme)
     fun hasSeenPrivacyOnBoarding(): Boolean = sharedPrefs.hasSeenPrivacyOnBoarding()
     fun setPrivacyOnBoardingSeen() = sharedPrefs.setPrivacyOnBoardingSeen()
-    fun giveStatsConsent() = sharedPrefs.giveAllStatsConsent(true)
-    fun withdrawStatsConsent() = sharedPrefs.giveAllStatsConsent(false)
-    fun recordCrashReportingConsentChange() = sharedPrefs.recordCrashReportingConsentChange()
+    fun setCrashReportingEnabled(isEnabled: Boolean) = sharedPrefs.setCrashReporting(isEnabled)
 
     // Database interaction functions
     fun fetchAllCars() = database.fetchAllCars()

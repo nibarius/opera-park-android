@@ -7,10 +7,10 @@ import se.barsk.park.ParkApp
 /**
  * Object for handling crash reporting
  */
-class CrashReporting {
+open class CrashReporting {
     private var isStarted = false
 
-    fun enableIfAllowed() {
+    open fun enableIfAllowed() {
         if (!isStarted && ParkApp.storageManager.crashReportingEnabled()) {
             val crashlytics = FirebaseCrashlytics.getInstance()
             crashlytics.isCrashlyticsCollectionEnabled = true

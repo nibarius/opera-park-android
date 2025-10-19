@@ -3,7 +3,7 @@ package se.barsk.park.storage
 import android.content.Context
 
 /**
- * A mock implementation of the storage manager that doesn't persist anything to storage.
+ * A mock implementation of the storage manager with a dummy server set automatically
  */
 class MockStorageManager(context: Context) : StorageManager(context) {
     private var server = "https://park.example.com/"
@@ -15,8 +15,4 @@ class MockStorageManager(context: Context) : StorageManager(context) {
     override fun setServer(server: String) {
         this.server = server
     }
-
-    // No crash reporting when mocking.
-    override fun crashReportingEnabled(): Boolean = false
-    override fun getAutomaticUpdateInterval(): Long = 0
 }

@@ -36,6 +36,7 @@
     <string name="menu_settings_entry">Settings</string>
     <string name="menu_manage_cars_entry">Manage cars</string>
     <string name="my_cars_label">My cars</string>
+    <string name="park_server_input_label">Server URL</string>
     <string name="park_server_input_hint" translatable="false">https://park.example.com/</string>
     <string name="park_status_full">Full</string>
     <string name="park_status_one_free">Last spot</string>
@@ -49,10 +50,12 @@
     <string name="notices_title">Third party licences</string>
     <string name="settings_privacy_group_title">Privacy</string>
     <string name="settings_crash_reporting">Crash reporting</string>
+    <string name="settings_crash_reporting_summary">Send anonymous crash data</string>
     <string name="settings_privacy_statement">Privacy statement</string>
     <string name="settings_server">Server</string>
     <string name="settings_about_group_title">About %s</string>
     <string name="settings_version">Version: %s</string>
+    <string name="settings_general_group_title">General</string>
     <string name="refresh_interval">Automatic refresh</string>
     <string name="seconds10">Every 10 seconds</string>
     <string name="seconds30">Every 30 seconds</string>
