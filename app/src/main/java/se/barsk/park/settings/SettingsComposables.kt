@@ -121,7 +121,7 @@ fun SwitchPreference(
         // The actual switch
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null, // Let the parent Row handle the click
             modifier = Modifier.padding(start = 16.dp)
         )
     }
