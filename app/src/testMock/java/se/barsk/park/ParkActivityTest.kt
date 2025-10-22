@@ -23,6 +23,7 @@ import se.barsk.park.mainui.SpecifyServerDialog
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.settings.SettingsActivity
+import se.barsk.park.storage.MockStorageManager
 import java.util.*
 
 @LooperMode(LooperMode.Mode.PAUSED)
@@ -43,6 +44,7 @@ class ParkActivityTest : RobolectricTest() {
         controller.pause().stop().destroy()
         ParkApp.carCollection = MockCarCollection()
         ParkApp.networkManager = MockNetworkManager()
+        (ParkApp.storageManager as MockStorageManager).reset()
     }
 
     @Test

@@ -19,6 +19,7 @@ import org.robolectric.annotation.LooperMode
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.RobolectricTest
+import se.barsk.park.storage.MockStorageManager
 
 @LooperMode(LooperMode.Mode.PAUSED)
 class SettingsActivityTest : RobolectricTest() {
@@ -31,8 +32,8 @@ class SettingsActivityTest : RobolectricTest() {
         // Set the initial state for all settings before each test runs.
         // Most settings are picked up from shared preferences which have
         // an unknown state when the first test is run.
-        with(ParkApp.storageManager) {
-            setServer("https://park.example.com/")
+        with(ParkApp.storageManager as MockStorageManager) {
+            reset()
             setTheme("system")
             setAutomaticUpdateInterval(10L) // Use the real value
             setCrashReportingEnabled(true)
@@ -43,8 +44,8 @@ class SettingsActivityTest : RobolectricTest() {
     fun tearDown() {
         // Reset all settings after the test finishes to leave shared
         // preferences in a known state when the tests have finished.
-        with(ParkApp.storageManager) {
-            setServer("https://park.example.com/")
+        with(ParkApp.storageManager as MockStorageManager) {
+            reset()
             setTheme("system")
             setAutomaticUpdateInterval(10L)
             setCrashReportingEnabled(true)
