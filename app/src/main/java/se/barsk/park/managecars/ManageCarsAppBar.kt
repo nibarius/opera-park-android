@@ -10,7 +10,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import se.barsk.park.ParkTopAppBar
 import se.barsk.park.R
+import se.barsk.park.theme.dynamicColorScheme
 
 @Composable
 fun ManageCarsAppBar(
@@ -58,7 +59,7 @@ private fun NormalTopAppBar(
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
-    TopAppBar(
+    ParkTopAppBar(
         title = { Text(text = stringResource(id = R.string.manage_cars_activity_title)) },
         navigationIcon = {
             IconButton(onClick = onNavigateUp) {
@@ -68,13 +69,6 @@ private fun NormalTopAppBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-
-        ),
         actions = {
             IconButton(onClick = { showMenu = true }) {
                 Icon(
@@ -112,6 +106,7 @@ private fun ContextualTopAppBar(
     onCloseActionMode: () -> Unit,
     onDeleteSelected: () -> Unit
 ) {
+    val actionModeColorScheme = dynamicColorScheme()
     TopAppBar(
         title = {
             Text(
@@ -138,10 +133,10 @@ private fun ContextualTopAppBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            containerColor = actionModeColorScheme.primaryContainer,
+            titleContentColor = actionModeColorScheme.onPrimaryContainer,
+            navigationIconContentColor = actionModeColorScheme.onPrimaryContainer,
+            actionIconContentColor = actionModeColorScheme.onPrimaryContainer
         )
     )
 }

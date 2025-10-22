@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -25,6 +24,7 @@ import kotlinx.coroutines.launch
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.theme.ParkTheme
 
 
 class ManageCarsActivity : ComponentActivity() {
@@ -63,7 +63,7 @@ class ManageCarsActivity : ComponentActivity() {
                 }
             }
 
-            MaterialTheme {
+            ParkTheme {
                 Scaffold(
                     topBar = {
                         ManageCarsAppBar(

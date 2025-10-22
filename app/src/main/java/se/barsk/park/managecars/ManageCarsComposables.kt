@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,14 +32,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.integerArrayResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
+import se.barsk.park.theme.AvatarColorsDark
+import se.barsk.park.theme.AvatarColorsLight
+import se.barsk.park.theme.dynamicColorScheme
 import kotlin.math.abs
 
 @Composable
@@ -112,7 +115,7 @@ fun ManageCarsListEntry(
     onLongClick: (car: OwnCar) -> Unit
 ) {
     val containerColor = if (entry.selected) {
-        MaterialTheme.colorScheme.primaryContainer
+        dynamicColorScheme().primaryContainer
     } else {
         Color.Transparent
     }
@@ -145,22 +148,27 @@ fun ManageCarsListEntry(
 @Composable
 fun CarIcon(car: OwnCar) {
     val regNo = car.regNo.uppercase()
-    val colors = integerArrayResource(R.array.avatar_background_color)
-    val colorForCar = colors[abs(regNo.hashCode()) % colors.size]
+    val avatarColors = if (isSystemInDarkTheme()) AvatarColorsDark else AvatarColorsLight
+    val colorForCar = avatarColors[abs(regNo.hashCode()) % avatarColors.size]
     Box(
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(color = Color(colorForCar)),
+            .background(color = colorForCar),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = if (regNo.isNotEmpty()) regNo.substring(
-                0,
-                1
-            ) else stringResource(R.string.missing_placeholder),
-            style = MaterialTheme.typography.titleMedium,
-            color = colorResource(R.color.colorAvatarTextColor)
+            text = if (regNo.isNotEmpty()) {
+                regNo.substring(0, 1)
+            } else {
+                stringResource(R.string.missing_placeholder)
+            },
+            fontSize = 24.sp,
+            color = if (isSystemInDarkTheme()) {
+                Color.Black.copy(alpha = 0.7f)
+            } else {
+                Color.White.copy(alpha = 0.7f)
+            }
         )
     }
 }
@@ -171,7 +179,7 @@ fun SelectedCarIcon() {
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(color = MaterialTheme.colorScheme.primary),
+            .background(color = dynamicColorScheme().primary),
         contentAlignment = Alignment.Center
     ) {
         Icon(

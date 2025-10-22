@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.MaterialTheme
 import androidx.core.view.WindowCompat
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.ParkApp
 import se.barsk.park.R
+import se.barsk.park.theme.ParkTheme
 
 
 /**
@@ -25,8 +25,7 @@ class SettingsActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            // You should use a proper theme here, e.g., your app's MaterialTheme
-            MaterialTheme {
+            ParkTheme {
                 SettingsScreen(
                     viewModel = viewModel,
                     onShowThirdPartyLicenses = { showThirdPartyList() },
