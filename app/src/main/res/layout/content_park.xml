@@ -27,13 +27,17 @@
             android:id="@+id/parked_cars_pull_to_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <androidx.recyclerview.widget.RecyclerView
+            <!--<androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/parked_cars_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
-                android:scrollbars="vertical"/>
+                android:scrollbars="vertical"/>-->
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/compose_recycler_replacement"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <LinearLayout

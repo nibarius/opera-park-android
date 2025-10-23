@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.barsk.park.R
+import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.theme.AvatarColorsDark
 import se.barsk.park.theme.AvatarColorsLight
@@ -146,7 +147,7 @@ fun ManageCarsListEntry(
 }
 
 @Composable
-fun CarIcon(car: OwnCar) {
+fun CarIcon(car: Car) {
     val regNo = car.regNo.uppercase()
     val avatarColors = if (isSystemInDarkTheme()) AvatarColorsDark else AvatarColorsLight
     val colorForCar = avatarColors[abs(regNo.hashCode()) % avatarColors.size]

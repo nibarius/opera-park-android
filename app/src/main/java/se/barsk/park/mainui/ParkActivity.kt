@@ -17,6 +17,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -24,6 +25,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +46,7 @@ import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.showPlaceholderIfNeeded
 import se.barsk.park.storage.SettingsChangeListener
+import se.barsk.park.theme.ParkTheme
 import se.barsk.park.utils.TimeUtils
 
 
@@ -114,19 +117,16 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityParkBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
+
+        binding.content.composeRecyclerReplacement?.setContent {
+            val parkedCars by garage.parkedCarsFlow.collectAsStateWithLifecycle()
+            ParkTheme {
+                ParkedCarsListContent(parkedCars)
+            }
+        }
 
         setSupportActionBar(binding.toolbar)
-
-        val parkedCarsRecyclerView = binding.content.parkedCarsRecyclerView
-        parkedCarsRecyclerView.layoutManager =
-            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        parkedCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        parkedCarsRecyclerView.adapter = CarsAdapter(
-            CarsAdapter.Type.PARKED_CARS,
-            garage.parkedCars
-        ) { /*listener that does nothing */ }
 
         val ownCarsRecyclerView = binding.content.ownCarsRecyclerView
         ownCarsRecyclerView.layoutManager =
@@ -272,12 +272,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * again.
      */
     private fun showParkedCarsPlaceholderIfNeededAfterAnimations() {
-        if (binding.content.parkedCarsRecyclerView.isAnimating) {
+        /*if (binding.content.parkedCarsRecyclerView.isAnimating) {
             // If the recyclerview is animating, try again once current animation has finished
             // If it's animating there is an animator so it's safe to assume itemAnimator exists
             binding.content.parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() }
             return
-        }
+        }*/
         if (parkingState.showsPlaceholder()) {
             setCorrectParkedCarsPlaceholder()
         }
@@ -414,15 +414,15 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    /*@SuppressLint("NotifyDataSetChanged")
     private fun updateListOfParkedCars() {
         val adapter = binding.content.parkedCarsRecyclerView.adapter as CarsAdapter
         adapter.cars = garage.parkedCars
         adapter.notifyDataSetChanged()
-    }
+    }*/
 
     private fun updateGarageStatus() {
-        updateListOfParkedCars()
+        //updateListOfParkedCars()
         updateParkingState()
         updateToolbar(garage.spotsFree)
         showParkedCarsPlaceholderIfNeeded()

@@ -1,6 +1,8 @@
 package se.barsk.park.datatypes
 
 import android.content.Context
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import se.barsk.park.ParkApp
 import se.barsk.park.network.Result
 import kotlin.properties.Delegates
@@ -14,20 +16,21 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         const val CAPACITY = 6
     }
 
+    private val _parkedCars = MutableStateFlow<List<ParkedCar>>(emptyList())
+    val parkedCarsFlow = _parkedCars.asStateFlow()
+
     private var listeners: MutableList<GarageStatusChangedListener> = mutableListOf()
 
-    var parkedCars: List<ParkedCar> by Delegates.observable(initialParkedCars) { _, _, _ ->
-        for (listener in listeners) {
-            listener.onGarageStatusChange()
-        }
-    }
+    val parkedCars: List<ParkedCar>
+        get() = _parkedCars.value
 
     val spotsFree: Int
         get() = CAPACITY - parkedCars.count()
 
     fun addListener(listener: GarageStatusChangedListener) = listeners.add(listener)
     fun clear() {
-        parkedCars = listOf()
+        _parkedCars.value = listOf()
+        notifyLegacyListeners()
     }
 
     fun isParked(car: OwnCar): Boolean = parkedCars.any { it.regNo == car.regNo }
@@ -43,10 +46,17 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         }
     }
 
+    private fun notifyLegacyListeners() {
+        for (listener in listeners) {
+            listener.onGarageStatusChange()
+        }
+    }
+
     private fun onResultReady(result: Result) = when (result) {
         is Result.Success -> {
             notifyListenersAboutReady()
-            parkedCars = result.parkedCars
+            _parkedCars.value = result.parkedCars.toList()
+            notifyLegacyListeners()
         }
         is Result.Fail -> {
             notifyListenersAboutReady(false, result.message)
