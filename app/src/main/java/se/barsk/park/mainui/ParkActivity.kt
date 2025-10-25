@@ -4,20 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -30,6 +26,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.R
@@ -88,7 +86,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         showOwnCarsPlaceholderIfNeeded()
     }
 
-    private enum class ParkingState {
+    enum class ParkingState {
         NO_SERVER,
         WAITING_ON_RESPONSE,
         REQUEST_FAILED,
@@ -103,7 +101,10 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private val garage: Garage = Garage()
     private val networkState = NetworkState()
-    private var parkingState: ParkingState = ParkingState.NO_SERVER
+
+    private val _parkingState = MutableStateFlow(ParkingState.NO_SERVER)
+    val parkingStateFlow = _parkingState.asStateFlow()
+
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
 
@@ -119,10 +120,25 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         binding = ActivityParkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.content.composeRecyclerReplacement?.setContent {
+        binding.content.composeRecyclerReplacement.setContent {
             val parkedCars by garage.parkedCarsFlow.collectAsStateWithLifecycle()
+            val currentParkingState by parkingStateFlow.collectAsStateWithLifecycle()
+            val unableToConnectText = stringResource(
+                R.string.unable_to_connect_placeholder_text,
+                ParkApp.storageManager.getServer()
+            )
             ParkTheme {
-                ParkedCarsListContent(parkedCars)
+                ParkedCarsScreen(
+                    cars = parkedCars,
+                    parkingState = currentParkingState,
+                    unableToConnectText = unableToConnectText,
+                    setServer = { showServerDialog() },
+                    retry = {
+                        networkState.resetState()
+                        updateGarageFromServer()
+                        updateParkingState()
+                    }
+                )
             }
         }
 
@@ -176,7 +192,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
         // But leave the left side and set it only on the view switcher so only the content get a
         // padding and not the background
-        ViewCompat.setOnApplyWindowInsetsListener(binding.content.parkedCarsViewSwitcher) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.content.parkedCarsPullToRefresh) { v, insets ->
             val systemBars: Insets = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or
                         WindowInsetsCompat.Type.displayCutout()
@@ -211,8 +227,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             ParkApp.storageManager.getAutomaticUpdateInterval()
         )
         automaticUpdateTask.start()
-        // TODO: re-enable sign in feature when there is a backend for it.
-        //user.silentSignIn(this)
         showPrivacyDialogIfNeeded()
     }
 
@@ -233,7 +247,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun automaticUpdate() {
         // Only try to update if we can communicate with the server and there is no update
         // in progress
-        if (parkingState.communicatesWithServer() && networkState.updateInProgress) {
+        if (_parkingState.value.communicatesWithServer() && networkState.updateInProgress) {
             updateGarageFromServer()
         }
     }
@@ -258,121 +272,19 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
      * placeholder.
      */
     private fun showParkedCarsPlaceholderIfNeeded() {
-        // This function is typically called just after the adapter have changed but before
-        // the recyclerview have started animating the changes. Post a message on the message
-        // queue to continue after the recycler view have started animations so we can detect
-        // if they are still going
-        Handler(Looper.getMainLooper()).post { showParkedCarsPlaceholderIfNeededAfterAnimations() }
-    }
 
-    /**
-     * Switches to/from a placeholder when the RecyclerView have finished it's animations.
-     * If the RecyclerView is replaced with a placeholder before the animation have finished
-     * the animation will continue from the same state when the RecyclerView becomes visible
-     * again.
-     */
-    private fun showParkedCarsPlaceholderIfNeededAfterAnimations() {
-        /*if (binding.content.parkedCarsRecyclerView.isAnimating) {
-            // If the recyclerview is animating, try again once current animation has finished
-            // If it's animating there is an animator so it's safe to assume itemAnimator exists
-            binding.content.parkedCarsRecyclerView.itemAnimator!!.isRunning { showParkedCarsPlaceholderIfNeeded() }
-            return
-        }*/
-        if (parkingState.showsPlaceholder()) {
-            setCorrectParkedCarsPlaceholder()
-        }
-        showPlaceholderIfNeeded(
-            binding.content.parkedCarsViewSwitcher,
-            binding.content.parkedCarsPullToRefresh,
-            garage.isEmpty()
-        )
-    }
-
-    /**
-     * Sets the current placeholder view for the parked cars view depending on circumstances
-     */
-    private fun setCorrectParkedCarsPlaceholder() {
-        val textView = binding.content.parkedCarsPlaceholderTextView
-        val parkServerButton = binding.content.noParkServerPlaceholderButton
-        val spinner = binding.content.loadingSpinner
-        val text: String
-        val top: Drawable?
-        when (parkingState) {
-            ParkingState.NO_SERVER -> {
-                // no server set up
-                spinner.visibility = View.GONE
-                text = getString(R.string.no_server_placeholder_text)
-                top = AppCompatResources.getDrawable(
-                    applicationContext,
-                    R.drawable.ic_cloud_off_black_72dp
-                )
-                parkServerButton.visibility = View.VISIBLE
-                parkServerButton.text = getString(R.string.no_server_placeholder_button)
-                parkServerButton.setOnClickListener { showServerDialog() }
-            }
-
-            ParkingState.REQUEST_FAILED -> {
-                // failed to communicate with server
-                spinner.visibility = View.GONE
-                text = getString(
-                    R.string.unable_to_connect_placeholder_text,
-                    ParkApp.storageManager.getServer()
-                )
-                top = AppCompatResources.getDrawable(
-                    applicationContext,
-                    R.drawable.ic_cloud_off_black_72dp
-                )
-                parkServerButton.visibility = View.VISIBLE
-                parkServerButton.text = getString(R.string.unable_to_connect_placeholder_button)
-                parkServerButton.setOnClickListener {
-                    networkState.resetState()
-                    updateGarageFromServer()
-                    updateParkingState()
-                    setCorrectParkedCarsPlaceholder()
-                }
-            }
-
-            ParkingState.WAITING_ON_RESPONSE -> {
-                spinner.visibility = View.VISIBLE
-                text = getString(R.string.updating_status_placeholder)
-                top = null
-                parkServerButton.visibility = View.GONE
-            }
-
-            ParkingState.EMPTY -> {
-                // No parked cars
-                spinner.visibility = View.GONE
-                text = getString(R.string.parked_cars_placeholder)
-                top =
-                    AppCompatResources.getDrawable(applicationContext, R.drawable.empty_placeholder)
-                parkServerButton.visibility = View.GONE
-            }
-
-            else -> {
-                throw RuntimeException("No need for a placeholder")
-            }
-        }
-        textView.text = text
-        textView.setCompoundDrawablesRelativeWithIntrinsicBounds(null, top, null, null)
     }
 
     private fun updateParkingState() {
-        parkingState = if (!ParkApp.storageManager.hasServer()) {
-            ParkingState.NO_SERVER
-        } else if (networkState.hasMadeFailedRequestsOnly()) {
-            ParkingState.REQUEST_FAILED
-        } else if (networkState.isWaitingForFirstResponse()) {
-            ParkingState.WAITING_ON_RESPONSE
-        } else if (garage.isEmpty()) {
-            ParkingState.EMPTY
-        } else if (garage.spotsFree > 1) {
-            ParkingState.FREE_SPACE
-        } else if (garage.spotsFree == 1) {
-            ParkingState.ALMOST_FULL
-        } else if (garage.isFull()) {
-            ParkingState.FULL
-        } else {
-            throw RuntimeException("Unknown parking state")
+        _parkingState.value = when {
+            !ParkApp.storageManager.hasServer() -> ParkingState.NO_SERVER
+            networkState.hasMadeFailedRequestsOnly() -> ParkingState.REQUEST_FAILED
+            networkState.isWaitingForFirstResponse() -> ParkingState.WAITING_ON_RESPONSE
+            garage.isEmpty() -> ParkingState.EMPTY
+            garage.spotsFree > 1 -> ParkingState.FREE_SPACE
+            garage.spotsFree == 1 -> ParkingState.ALMOST_FULL
+            garage.isFull() -> ParkingState.FULL
+            else -> throw RuntimeException("Unknown parking state")
         }
     }
 
@@ -414,15 +326,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
-    /*@SuppressLint("NotifyDataSetChanged")
-    private fun updateListOfParkedCars() {
-        val adapter = binding.content.parkedCarsRecyclerView.adapter as CarsAdapter
-        adapter.cars = garage.parkedCars
-        adapter.notifyDataSetChanged()
-    }*/
-
     private fun updateGarageStatus() {
-        //updateListOfParkedCars()
         updateParkingState()
         updateToolbar(garage.spotsFree)
         showParkedCarsPlaceholderIfNeeded()
@@ -443,21 +347,21 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val statusBarColor: Int
         val title: String
         when {
-            parkingState.showsPlaceholder() -> {
+            _parkingState.value.showsPlaceholder() -> {
                 title = getString(R.string.app_name)
                 textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFree)
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
             }
 
-            parkingState == ParkingState.FULL -> {
+            _parkingState.value == ParkingState.FULL -> {
                 title = getString(R.string.park_status_full)
                 textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFull)
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
                 statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
             }
 
-            parkingState == ParkingState.ALMOST_FULL -> {
+            _parkingState.value == ParkingState.ALMOST_FULL -> {
                 title = resources.getString(R.string.park_status_one_free)
                 textColor = ContextCompat.getColor(this, R.color.colorToolbarTextAlmostFull)
                 toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)

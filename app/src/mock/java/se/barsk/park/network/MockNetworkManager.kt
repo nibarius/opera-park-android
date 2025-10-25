@@ -46,7 +46,7 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         if (hasConnection) {
             resultReadyListener(Result.Success(parkedCars))
         } else {
-            resultReadyListener(Result.Fail(null, ""))
+            resultReadyListener(Result.Fail(null, "Mock message: Unable to connect to server"))
         }
     }
 

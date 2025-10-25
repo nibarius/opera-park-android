@@ -22,10 +22,10 @@ inline fun consume(f: () -> Unit): Boolean {
  * and a boolean saying if the list is empty. Given this it ensures that the placeholder
  * is shown if the list is empty and that the list is shown otherwise.
  */
-fun showPlaceholderIfNeeded(viewSwitcher: ViewSwitcher, listView: View?, empty: Boolean) {
+fun showPlaceholderIfNeeded(viewSwitcher: ViewSwitcher, listView: View?, shouldShowPlaceholder: Boolean) {
     val listShown = viewSwitcher.currentView == listView
     val placeholderShown = !listShown
-    if ((empty && listShown) || (!empty && placeholderShown)) {
+    if ((shouldShowPlaceholder && listShown) || (!shouldShowPlaceholder && placeholderShown)) {
         viewSwitcher.showNext()
     }
 }
