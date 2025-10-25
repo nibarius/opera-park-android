@@ -12,7 +12,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
@@ -67,15 +70,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
         networkState.requestFinished(success)
 
-        binding.content.parkedCarsPullToRefresh.isRefreshing = false
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
-        if (!success) {
-            // On success the placeholder will be updated from the onGarageStatusChange() case
-            // if the request was successful and there were no change there is no need to
-            // update the placeholder.
-            showParkedCarsPlaceholderIfNeeded()
-        }
         if (errorMessage != null) {
             ErrorHandler.showMessage(binding.content.containerView, errorMessage)
         }
@@ -123,22 +119,37 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         binding.content.composeRecyclerReplacement.setContent {
             val parkedCars by garage.parkedCarsFlow.collectAsStateWithLifecycle()
             val currentParkingState by parkingStateFlow.collectAsStateWithLifecycle()
+            val updateInProgress by networkState.updateInProgressFlow.collectAsStateWithLifecycle()
             val unableToConnectText = stringResource(
                 R.string.unable_to_connect_placeholder_text,
                 ParkApp.storageManager.getServer()
             )
+
+            val isRefreshing by remember(parkedCars, updateInProgress) {
+                derivedStateOf { updateInProgress && parkedCars.isNotEmpty() }
+            }
+
             ParkTheme {
-                ParkedCarsScreen(
-                    cars = parkedCars,
-                    parkingState = currentParkingState,
-                    unableToConnectText = unableToConnectText,
-                    setServer = { showServerDialog() },
-                    retry = {
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
                         networkState.resetState()
                         updateGarageFromServer()
                         updateParkingState()
                     }
-                )
+                ) {
+                    ParkedCarsScreen(
+                        cars = parkedCars,
+                        parkingState = currentParkingState,
+                        unableToConnectText = unableToConnectText,
+                        setServer = { showServerDialog() },
+                        retry = {
+                            networkState.resetState()
+                            updateGarageFromServer()
+                            updateParkingState()
+                        }
+                    )
+                }
             }
         }
 
@@ -155,8 +166,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             OwnCarsAdapter(ParkApp.carCollection.getCars(), this::onOwnCarClicked)
 
         binding.content.noOwnCarsPlaceholderButton.setOnClickListener { navigateToManageCarsAndAddCar() }
-
-        binding.content.parkedCarsPullToRefresh.setOnRefreshListener { updateGarageFromServer() }
 
         garage.addListener(this)
         ParkApp.carCollection.addListener(this)
@@ -192,7 +201,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
         // But leave the left side and set it only on the view switcher so only the content get a
         // padding and not the background
-        ViewCompat.setOnApplyWindowInsetsListener(binding.content.parkedCarsPullToRefresh) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.content.composeRecyclerReplacement) { v, insets ->
             val systemBars: Insets = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or
                         WindowInsetsCompat.Type.displayCutout()
@@ -245,9 +254,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
 
     private fun automaticUpdate() {
-        // Only try to update if we can communicate with the server and there is no update
-        // in progress
-        if (_parkingState.value.communicatesWithServer() && networkState.updateInProgress) {
+        // Only try to update if we can communicate with the server and there is no update in progress
+        if (parkingStateFlow.value.communicatesWithServer() && networkState.updateInProgressFlow.value) {
             updateGarageFromServer()
         }
     }
@@ -265,14 +273,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         val ownCarsView = binding.content.ownCarsRecyclerView
         val empty = ParkApp.carCollection.getCars().isEmpty()
         showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
-    }
-
-    /**
-     * Show the list of parked cars if there are any parked cars, otherwise show the appropriate
-     * placeholder.
-     */
-    private fun showParkedCarsPlaceholderIfNeeded() {
-
     }
 
     private fun updateParkingState() {
@@ -329,7 +329,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     private fun updateGarageStatus() {
         updateParkingState()
         updateToolbar(garage.spotsFree)
-        showParkedCarsPlaceholderIfNeeded()
         ParkApp.carCollection.updateParkStatus(garage)
     }
 

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -35,8 +37,8 @@ fun ParkedCarsScreen(
     retry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (parkingState) {
-        ParkActivity.ParkingState.NO_SERVER -> {
+    when {
+        parkingState == ParkActivity.ParkingState.NO_SERVER -> {
             ServerIssuePlaceholder(
                 text = stringResource(R.string.no_server_placeholder_text),
                 buttonText = stringResource(R.string.no_server_placeholder_button),
@@ -45,11 +47,11 @@ fun ParkedCarsScreen(
             )
         }
 
-        ParkActivity.ParkingState.WAITING_ON_RESPONSE -> {
+        parkingState == ParkActivity.ParkingState.WAITING_ON_RESPONSE && cars.isEmpty() -> {
             LoadingPlaceholder(modifier = modifier)
         }
 
-        ParkActivity.ParkingState.REQUEST_FAILED -> {
+        parkingState == ParkActivity.ParkingState.REQUEST_FAILED -> {
             ServerIssuePlaceholder(
                 text = unableToConnectText,
                 buttonText = stringResource(R.string.unable_to_connect_placeholder_button),
@@ -58,7 +60,7 @@ fun ParkedCarsScreen(
             )
         }
 
-        ParkActivity.ParkingState.EMPTY -> {
+        parkingState == ParkActivity.ParkingState.EMPTY -> {
             NoParkedCarsPlaceholder(modifier = modifier)
         }
 
@@ -95,7 +97,9 @@ fun ParkedCarsListEntry(car: ParkedCar) {
 @Composable
 fun NoParkedCarsPlaceholder(modifier: Modifier) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()), // Needed for pull to refresh
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

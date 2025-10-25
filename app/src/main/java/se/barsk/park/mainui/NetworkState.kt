@@ -1,5 +1,8 @@
 package se.barsk.park.mainui
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
 /**
  * Used to keep track of the state of requests to be able to decide which placeholder
  * to show if there is no data from the server available.
@@ -39,20 +42,20 @@ class NetworkState {
     fun isWaitingForFirstResponse() = state == State.FIRST_RESPONSE_NOT_RECEIVED
     fun hasMadeFailedRequestsOnly() = state == State.ONLY_FAILED_REQUESTS
 
-    var updateInProgress: Boolean = false
-        private set
+    private val _updateInProgress = MutableStateFlow(false)
+    val updateInProgressFlow = _updateInProgress.asStateFlow()
 
     fun resetState() {
         state = State.FIRST_RESPONSE_NOT_RECEIVED
-        updateInProgress = false
+        _updateInProgress.value = false
     }
 
     fun requestStarted() {
-        updateInProgress = true
+        _updateInProgress.value = true
     }
 
     fun requestFinished(success: Boolean) {
-        updateInProgress = false
+        _updateInProgress.value = false
         if (success) {
             state = State.HAVE_MADE_SUCCESSFUL_REQUEST
         } else if (state != State.HAVE_MADE_SUCCESSFUL_REQUEST) {
