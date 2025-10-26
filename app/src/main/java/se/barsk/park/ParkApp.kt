@@ -2,6 +2,9 @@ package se.barsk.park
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import se.barsk.park.analytics.CrashReporting
 import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.network.NetworkManager
@@ -20,6 +23,8 @@ object ParkApp {
     lateinit var carCollection: CarCollection
     lateinit var networkManager: NetworkManager
     lateinit var storageManager: StorageManager
+
+    val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     fun init(context: Context) {
         if (isInitiated) {

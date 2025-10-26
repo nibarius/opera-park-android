@@ -1,12 +1,8 @@
 package se.barsk.park
 
 import android.content.Intent
-import android.os.Bundle
-import android.os.Looper.getMainLooper
-import android.view.View
-import androidx.appcompat.app.AlertDialog
 import com.google.firebase.FirebaseApp
-import org.amshove.kluent.*
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -14,17 +10,12 @@ import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.LooperMode
-import org.robolectric.shadows.ShadowLooper
 import se.barsk.park.datatypes.MockCarCollection
-import se.barsk.park.datatypes.ParkedCar
-import se.barsk.park.mainui.OwnCarListEntry
 import se.barsk.park.mainui.ParkActivity
-import se.barsk.park.mainui.SpecifyServerDialog
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.network.MockNetworkManager
 import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.storage.MockStorageManager
-import java.util.*
 
 @LooperMode(LooperMode.Mode.PAUSED)
 class ParkActivityTest : RobolectricTest() {
@@ -631,36 +622,36 @@ class ParkActivityTest : RobolectricTest() {
         activity.binding.content.noParkServerPlaceholderButton.text.toString() shouldBeEqualTo
                 activity.getString(R.string.no_server_placeholder_button)
     }*/
+    /*
+        private fun carIsNotParked(car: OwnCarListEntry) {
+            val button = car.parkButton
+            button.isEnabled.shouldBeTrue()
+            button.text.shouldStartWith(
+                context().getString(R.string.park_label)
+                    .uppercase(Locale.getDefault())
+            )
+        }
 
-    private fun carIsNotParked(car: OwnCarListEntry) {
-        val button = car.parkButton
-        button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(
-            context().getString(R.string.park_label)
-                .uppercase(Locale.getDefault())
-        )
-    }
+        private fun carIsParked(car: OwnCarListEntry) {
+            val button = car.parkButton
+            button.isEnabled.shouldBeTrue()
+            button.text.shouldStartWith(
+                context().getString(R.string.unpark_label)
+                    .uppercase(Locale.getDefault())
+            )
+        }
 
-    private fun carIsParked(car: OwnCarListEntry) {
-        val button = car.parkButton
-        button.isEnabled.shouldBeTrue()
-        button.text.shouldStartWith(
-            context().getString(R.string.unpark_label)
-                .uppercase(Locale.getDefault())
-        )
-    }
+        private fun parkCarButtonIsDisabled(car: OwnCarListEntry) {
+            val button = car.parkButton
+            button.isEnabled.shouldBeFalse()
+        }
 
-    private fun parkCarButtonIsDisabled(car: OwnCarListEntry) {
-        val button = car.parkButton
-        button.isEnabled.shouldBeFalse()
-    }
+        private fun View.shouldBeGone() {
+            this.visibility shouldBeEqualTo View.GONE
+        }
 
-    private fun View.shouldBeGone() {
-        this.visibility shouldBeEqualTo View.GONE
-    }
-
-    private fun View.shouldBeVisible() {
-        this.visibility shouldBeEqualTo View.VISIBLE
-    }
+        private fun View.shouldBeVisible() {
+            this.visibility shouldBeEqualTo View.VISIBLE
+        }*/
 }
 

@@ -1,35 +1,131 @@
 package se.barsk.park.mainui
 
+import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import se.barsk.park.R
+import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.datatypes.ParkedCar
 import se.barsk.park.managecars.CarIcon
 
 @Composable
 fun ParkedCarsScreen(
+    isRefreshing: Boolean,
+    parkedCars: List<ParkedCar>,
+    parkingState: ParkActivity.ParkingState,
+    unableToConnectText: String,
+    setServer: () -> Unit,
+    retry: () -> Unit,
+    ownCars: List<OwnCar>,
+    onCarClick: (OwnCar) -> Unit,
+    onAddCarClick: () -> Unit,
+) {
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    if (isLandscape) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            ParkedCarsSection(
+                isRefreshing,
+                parkedCars,
+                parkingState,
+                unableToConnectText,
+                setServer,
+                retry,
+                modifier = Modifier.weight(1f) // take all remaining space
+            )
+            MyCarsSection(
+                ownCars,
+                parkingState == ParkActivity.ParkingState.FULL,
+                onCarClick,
+                onAddCarClick,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(192.dp)
+            )
+        }
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            ParkedCarsSection(
+                isRefreshing,
+                parkedCars,
+                parkingState,
+                unableToConnectText,
+                setServer,
+                retry,
+                modifier = Modifier.weight(1f) // Take the remaining space
+            )
+            MyCarsSection(
+                ownCars,
+                parkingState == ParkActivity.ParkingState.FULL,
+                onCarClick,
+                onAddCarClick
+            )
+        }
+    }
+}
+
+@Composable
+fun ParkedCarsSection(
+    isRefreshing: Boolean,
+    cars: List<ParkedCar>,
+    parkingState: ParkActivity.ParkingState,
+    unableToConnectText: String,
+    setServer: () -> Unit,
+    retry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = retry, modifier = modifier) {
+        ParkedCarsContent(
+            cars = cars,
+            parkingState = parkingState,
+            unableToConnectText = unableToConnectText,
+            setServer = setServer,
+            retry = retry,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorResource(R.color.backgroundColor))
+        )
+    }
+}
+
+@Composable
+fun ParkedCarsContent(
     cars: List<ParkedCar>,
     parkingState: ParkActivity.ParkingState,
     unableToConnectText: String,
@@ -158,4 +254,178 @@ private fun PlaceholderBodyText(text: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center
     )
+}
+
+@Composable
+fun OwnCarsList(
+    ownCars: List<OwnCar>,
+    garageFull: Boolean,
+    onCarClick: (OwnCar) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val configuration = LocalConfiguration.current
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            LazyColumn(modifier = modifier) {
+                items(items = ownCars, key = { it.regNo }) { car ->
+                    OwnCarEntry(
+                        car = car,
+                        garageFull = garageFull,
+                        onCarClick = onCarClick
+                    )
+                }
+            }
+        }
+
+        else -> {
+            LazyRow(modifier = modifier) {
+                items(items = ownCars, key = { it.regNo }) { car ->
+                    OwnCarEntry(
+                        car = car,
+                        garageFull = garageFull,
+                        onCarClick = onCarClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun OwnCarEntry(
+    car: OwnCar,
+    garageFull: Boolean,
+    onCarClick: (OwnCar) -> Unit
+) {
+    val isParked = car.parked
+    val isDarkTheme = isSystemInDarkTheme()
+    val buttonEnabled = if (isParked) true else !garageFull
+    val actionText = if (isParked) {
+        stringResource(R.string.unpark_label).uppercase()
+    } else {
+        stringResource(R.string.park_label).uppercase()
+    }
+
+    val commonModifier = Modifier.padding(8.dp)
+    val onClickAction = { onCarClick(car) }
+
+    when {
+        // Case 1: Parked car in Dark Theme -> OutlinedButton (Unpark style)
+        isParked && isDarkTheme -> {
+            OutlinedButton(
+                onClick = onClickAction,
+                modifier = commonModifier,
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(2.dp, colorResource(R.color.unparkButtonColor)),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = colorResource(R.color.unparkButtonColor),
+                    disabledContentColor = colorResource(R.color.colorDisabled)
+                )
+            ) {
+                ButtonContent(actionText = actionText, regNo = car.regNo)
+            }
+        }
+
+        // Case 2: Parked car in Light Theme -> Filled Button
+        isParked -> {
+            Button(
+                onClick = onClickAction,
+                modifier = commonModifier,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.unparkButtonColor),
+                )
+            ) {
+                ButtonContent(actionText = actionText, regNo = car.regNo)
+            }
+        }
+
+        // Case 3: Not parked -> OutlinedButton (Park style)
+        else -> {
+            OutlinedButton(
+                onClick = onClickAction,
+                modifier = commonModifier,
+                shape = RoundedCornerShape(8.dp),
+                enabled = buttonEnabled,
+                border = BorderStroke(
+                    2.dp,
+                    if (buttonEnabled) colorResource(R.color.parkButtonColor) else colorResource(R.color.colorDisabled)
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = colorResource(R.color.parkButtonColor),
+                    disabledContentColor = colorResource(R.color.colorDisabled)
+                )
+            ) {
+                ButtonContent(actionText = actionText, regNo = car.regNo)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ButtonContent(actionText: String, regNo: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(text = actionText, style = MaterialTheme.typography.labelSmall)
+        Text(text = regNo, style = MaterialTheme.typography.titleMedium)
+    }
+}
+
+@Composable
+fun OwnCarsPlaceholder(onAddCarClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val text =
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                stringResource(R.string.no_cars_placeholder_message_short)
+            } else {
+                stringResource(R.string.no_cars_placeholder_message)
+            }
+        Text(
+            text,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        TextButton(onAddCarClick) {
+            Text(stringResource(R.string.add_car_button).uppercase())
+        }
+    }
+}
+
+@Composable
+fun MyCarsSection(
+    ownCars: List<OwnCar>,
+    garageFull: Boolean,
+    onCarClick: (OwnCar) -> Unit,
+    onAddCarClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(8.dp)
+    ) {
+        Text(
+            stringResource(R.string.my_cars_label),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(8.dp)
+        )
+        if (ownCars.isEmpty()) {
+            OwnCarsPlaceholder(onAddCarClick)
+        } else {
+            OwnCarsList(
+                ownCars = ownCars,
+                garageFull = garageFull,
+                onCarClick = onCarClick,
+            )
+        }
+    }
 }

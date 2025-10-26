@@ -1,8 +1,6 @@
 package se.barsk.park.mainui
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Spannable
@@ -12,7 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -25,9 +22,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,21 +32,19 @@ import se.barsk.park.RepeatableTask
 import se.barsk.park.consume
 import se.barsk.park.databinding.ActivityParkBinding
 import se.barsk.park.datatypes.Car
-import se.barsk.park.datatypes.CarCollectionStatusChangedListener
 import se.barsk.park.datatypes.Garage
 import se.barsk.park.datatypes.GarageStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.error.ErrorHandler
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.settings.SettingsActivity
-import se.barsk.park.showPlaceholderIfNeeded
 import se.barsk.park.storage.SettingsChangeListener
 import se.barsk.park.theme.ParkTheme
 import se.barsk.park.utils.TimeUtils
 
 
 class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
-    CarCollectionStatusChangedListener, SpecifyServerDialog.SpecifyServerDialogListener {
+    SpecifyServerDialog.SpecifyServerDialogListener {
 
     override fun parkServerChanged() {
         networkState.resetState()
@@ -63,7 +55,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
     // called when the garage status change (happens just after the update is ready in the success case)
     override fun onGarageStatusChange() {
         updateGarageStatus()
-        updateListOfOwnCars()
     }
 
     // called when the network request is done
@@ -77,10 +68,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         }
     }
 
-    override fun onCarCollectionStatusChange() {
-        updateListOfOwnCars()
-        showOwnCarsPlaceholderIfNeeded()
-    }
 
     enum class ParkingState {
         NO_SERVER,
@@ -118,6 +105,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
         binding.content.composeRecyclerReplacement.setContent {
             val parkedCars by garage.parkedCarsFlow.collectAsStateWithLifecycle()
+            val ownCars by ParkApp.carCollection.ownCarsFlow.collectAsStateWithLifecycle()
             val currentParkingState by parkingStateFlow.collectAsStateWithLifecycle()
             val updateInProgress by networkState.updateInProgressFlow.collectAsStateWithLifecycle()
             val unableToConnectText = stringResource(
@@ -130,47 +118,28 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             }
 
             ParkTheme {
-                PullToRefreshBox(
+                ParkedCarsScreen(
                     isRefreshing = isRefreshing,
-                    onRefresh = {
+                    parkedCars = parkedCars,
+                    parkingState = currentParkingState,
+                    unableToConnectText = unableToConnectText,
+                    setServer = { showServerDialog() },
+                    retry = {
                         networkState.resetState()
                         updateGarageFromServer()
                         updateParkingState()
-                    }
-                ) {
-                    ParkedCarsScreen(
-                        cars = parkedCars,
-                        parkingState = currentParkingState,
-                        unableToConnectText = unableToConnectText,
-                        setServer = { showServerDialog() },
-                        retry = {
-                            networkState.resetState()
-                            updateGarageFromServer()
-                            updateParkingState()
-                        }
-                    )
-                }
+                    },
+                    ownCars = ownCars,
+                    onCarClick = { car -> onOwnCarClicked(car) },
+                    onAddCarClick = { navigateToManageCarsAndAddCar() }
+                )
             }
         }
 
         setSupportActionBar(binding.toolbar)
 
-        val ownCarsRecyclerView = binding.content.ownCarsRecyclerView
-        ownCarsRecyclerView.layoutManager =
-            if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
-                LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            else
-                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        ownCarsRecyclerView.itemAnimator = DefaultItemAnimator()
-        ownCarsRecyclerView.adapter =
-            OwnCarsAdapter(ParkApp.carCollection.getCars(), this::onOwnCarClicked)
-
-        binding.content.noOwnCarsPlaceholderButton.setOnClickListener { navigateToManageCarsAndAddCar() }
-
         garage.addListener(this)
-        ParkApp.carCollection.addListener(this)
         ParkApp.storageManager.settingsChangeListener = ServerChangeFromSettingsListener()
-        showOwnCarsPlaceholderIfNeeded()
 
         // Handle edge-to-edge so that parts of the UI doesn't get covered under system bars
         // Toolbar
@@ -265,16 +234,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         garage.updateStatusFromServer(applicationContext)
     }
 
-    /**
-     * Show list of own cars if there are any own cars, otherwise show the placeholder.
-     */
-    private fun showOwnCarsPlaceholderIfNeeded() {
-        val viewSwitcher = binding.content.ownCarsViewSwitcher
-        val ownCarsView = binding.content.ownCarsRecyclerView
-        val empty = ParkApp.carCollection.getCars().isEmpty()
-        showPlaceholderIfNeeded(viewSwitcher, ownCarsView, empty)
-    }
-
     private fun updateParkingState() {
         _parkingState.value = when {
             !ParkApp.storageManager.hasServer() -> ParkingState.NO_SERVER
@@ -330,14 +289,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         updateParkingState()
         updateToolbar(garage.spotsFree)
         ParkApp.carCollection.updateParkStatus(garage)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun updateListOfOwnCars() {
-        val adapter = binding.content.ownCarsRecyclerView.adapter as OwnCarsAdapter
-        adapter.garageFull = garage.isFull()
-        adapter.cars = ParkApp.carCollection.getCars()
-        adapter.notifyDataSetChanged()
     }
 
     private fun updateToolbar(freeSpots: Int) {

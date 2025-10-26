@@ -1,12 +1,11 @@
 package se.barsk.park.datatypes
 
 import android.util.SparseBooleanArray
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.core.util.size
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import se.barsk.park.ParkApp
 
 /**
@@ -16,15 +15,8 @@ import se.barsk.park.ParkApp
  */
 open class CarCollection {
 
-    private var listeners: MutableList<CarCollectionStatusChangedListener> = mutableListOf()
-    @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
-    var ownCars: MutableList<OwnCar>  = mutableListOf()
-
     protected val _ownCars = MutableStateFlow<List<OwnCar>>(emptyList())
     val ownCarsFlow = _ownCars.asStateFlow()
-
-    // A scope for collecting the flow from the database
-    private val scope = CoroutineScope(Dispatchers.Main)
 
     init {
         // Start collecting the flow as soon as the class is instantiated
@@ -34,24 +26,10 @@ open class CarCollection {
     protected open fun readCarsFromStorage() {
         ParkApp.storageManager.fetchAllCars()
             .onEach { updatedCars ->
-                // old listeners based part
-                ownCars = updatedCars.toMutableList()
-                notifyListeners()
-
-                //flow part:
                 _ownCars.value = updatedCars
-            }.launchIn(scope)
+            }.launchIn(ParkApp.applicationScope)
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
-    protected fun notifyListeners() {
-        for (listener in listeners) {
-            listener.onCarCollectionStatusChange()
-        }
-    }
-
-    fun addListener(listener: CarCollectionStatusChangedListener) = listeners.add(listener)
-    fun removeListener(listener: CarCollectionStatusChangedListener) = listeners.remove(listener)
 
     /**
      * Update the parking status for all the cars in the car collection
@@ -60,15 +38,6 @@ open class CarCollection {
      */
     fun updateParkStatus(garage: Garage): Boolean {
         var anyChange = false
-        // listener based:
-        for (car in ownCars) {
-            val newValue = garage.isParked(car)
-            if (newValue != car.parked) {
-                car.parked = newValue
-                anyChange = true
-            }
-        }
-        // flow based
         val currentCars = _ownCars.value.toMutableList()
         for (car in currentCars) {
             val newValue = garage.isParked(car)
@@ -80,7 +49,6 @@ open class CarCollection {
 
         if (anyChange) {
             _ownCars.value = currentCars // Emit the updated list
-            notifyListeners()
         }
         return anyChange
     }
@@ -88,42 +56,28 @@ open class CarCollection {
     /**
      * Adds a new car to the car collection and persists it to persistent storage
      */
-    suspend fun addCar(ownCar: OwnCar, notify: Boolean = true) {
-        ownCars.add(ownCar)
-        persistUpdate(ownCar, ownCars.lastIndex)
-        if (notify) {
-            notifyListeners()
-        }
+    suspend fun addCar(ownCar: OwnCar) {
+        val updatedList = _ownCars.value + ownCar
+        _ownCars.value = updatedList
+        persistUpdate(ownCar, updatedList.lastIndex)
     }
-
-    /**
-     * Adds all cars in the given list that isn't already present in the car collection
-     * and persists it to persistent storage. If there are no cars, nothing is done.
-     */
-    /*fun addCarsThatDoesNotExist(carsToAdd: List<OwnCar>) {
-        carsToAdd
-                .filterNot { hasCar(it) }
-                .forEach { addCar(it, false) }
-        notifyListeners()
-    }*/
 
     /**
      * Removes the car at the given index and persists the removal to persistent storage
      */
     private suspend fun removeCarAt(index: Int) {
-        val ownCar = ownCars[index]
-        ownCars.remove(ownCar)
-        persistRemoval(ownCar)
+        val carToRemove = _ownCars.value[index]
+        _ownCars.value = _ownCars.value.toMutableList().apply { removeAt(index) }
+        persistRemoval(carToRemove)
     }
 
     /**
      * Remove all cars at the positions indicated by the given sparse boolean array.
      */
     suspend fun removeCars(which: SparseBooleanArray) {
-        for (index in which.size() - 1 downTo 0) {
+        for (index in which.size - 1 downTo 0) {
             removeCarAt(which.keyAt(index))
         }
-        notifyListeners()
     }
 
     /**
@@ -131,10 +85,9 @@ open class CarCollection {
      */
     suspend fun removeCars(cars: Collection<OwnCar>) {
         for (car in cars) {
-            ownCars.remove(car)
+            _ownCars.value = _ownCars.value.filterNot { it.id == car.id }
             persistRemoval(car)
         }
-        notifyListeners()
     }
 
     /**
@@ -142,39 +95,27 @@ open class CarCollection {
      */
     suspend fun updateCar(ownCar: OwnCar) {
         val position = positionOf(ownCar)
-        ownCars[position] = ownCar
+        _ownCars.value = _ownCars.value.toMutableList().apply { set(position, ownCar) }
         persistUpdate(ownCar, position)
-        notifyListeners()
     }
 
     open suspend fun persistRemoval(ownCar: OwnCar) = ParkApp.storageManager.remove(ownCar)
     open suspend fun persistUpdate(ownCar: OwnCar, position: Int) = ParkApp.storageManager.insertOrReplace(ownCar, position)
 
-    /**
-     * Returns true if the car collection already has a car with the same license plate
-     */
-    private fun hasCar(otherCar: OwnCar): Boolean = ownCars.any { it.isSameCar(otherCar) }
-
     @Suppress("MemberVisibilityCanBePrivate") // Used by mock flavor
     fun positionOf(car: OwnCar): Int = positionOf(car.id)
 
     private fun positionOf(carId: String): Int {
-        for ((index, ownCar) in ownCars.withIndex()) {
-            if (carId == ownCar.id) {
-                return index
-            }
+        val position = _ownCars.value.indexOfFirst { it.id == carId }
+        if (position == -1) {
+            throw RuntimeException("A car with id $carId does not exist in the CarCollection")
         }
-        throw RuntimeException("A car with id $carId does not exist in the CarCollection")
+        return position
     }
-
-    /**
-     * Returns the car with the given id
-     */
-    fun getCar(id: String): OwnCar = ownCars[positionOf(id)]
 
     /**
      * Returns a list of all the cars in the collection.
      */
-    fun getCars(): List<OwnCar> = ownCars.toList()
+    fun getCars(): List<OwnCar> = _ownCars.value.toList()
 
 }

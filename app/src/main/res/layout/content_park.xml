@@ -16,77 +16,9 @@
         android:id="@+id/compose_recycler_replacement"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/my_cars_label"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/my_cars_label"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:background="@color/colorSurface"
-        android:elevation="4dp"
-        android:fontFamily="sans-serif"
-        android:gravity="center_vertical"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="@string/my_cars_label"
-        android:textColor="@color/highEmphasisText"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/own_cars_view_switcher"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
-
-    <ViewSwitcher
-        android:id="@+id/own_cars_view_switcher"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/colorSurface"
-        android:elevation="4dp"
-        android:measureAllChildren="false"
-        android:padding="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/own_cars_recycler_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:overScrollMode="never"
-            android:scrollbars="horizontal"
-            app:layout_constraintVertical_bias="1.0"/>
-
-        <LinearLayout
-            android:id="@+id/own_cars_placeholder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:text="@string/no_cars_placeholder_message"
-                android:textColor="@color/colorPlaceholderText"
-                android:textSize="16sp"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/no_own_cars_placeholder_button"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/add_car_button"/>
-        </LinearLayout>
-
-    </ViewSwitcher>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
