@@ -56,10 +56,11 @@ fun ParkedCarsScreen(
     ownCars: List<OwnCar>,
     onCarClick: (OwnCar) -> Unit,
     onAddCarClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     if (isLandscape) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = modifier.fillMaxSize()) {
             ParkedCarsSection(
                 isRefreshing,
                 parkedCars,
@@ -71,6 +72,7 @@ fun ParkedCarsScreen(
             )
             MyCarsSection(
                 ownCars,
+                parkedCars,
                 parkingState == ParkActivity.ParkingState.FULL,
                 onCarClick,
                 onAddCarClick,
@@ -80,7 +82,7 @@ fun ParkedCarsScreen(
             )
         }
     } else {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = modifier.fillMaxSize()) {
             ParkedCarsSection(
                 isRefreshing,
                 parkedCars,
@@ -92,6 +94,7 @@ fun ParkedCarsScreen(
             )
             MyCarsSection(
                 ownCars,
+                parkedCars,
                 parkingState == ParkActivity.ParkingState.FULL,
                 onCarClick,
                 onAddCarClick
@@ -259,6 +262,7 @@ private fun PlaceholderBodyText(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun OwnCarsList(
     ownCars: List<OwnCar>,
+    parkedCars: List<ParkedCar>,
     garageFull: Boolean,
     onCarClick: (OwnCar) -> Unit,
     modifier: Modifier = Modifier
@@ -268,8 +272,10 @@ fun OwnCarsList(
         Configuration.ORIENTATION_LANDSCAPE -> {
             LazyColumn(modifier = modifier) {
                 items(items = ownCars, key = { it.regNo }) { car ->
+                    val isParked = parkedCars.any { it.regNo == car.regNo }
                     OwnCarEntry(
                         car = car,
+                        isParked = isParked,
                         garageFull = garageFull,
                         onCarClick = onCarClick
                     )
@@ -280,8 +286,10 @@ fun OwnCarsList(
         else -> {
             LazyRow(modifier = modifier) {
                 items(items = ownCars, key = { it.regNo }) { car ->
+                    val isParked = parkedCars.any { it.regNo == car.regNo }
                     OwnCarEntry(
                         car = car,
+                        isParked = isParked,
                         garageFull = garageFull,
                         onCarClick = onCarClick
                     )
@@ -295,10 +303,10 @@ fun OwnCarsList(
 @Composable
 fun OwnCarEntry(
     car: OwnCar,
+    isParked: Boolean,
     garageFull: Boolean,
     onCarClick: (OwnCar) -> Unit
 ) {
-    val isParked = car.parked
     val isDarkTheme = isSystemInDarkTheme()
     val buttonEnabled = if (isParked) true else !garageFull
     val actionText = if (isParked) {
@@ -403,6 +411,7 @@ fun OwnCarsPlaceholder(onAddCarClick: () -> Unit) {
 @Composable
 fun MyCarsSection(
     ownCars: List<OwnCar>,
+    parkedCars: List<ParkedCar>,
     garageFull: Boolean,
     onCarClick: (OwnCar) -> Unit,
     onAddCarClick: () -> Unit,
@@ -423,6 +432,7 @@ fun MyCarsSection(
         } else {
             OwnCarsList(
                 ownCars = ownCars,
+                parkedCars = parkedCars,
                 garageFull = garageFull,
                 onCarClick = onCarClick,
             )

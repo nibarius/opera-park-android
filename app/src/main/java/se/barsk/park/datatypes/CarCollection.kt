@@ -48,7 +48,7 @@ open class CarCollection {
         }
 
         if (anyChange) {
-            _ownCars.value = currentCars // Emit the updated list
+            _ownCars.value = currentCars
         }
         return anyChange
     }

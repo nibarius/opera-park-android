@@ -1,36 +1,24 @@
 package se.barsk.park.mainui
 
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.view.Menu
-import android.view.MenuItem
-import android.view.WindowManager
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.Insets
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.RepeatableTask
-import se.barsk.park.consume
-import se.barsk.park.databinding.ActivityParkBinding
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.Garage
 import se.barsk.park.datatypes.GarageStatusChangedListener
@@ -64,7 +52,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
         if (errorMessage != null) {
-            ErrorHandler.showMessage(binding.root, errorMessage)
+            ErrorHandler.showMessage(window.decorView.rootView, errorMessage)
         }
     }
 
@@ -93,17 +81,12 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private lateinit var automaticUpdateTask: RepeatableTask
 
-    // Also used by tests
-    lateinit var binding: ActivityParkBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         ParkApp.init(this)
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        binding = ActivityParkBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        binding.composeRecyclerReplacement.setContent {
+        setContent {
             val parkedCars by garage.parkedCarsFlow.collectAsStateWithLifecycle()
             val ownCars by ParkApp.carCollection.ownCarsFlow.collectAsStateWithLifecycle()
             val currentParkingState by parkingStateFlow.collectAsStateWithLifecycle()
@@ -117,57 +100,41 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                 derivedStateOf { updateInProgress && parkedCars.isNotEmpty() }
             }
 
+            val freeSpotsCount = Garage.CAPACITY - parkedCars.size
+
             ParkTheme {
-                ParkedCarsScreen(
-                    isRefreshing = isRefreshing,
-                    parkedCars = parkedCars,
-                    parkingState = currentParkingState,
-                    unableToConnectText = unableToConnectText,
-                    setServer = { showServerDialog() },
-                    retry = {
-                        networkState.resetState()
-                        updateGarageFromServer()
-                        updateParkingState()
-                    },
-                    ownCars = ownCars,
-                    onCarClick = { car -> onOwnCarClicked(car) },
-                    onAddCarClick = { navigateToManageCarsAndAddCar() }
-                )
+                Scaffold(
+                    topBar = {
+                        ParkActivityAppBar(
+                            parkingState = currentParkingState,
+                            freeSpotsCount = freeSpotsCount,
+                            onManageCarsClick = { navigateToManageCars() },
+                            onSettingsClick = { navigateToSettings() }
+                        )
+                    }
+                ) { innerPadding ->
+                    ParkedCarsScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        isRefreshing = isRefreshing,
+                        parkedCars = parkedCars,
+                        parkingState = currentParkingState,
+                        unableToConnectText = unableToConnectText,
+                        setServer = { showServerDialog() },
+                        retry = {
+                            networkState.resetState()
+                            updateGarageFromServer()
+                            updateParkingState()
+                        },
+                        ownCars = ownCars,
+                        onCarClick = { car -> onOwnCarClicked(car) },
+                        onAddCarClick = { navigateToManageCarsAndAddCar() }
+                    )
+                }
             }
         }
-
-        setSupportActionBar(binding.toolbar)
 
         garage.addListener(this)
         ParkApp.storageManager.settingsChangeListener = ServerChangeFromSettingsListener()
-
-        // Handle edge-to-edge so that parts of the UI doesn't get covered under system bars
-        // Toolbar
-        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, insets ->
-            //val statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
-            //v.setBackgroundColor(statusBarColor)
-            val systemBars: Insets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<AppBarLayout.LayoutParams> {
-                leftMargin = systemBars.left
-                rightMargin = systemBars.right
-                topMargin = systemBars.top
-            }
-
-            insets
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.composeRecyclerReplacement) { v, insets ->
-            val systemBars: Insets = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or
-                        WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                left = systemBars.left,
-                right = systemBars.right,
-                bottom = systemBars.bottom
-            )
-            insets
-        }
     }
 
     override fun onResume() {
@@ -209,9 +176,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         super.onDestroy()
     }
 
-    private var optionsMenu: Menu? = null
-
-
     private fun automaticUpdate() {
         // Only try to update if we can communicate with the server and there is no update in progress
         if (parkingStateFlow.value.communicatesWithServer() && networkState.updateInProgressFlow.value) {
@@ -235,19 +199,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
             garage.isFull() -> ParkingState.FULL
             else -> throw RuntimeException("Unknown parking state")
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        optionsMenu = menu
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.menu_manage_cars -> consume { navigateToManageCars() }
-        R.id.menu_settings -> consume { navigateToSettings() }
-        else -> super.onOptionsItemSelected(item)
     }
 
     private fun navigateToSettings() {
@@ -277,57 +228,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
     private fun updateGarageStatus() {
         updateParkingState()
-        updateToolbar(garage.spotsFree)
         ParkApp.carCollection.updateParkStatus(garage)
-    }
-
-    private fun updateToolbar(freeSpots: Int) {
-        val textColor: Int
-        val toolbarColor: Int
-        val statusBarColor: Int
-        val title: String
-        when {
-            _parkingState.value.showsPlaceholder() -> {
-                title = getString(R.string.app_name)
-                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFree)
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
-            }
-
-            _parkingState.value == ParkingState.FULL -> {
-                title = getString(R.string.park_status_full)
-                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFull)
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFull)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFull)
-            }
-
-            _parkingState.value == ParkingState.ALMOST_FULL -> {
-                title = resources.getString(R.string.park_status_one_free)
-                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextAlmostFull)
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarAlmostFull)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarAlmostFull)
-            }
-
-            else -> {
-                title = resources.getString(R.string.park_status_many_free, freeSpots)
-                textColor = ContextCompat.getColor(this, R.color.colorToolbarTextFree)
-                toolbarColor = ContextCompat.getColor(this, R.color.colorToolbarFree)
-                statusBarColor = ContextCompat.getColor(this, R.color.colorStatusBarFree)
-            }
-        }
-
-        supportActionBar?.setBackgroundDrawable(ColorDrawable(toolbarColor))
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = statusBarColor
-
-        val span = SpannableString(title)
-        span.setSpan(
-            ForegroundColorSpan(textColor),
-            0,
-            title.length,
-            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-        )
-        supportActionBar?.title = span
     }
 
     private fun showServerDialog() =

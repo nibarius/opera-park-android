@@ -8,6 +8,14 @@ val Green200 = Color(0xFFA5D6A7) // Primary color dark mode
 
 val DarkAppBar = Color(0xFF1F1F1F)
 
+// Parking state colors - Light mode
+val Red600 = Color(0xFFE53935)
+val Orange600 = Color(0xFFFB8C00)
+
+// Parking state colors - Dark mode
+val Red200 = Color(0xFFEF9A9A)
+val Orange200 = Color(0xFFFFCC80)
+
 // --- Avatar Colors ---
 
 val AvatarColorsLight = listOf(
