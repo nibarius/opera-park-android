@@ -64,7 +64,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
         if (errorMessage != null) {
-            ErrorHandler.showMessage(binding.content.containerView, errorMessage)
+            ErrorHandler.showMessage(binding.root, errorMessage)
         }
     }
 
@@ -103,7 +103,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         binding = ActivityParkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.content.composeRecyclerReplacement.setContent {
+        binding.composeRecyclerReplacement.setContent {
             val parkedCars by garage.parkedCarsFlow.collectAsStateWithLifecycle()
             val ownCars by ParkApp.carCollection.ownCarsFlow.collectAsStateWithLifecycle()
             val currentParkingState by parkingStateFlow.collectAsStateWithLifecycle()
@@ -155,28 +155,18 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
             insets
         }
-        // First set the insets generally for the whole content view when it comes to the right
-        // and bottom part
-        ViewCompat.setOnApplyWindowInsetsListener(binding.content.containerView) { v, insets ->
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.composeRecyclerReplacement) { v, insets ->
             val systemBars: Insets = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or
                         WindowInsetsCompat.Type.displayCutout()
             )
             v.updatePadding(
+                left = systemBars.left,
                 right = systemBars.right,
-                bottom = systemBars.bottom,
+                bottom = systemBars.bottom
             )
             insets
-        }
-        // But leave the left side and set it only on the view switcher so only the content get a
-        // padding and not the background
-        ViewCompat.setOnApplyWindowInsetsListener(binding.content.composeRecyclerReplacement) { v, insets ->
-            val systemBars: Insets = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or
-                        WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(left = systemBars.left)
-            WindowInsetsCompat.CONSUMED
         }
     }
 
