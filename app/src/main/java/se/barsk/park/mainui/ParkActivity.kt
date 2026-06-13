@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
@@ -19,6 +21,7 @@ import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.RepeatableTask
+import se.barsk.park.ServerUrlDialog
 import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.Garage
 import se.barsk.park.datatypes.GarageStatusChangedListener
@@ -31,10 +34,9 @@ import se.barsk.park.theme.ParkTheme
 import se.barsk.park.utils.TimeUtils
 
 
-class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
-    SpecifyServerDialog.SpecifyServerDialogListener {
+class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
 
-    override fun parkServerChanged() {
+    private fun parkServerChanged() {
         networkState.resetState()
         garage.clear()
         updateGarageFromServer()
@@ -102,6 +104,8 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
 
             val freeSpotsCount = Garage.CAPACITY - parkedCars.size
 
+            var showServerDialog by remember { mutableStateOf(false) }
+
             ParkTheme {
                 Scaffold(
                     topBar = {
@@ -119,7 +123,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                         parkedCars = parkedCars,
                         parkingState = currentParkingState,
                         unableToConnectText = unableToConnectText,
-                        setServer = { showServerDialog() },
+                        setServer = { showServerDialog = true },
                         retry = {
                             networkState.resetState()
                             updateGarageFromServer()
@@ -128,6 +132,19 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
                         ownCars = ownCars,
                         onCarClick = { car -> onOwnCarClicked(car) },
                         onAddCarClick = { navigateToManageCarsAndAddCar() }
+                    )
+                }
+
+                if (showServerDialog) {
+                    ServerUrlDialog(
+                        currentUrl = ParkApp.storageManager.getServer(),
+                        title = stringResource(R.string.specify_server_dialog_title),
+                        onDismiss = { showServerDialog = false },
+                        onSave = { url ->
+                            showServerDialog = false
+                            ParkApp.storageManager.setServer(url)
+                            parkServerChanged()
+                        }
                     )
                 }
             }
@@ -230,9 +247,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener,
         updateParkingState()
         ParkApp.carCollection.updateParkStatus(garage)
     }
-
-    private fun showServerDialog() =
-        SpecifyServerDialog.newInstance().show(supportFragmentManager, "specifyServer")
 
     private fun showPrivacyDialogIfNeeded() {
         val tag = "privacyDialog"

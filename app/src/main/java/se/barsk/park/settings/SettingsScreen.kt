@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
+import se.barsk.park.ServerUrlDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +65,7 @@ fun SettingsScreen(
     if (showServerDialog) {
         ServerUrlDialog(
             currentUrl = serverUrl,
+            title = stringResource(id = R.string.settings_server),
             onDismiss = { viewModel.onDismissServerDialog() },
             onSave = { newUrl -> viewModel.onServerUrlChange(newUrl) }
         )
