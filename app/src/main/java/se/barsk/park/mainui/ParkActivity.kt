@@ -6,6 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import se.barsk.park.INTENT_EXTRA_ADD_CAR
 import se.barsk.park.ParkApp
 import se.barsk.park.R
@@ -26,7 +32,6 @@ import se.barsk.park.datatypes.Car
 import se.barsk.park.datatypes.Garage
 import se.barsk.park.datatypes.GarageStatusChangedListener
 import se.barsk.park.datatypes.OwnCar
-import se.barsk.park.error.ErrorHandler
 import se.barsk.park.managecars.ManageCarsActivity
 import se.barsk.park.settings.SettingsActivity
 import se.barsk.park.storage.SettingsChangeListener
@@ -54,7 +59,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
         if (errorMessage != null) {
-            ErrorHandler.showMessage(window.decorView.rootView, errorMessage)
+            errorEvents.trySend(errorMessage)
         }
     }
 
@@ -80,6 +85,13 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
 
     private val _showPrivacyDialog = MutableStateFlow(false)
     val showPrivacyDialogFlow = _showPrivacyDialog.asStateFlow()
+
+    // One-shot error messages surfaced from the (non-Compose) garage update callback to the
+    // Compose SnackbarHost. A conflated channel is used so each error is shown once and is not
+    // re-shown on recomposition; bursts of errors (e.g. tapping retry repeatedly) collapse to
+    // at most one queued message (the newest) instead of a long backlog shown one after another.
+    private val errorEvents = Channel<String>(Channel.CONFLATED)
+    val errorEventsFlow = errorEvents.receiveAsFlow()
 
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
@@ -110,8 +122,16 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
             var showServerDialog by remember { mutableStateOf(false) }
             val showPrivacyDialog by showPrivacyDialogFlow.collectAsStateWithLifecycle()
 
+            val snackbarHostState = remember { SnackbarHostState() }
+            LaunchedEffect(Unit) {
+                errorEventsFlow.collect { message ->
+                    snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
+                }
+            }
+
             ParkTheme {
                 Scaffold(
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
                     topBar = {
                         ParkActivityAppBar(
                             parkingState = currentParkingState,
