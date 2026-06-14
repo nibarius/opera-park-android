@@ -78,6 +78,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     private val _parkingState = MutableStateFlow(ParkingState.NO_SERVER)
     val parkingStateFlow = _parkingState.asStateFlow()
 
+    private val _showPrivacyDialog = MutableStateFlow(false)
+    val showPrivacyDialogFlow = _showPrivacyDialog.asStateFlow()
+
     private var serverBeforePause: String? = null
     private var lastGarageUpdateTime = TimeUtils.now()
 
@@ -105,6 +108,7 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
             val freeSpotsCount = Garage.CAPACITY - parkedCars.size
 
             var showServerDialog by remember { mutableStateOf(false) }
+            val showPrivacyDialog by showPrivacyDialogFlow.collectAsStateWithLifecycle()
 
             ParkTheme {
                 Scaffold(
@@ -147,6 +151,22 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
                         }
                     )
                 }
+
+                if (showPrivacyDialog) {
+                    PrivacyOnboardingDialog(
+                        onAccept = {
+                            ParkApp.storageManager.setCrashReportingEnabled(true)
+                            ParkApp.crashlytics.enableIfAllowed()
+                            ParkApp.storageManager.setPrivacyOnBoardingSeen()
+                            _showPrivacyDialog.value = false
+                        },
+                        onDecline = {
+                            ParkApp.storageManager.setCrashReportingEnabled(false)
+                            ParkApp.storageManager.setPrivacyOnBoardingSeen()
+                            _showPrivacyDialog.value = false
+                        }
+                    )
+                }
             }
         }
 
@@ -179,7 +199,9 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
             ParkApp.storageManager.getAutomaticUpdateInterval()
         )
         automaticUpdateTask.start()
-        showPrivacyDialogIfNeeded()
+        if (!ParkApp.storageManager.hasSeenPrivacyOnBoarding()) {
+            _showPrivacyDialog.value = true
+        }
     }
 
     override fun onPause() {
@@ -246,15 +268,6 @@ class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
     private fun updateGarageStatus() {
         updateParkingState()
         ParkApp.carCollection.updateParkStatus(garage)
-    }
-
-    private fun showPrivacyDialogIfNeeded() {
-        val tag = "privacyDialog"
-        if (supportFragmentManager.findFragmentByTag(tag) == null &&
-            !ParkApp.storageManager.hasSeenPrivacyOnBoarding()
-        ) {
-            PrivacyPolicyOnBoardingDialog.newInstance().show(supportFragmentManager, tag)
-        }
     }
 
     inner class ServerChangeFromSettingsListener : SettingsChangeListener {
