@@ -16,7 +16,7 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         const val CAPACITY = 6
     }
 
-    private val _parkedCars = MutableStateFlow<List<ParkedCar>>(emptyList())
+    private val _parkedCars = MutableStateFlow(initialParkedCars)
     val parkedCarsFlow = _parkedCars.asStateFlow()
 
     private var listeners: MutableList<GarageStatusChangedListener> = mutableListOf()
