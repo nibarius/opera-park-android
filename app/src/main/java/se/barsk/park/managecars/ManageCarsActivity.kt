@@ -13,6 +13,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
@@ -45,8 +46,11 @@ class ManageCarsActivity : ComponentActivity() {
 
             var isActionMode by remember(selectedCars) { mutableStateOf(selectedCars.isNotEmpty()) }
 
-            // State to control which dialog is shown
-            var showAddDialog by remember {
+            // State to control which dialog is shown. rememberSaveable so the dialog state
+            // survives configuration changes (e.g. toggling dark mode recreates the activity).
+            // Plain remember would re-read the launch intent's add-car extra on every recreation
+            // and wrongly reopen the dialog after it had been dismissed.
+            var showAddDialog by rememberSaveable {
                 mutableStateOf(
                     intent.getBooleanExtra(
                         INTENT_EXTRA_ADD_CAR,
