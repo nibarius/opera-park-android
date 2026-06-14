@@ -13,10 +13,6 @@
         <item name="colorAccent">@color/colorAccent</item> <!-- Section titles in settings -->
         <!-- color for text field selection and switches -->
         <item name="colorControlActivated">@color/colorAccent</item>
-        <item name="android:actionModeCloseDrawable">@drawable/ic_close_24dp</item>
-        <item name="actionModeStyle">@style/MyActionMode</item>
-        <item name="ownCarEntryStyle">@style/OwnCarEntryStyle</item>
-        <item name="manageCarsEntryStyle">@style/ManageCarsEntryStyle</item>
     </style>
 
     <!-- The ParkActivity have a toolbar in the layout so it uses a style with
@@ -24,37 +20,6 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <!-- Todo: Font size is wrong for toolbar in manage cars view / settings in landscape mode
-               when dark mode is enabled. Bug reported at:
-               https://github.com/material-components/material-components-android/issues/779 -->
-
-    <!-- The appbar is dark background and light text regardless of dark/light theme -->
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <!-- The PopupOverlay theme is applied to the overflow menu popup. -->
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
-
-    <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="background">?attr/colorSurface</item>
-        <item name="titleTextStyle">@style/MyActionModeTitleStyle</item>
-    </style>
-
-    <style name="MyActionModeTitleStyle" parent="@style/TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textColor">?attr/colorOnSurface</item>
-    </style>
-
-    <style name="OwnCarEntryStyle">
-        <item name="android:foreground">?android:attr/selectableItemBackground</item>
-        <item name="android:paddingTop">@dimen/own_cars_padding_top</item>
-        <item name="android:paddingStart">@dimen/own_cars_padding_start</item>
-        <item name="android:paddingEnd">@dimen/own_cars_padding_end</item>
-        <item name="android:paddingBottom">@dimen/own_cars_padding_bottom</item>
-    </style>
-
-    <style name="ManageCarsEntryStyle">
-        <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
     <!-- Splash screen styles -->

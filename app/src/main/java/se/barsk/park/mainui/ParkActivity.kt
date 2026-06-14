@@ -2,8 +2,8 @@ package se.barsk.park.mainui
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -39,7 +39,7 @@ import se.barsk.park.theme.ParkTheme
 import se.barsk.park.utils.TimeUtils
 
 
-class ParkActivity : AppCompatActivity(), GarageStatusChangedListener {
+class ParkActivity : ComponentActivity(), GarageStatusChangedListener {
 
     private fun parkServerChanged() {
         networkState.resetState()

@@ -2,10 +2,6 @@
 
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="own_cars_bar_landscape_width">192dp</dimen>
-    <dimen name="own_cars_padding_top">0dp</dimen>
-    <dimen name="own_cars_padding_start">8dp</dimen>
-    <dimen name="own_cars_padding_end">8dp</dimen>
-    <dimen name="own_cars_padding_bottom">25dp</dimen>
 
     <dimen name="parked_cars_text_size">16sp</dimen>
 
