@@ -17,9 +17,9 @@ android {
     }
     defaultConfig {
         applicationId "se.barsk.park"
-        minSdkVersion 23
-        compileSdkVersion 36
-        targetSdkVersion 36
+        minSdkVersion 24
+        compileSdkVersion 37
+        targetSdkVersion 37
         versionCode 11
         versionName "$majorVersion.$minorVersion"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
