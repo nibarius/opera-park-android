@@ -3,7 +3,6 @@ plugins{
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.firebase.crashlitycs)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
 }
 
@@ -15,9 +14,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = 17
     }
     defaultConfig {
         applicationId "se.barsk.park"
@@ -94,15 +90,6 @@ android {
     }
 
     // Remove mockRelease and prodMock_* as it's not needed.
-    android.variantFilter { variant ->
-        if(variant.buildType.name == 'release'
-                && variant.getFlavors().get(0).name == 'mock') {
-            variant.setIgnore(true)
-        } else if (variant.buildType.name.startsWith("mock")
-                && variant.getFlavors().get(0).name == "prod") {
-            variant.setIgnore(true)
-        }
-    }
 
     configurations.configureEach {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
@@ -161,4 +148,13 @@ dependencies {
     debugImplementation(libs.ui.test.manifest) // For running on devices/emulators
 
 }
+
+androidComponents {
+    beforeVariants(selector().all()) { variantBuilder ->
+        if (variantBuilder.name == 'mockRelease' || (variantBuilder.buildType.startsWith('mock') && variantBuilder.name.startsWith('prod'))) {
+            variantBuilder.enable = false
+        }
+    }
+}
+
 
