@@ -64,8 +64,5 @@ class Garage(initialParkedCars: List<ParkedCar> = listOf()) {
         is Result.NoServer -> {
             notifyListenersAboutReady(false)
         }
-        else -> {
-            throw RuntimeException("Unexpected result type given to the Garage")
-        }
     }
 }

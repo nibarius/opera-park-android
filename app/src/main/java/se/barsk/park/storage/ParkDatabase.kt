@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
 
-@Database(entities = [CarEntity::class], version = 2)
+@Database(entities = [CarEntity::class], version = 2, exportSchema = false)
 abstract class ParkDatabase : RoomDatabase() {
     companion object {
         /**
