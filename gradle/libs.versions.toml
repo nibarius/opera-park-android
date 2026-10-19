@@ -24,7 +24,6 @@ room = "2.8.5"
 runtime = "1.12.1"
 runtimeLifecycle = "2.11.0"
 material = "1.14.0"
-lifecycleViewmodelKtx = "2.9.4"
 activityKtx = "1.13.0"
 uiToolingPreview = "1.12.1"
 uiTooling = "1.12.1"
@@ -40,7 +39,6 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 fuel-json = { module = "com.github.kittinunf.fuel:fuel-json", version.ref = "fuelJson" }
 fuel-android = { module = "com.github.kittinunf.fuel:fuel-android", version.ref = "fuelAndroid" }
-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kluent-android = { module = "org.amshove.kluent:kluent-android", version.ref = "kluentAndroid" }
@@ -69,7 +67,6 @@ animation = { group = "androidx.compose.animation", name = "animation", version.
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 firebase-crashlitycs = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle"}
 google-services = { id = "com.google.gms.google-services", version.ref="googlePlayServices"}
