@@ -10,82 +10,82 @@ android {
     def majorVersion = 4
     def minorVersion = 0
 
-    testOptions.unitTests.includeAndroidResources true
+    testOptions.unitTests.includeAndroidResources = true
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     defaultConfig {
-        applicationId "se.barsk.park"
+        applicationId = "se.barsk.park"
         minSdkVersion 24
         compileSdkVersion 37
         targetSdkVersion 37
         versionCode 11
-        versionName "$majorVersion.$minorVersion"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionName = "$majorVersion.$minorVersion"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "releaseBuild", "false"
         buildConfigField "int", "initialParkedCars", "0"
-        signingConfig signingConfigs.debug
+        signingConfig = signingConfigs.debug
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "releaseBuild", "true"
             ndk {
-                debugSymbolLevel "FULL"
+                debugSymbolLevel = "FULL"
             }
         }
         mock_6 {
             buildConfigField "int", "initialParkedCars", "6"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
         mock_5 {
             buildConfigField "int", "initialParkedCars", "5"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
         mock_4 {
             buildConfigField "int", "initialParkedCars", "4"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
         mock_3 {
             buildConfigField "int", "initialParkedCars", "3"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
         mock_2 {
             buildConfigField "int", "initialParkedCars", "2"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
         mock_1 {
             buildConfigField "int", "initialParkedCars", "1"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
         mock_0 {
             buildConfigField "int", "initialParkedCars", "0"
-            signingConfig signingConfigs.debug
-            debuggable true
+            signingConfig = signingConfigs.debug
+            debuggable = true
         }
     }
     buildFeatures {
-        viewBinding true
-        buildConfig true
-        compose true
+        viewBinding = true
+        buildConfig = true
+        compose = true
     }
 
     flavorDimensions "build"
     productFlavors {
         mock {
             applicationIdSuffix = ".mock"
-            dimension "build"
+            dimension = "build"
         }
         prod {
-            dimension "build"
+            dimension = "build"
         }
     }
 
@@ -96,10 +96,10 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
+            storeFile = file('debug.keystore')
         }
     }
-    namespace 'se.barsk.park'
+    namespace = 'se.barsk.park'
 }
 
 dependencies {
