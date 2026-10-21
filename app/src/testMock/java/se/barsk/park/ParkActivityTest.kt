@@ -76,4 +76,13 @@ class ParkActivityTest : RobolectricTest() {
         val actualIntent = Shadows.shadowOf(activity).nextStartedActivity
         actualIntent.component shouldBeEqualTo expectedIntent.component
     }
+
+    @Test
+    fun themeSettingAppliesNightMode() {
+        se.barsk.park.utils.Utils.setTheme("dark")
+        androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode() shouldBeEqualTo androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+
+        se.barsk.park.utils.Utils.setTheme("light")
+        androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode() shouldBeEqualTo androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+    }
 }

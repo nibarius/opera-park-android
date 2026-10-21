@@ -2,7 +2,7 @@ package se.barsk.park
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import se.barsk.park.mainui.ParkActivity
 
 // Inspiration from:
@@ -11,7 +11,7 @@ import se.barsk.park.mainui.ParkActivity
 /**
  * Activity for the splash screen that just opens the ParkActivity
  */
-class SplashActivity : ComponentActivity() {
+class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

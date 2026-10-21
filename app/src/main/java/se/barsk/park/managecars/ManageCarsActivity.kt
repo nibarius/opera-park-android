@@ -1,7 +1,7 @@
 package se.barsk.park.managecars
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
@@ -28,7 +28,7 @@ import se.barsk.park.datatypes.OwnCar
 import se.barsk.park.theme.ParkTheme
 
 
-class ManageCarsActivity : ComponentActivity() {
+class ManageCarsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ParkApp.init(this)
