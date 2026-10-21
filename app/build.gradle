@@ -17,7 +17,7 @@ android {
     }
     defaultConfig {
         applicationId = "se.barsk.park"
-        minSdkVersion 24
+        minSdkVersion 26
         compileSdkVersion 37
         targetSdkVersion 37
         versionCode 11
@@ -135,7 +135,6 @@ dependencies {
     implementation libs.fuel.json
     implementation libs.result
     implementation libs.licensesdialog
-    implementation libs.android.joda
     implementation libs.kotlinx.coroutines.android
     testImplementation libs.core
     testImplementation libs.junit

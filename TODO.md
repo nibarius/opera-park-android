@@ -16,7 +16,7 @@ This document outlines planned technical debt cleanups, architecture modernizati
 ---
 
 ## 2. Replace Legacy Joda-Time with `java.time`
-- **Status:** Planned
+- **Status:** Completed
 - **Context:** The app uses `net.danlew:android.joda` (`JodaTimeAndroid`). Standard Android natively supports `java.time` (`Instant`, `ZonedDateTime`, `ZoneOffset`).
 - **Action:**
   - Refactor `TimeUtils.kt` to use `java.time.Instant`, `java.time.ZonedDateTime`, and `java.time.ZoneOffset`.

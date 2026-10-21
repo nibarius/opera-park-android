@@ -144,7 +144,7 @@ class SharedPrefs(private val context: Context, private val sharedPreferences: S
     ) {
         val e = editor ?: sharedPreferences.edit()
         e.putBoolean(consentKey, value)
-        e.putLong(timestampKey, TimeUtils.now().millis)
+        e.putLong(timestampKey, TimeUtils.now().toEpochMilli())
         if (editor == null) {
             e.apply()
         }

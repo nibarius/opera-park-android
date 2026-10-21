@@ -3,7 +3,8 @@ package se.barsk.park.network
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import org.joda.time.DateTime
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import se.barsk.park.BuildConfig
 import se.barsk.park.R
 import se.barsk.park.datatypes.OwnCar
@@ -75,7 +76,8 @@ class MockNetworkManager(private val initialParkedCars: Int = BuildConfig.initia
         if (parkedCars.any { it.regNo == ownCar.regNo }) {
             resultReadyListener(Result.Fail(parkedCars, context.getString(R.string.failed_to_park, ownCar.regNo)))
         } else {
-            parkedCars.add(ParkedCar(ownCar.regNo, ownCar.owner, DateTime.now().toString("yyyy-MM-dd HH:mm:ss")))
+            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            parkedCars.add(ParkedCar(ownCar.regNo, ownCar.owner, timestamp))
             resultReadyListener(Result.Success(parkedCars))
         }
 

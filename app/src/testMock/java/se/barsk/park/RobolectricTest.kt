@@ -10,7 +10,7 @@ import java.io.File
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = RobolectricTest.ApplicationStub::class,
-        sdk = [24])
+        sdk = [26])
 abstract class RobolectricTest {
     fun context(): Context = ApplicationProvider.getApplicationContext()
 
