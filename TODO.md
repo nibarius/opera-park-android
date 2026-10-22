@@ -5,7 +5,7 @@ This document outlines planned technical debt cleanups, architecture modernizati
 ---
 
 ## 1. Edge-to-Edge Modernization (`enableEdgeToEdge()`)
-- **Status:** Planned
+- **Status:** Completed
 - **Context:** `ParkActivity`, `ManageCarsActivity`, and `SettingsActivity` currently call `WindowCompat.setDecorFitsSystemWindows(window, false)`.
 - **Action:** Replace with `enableEdgeToEdge()` from `androidx.activity` (Activity 1.8+ API).
 - **Files Involved:**

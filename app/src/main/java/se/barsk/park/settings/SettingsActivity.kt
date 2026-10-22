@@ -1,10 +1,10 @@
 package se.barsk.park.settings
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import de.psdev.licensesdialog.LicensesDialogFragment
 import se.barsk.park.ParkApp
 import se.barsk.park.R
@@ -22,7 +22,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Enable edge to edge
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         setContent {
             ParkTheme {
