@@ -25,10 +25,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -70,6 +73,7 @@ fun ParkedCarsScreen(
                 retry,
                 modifier = Modifier.weight(1f) // take all remaining space
             )
+            VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             MyCarsSection(
                 ownCars,
                 parkedCars,
@@ -92,12 +96,14 @@ fun ParkedCarsScreen(
                 retry,
                 modifier = Modifier.weight(1f) // Take the remaining space
             )
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             MyCarsSection(
                 ownCars,
                 parkedCars,
                 parkingState == ParkActivity.ParkingState.FULL,
                 onCarClick,
-                onAddCarClick
+                onAddCarClick,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -417,26 +423,33 @@ fun MyCarsSection(
     onAddCarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .padding(8.dp)
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = colorResource(R.color.colorSurface)
     ) {
-        Text(
-            stringResource(R.string.my_cars_label),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(8.dp),
-            maxLines = 1
-        )
-        if (ownCars.isEmpty()) {
-            OwnCarsPlaceholder(onAddCarClick)
-        } else {
-            OwnCarsList(
-                ownCars = ownCars,
-                parkedCars = parkedCars,
-                garageFull = garageFull,
-                onCarClick = onCarClick,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text(
+                stringResource(R.string.my_cars_label),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp),
+                maxLines = 1
             )
+            if (ownCars.isEmpty()) {
+                OwnCarsPlaceholder(onAddCarClick)
+            } else {
+                OwnCarsList(
+                    ownCars = ownCars,
+                    parkedCars = parkedCars,
+                    garageFull = garageFull,
+                    onCarClick = onCarClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
