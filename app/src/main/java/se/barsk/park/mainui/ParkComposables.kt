@@ -78,7 +78,7 @@ fun ParkedCarsScreen(
                 onAddCarClick,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(192.dp)
+                    .width(256.dp)
             )
         }
     } else {
@@ -378,8 +378,8 @@ private fun ButtonContent(actionText: String, regNo: String) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(text = actionText, style = MaterialTheme.typography.labelSmall)
-        Text(text = regNo, style = MaterialTheme.typography.titleMedium)
+        Text(text = actionText, style = MaterialTheme.typography.labelSmall, maxLines = 1)
+        Text(text = regNo, style = MaterialTheme.typography.titleMedium, maxLines = 1)
     }
 }
 
@@ -425,7 +425,8 @@ fun MyCarsSection(
             stringResource(R.string.my_cars_label),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
+            maxLines = 1
         )
         if (ownCars.isEmpty()) {
             OwnCarsPlaceholder(onAddCarClick)
