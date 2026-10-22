@@ -31,7 +31,7 @@ This document outlines planned technical debt cleanups, architecture modernizati
 ---
 
 ## 3. Replace Legacy Fuel HTTP Library
-- **Status:** Planned
+- **Status:** Completed
 - **Context:** The networking layer uses `com.github.kittinunf.fuel` (`fuel-android`, `fuel-json`), which is archived and no longer maintained.
 - **Action:**
   - Migrate `NetworkManager.kt` to use **Ktor Client** or **Retrofit/OkHttp**.

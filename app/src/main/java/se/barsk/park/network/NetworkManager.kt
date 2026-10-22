@@ -1,12 +1,17 @@
 package se.barsk.park.network
 
 import android.content.Context
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.json.FuelJson
-import com.github.kittinunf.fuel.json.responseJson
-import com.github.kittinunf.result.getAs
+import android.os.Handler
+import android.os.Looper
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 import se.barsk.park.BuildConfig
 import se.barsk.park.ParkApp
 import se.barsk.park.R
@@ -24,7 +29,9 @@ open class NetworkManager {
         private const val UNPARK = "unpark"
     }
 
+    private val client = OkHttpClient()
     private val userAgent = "Opark/${BuildConfig.VERSION_NAME}"
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     private enum class Action { PARK, UNPARK }
 
@@ -42,31 +49,47 @@ open class NetworkManager {
             resultReadyListener(Result.NoServer)
             return
         }
-        Fuel.get(serverUrl + STATUS)
-                .header(mapOf("User-Agent" to userAgent))
-                .responseJson { _, _, result ->
-                    when (result) {
-                        is com.github.kittinunf.result.Result.Failure -> {
-                            val (_, fuelError) = result
-                            resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, fuelError)))
+        val request = Request.Builder()
+            .url(serverUrl + STATUS)
+            .header("User-Agent", userAgent)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                mainHandler.post {
+                    resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, e.localizedMessage ?: e.toString())))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val bodyString = response.body?.string() ?: ""
+                    if (!response.isSuccessful) {
+                        mainHandler.post {
+                            resultReadyListener(Result.Fail(null, context.getString(R.string.failed_to_update_generic, "${response.code}: ${response.message}")))
                         }
-                        is com.github.kittinunf.result.Result.Success -> {
-                            try {
-                                val data: JSONObject = result.getAs<FuelJson>()?.obj() as JSONObject
-                                val parkedCars = getParkedCarsFromResponse(data)
-                                resultReadyListener(Result.Success(parkedCars))
-                            } catch (e: org.json.JSONException) {
-                                val errorMessage = context.getString(R.string.failed_to_update) +
-                                        "\n" + context.getString(R.string.fail_reason_unknown_data)
-                                resultReadyListener(Result.Fail(null, errorMessage))
-                            } catch (e: Exception) {
-                                val errorMessage = context.getString(R.string.failed_to_update) +
-                                        "\n" + context.getString(R.string.fail_reason_unknown_error)
-                                resultReadyListener(Result.Fail(null, errorMessage))
-                            }
-                        }
+                        return
+                    }
+                    val data = JSONObject(bodyString)
+                    val parkedCars = getParkedCarsFromResponse(data)
+                    mainHandler.post {
+                        resultReadyListener(Result.Success(parkedCars))
+                    }
+                } catch (e: org.json.JSONException) {
+                    val errorMessage = context.getString(R.string.failed_to_update) +
+                            "\n" + context.getString(R.string.fail_reason_unknown_data)
+                    mainHandler.post {
+                        resultReadyListener(Result.Fail(null, errorMessage))
+                    }
+                } catch (e: Exception) {
+                    val errorMessage = context.getString(R.string.failed_to_update) +
+                            "\n" + context.getString(R.string.fail_reason_unknown_error)
+                    mainHandler.post {
+                        resultReadyListener(Result.Fail(null, errorMessage))
                     }
                 }
+            }
+        })
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // Used in mock flavor
@@ -89,50 +112,67 @@ open class NetworkManager {
         }
         val errorMessage: String
         val url: String
-        val parameters: MutableList<Pair<String, Any?>> = mutableListOf()
-        parameters.add(Pair("regno", ownCar.regNo))
+        val formBuilder = FormBody.Builder().add("regno", ownCar.regNo)
         when (action) {
             Action.PARK -> {
                 errorMessage = context.getString(R.string.failed_to_park, ownCar.regNo)
                 url = serverUrl + PARK
-                parameters.add(Pair("user", ownCar.owner))
+                formBuilder.add("user", ownCar.owner)
             }
             Action.UNPARK -> {
                 errorMessage = context.getString(R.string.failed_to_unpark, ownCar.regNo)
                 url = serverUrl + UNPARK
             }
         }
-        Fuel.post(url, parameters)
-                .header(mapOf("User-Agent" to userAgent))
-                .responseJson { _, response, result ->
-                    when (result) {
-                        is com.github.kittinunf.result.Result.Success -> {
-                            try {
-                                val data: JSONObject = result.getAs<FuelJson>()?.obj() as JSONObject
-                                val success = data.getString("result") == "ok"
-                                val parkedCars = getParkedCarsFromResponse(data)
-                                if (success) {
-                                    resultReadyListener(Result.Success(parkedCars))
-                                } else {
-                                    resultReadyListener(Result.Fail(parkedCars, errorMessage))
-                                }
-                            } catch (e: org.json.JSONException) {
-                                val msg = "$errorMessage\n" +
-                                        context.getString(R.string.fail_reason_unknown_data)
-                                resultReadyListener(Result.Fail(null, msg))
-                            } catch (e: Exception) {
-                                val msg = "$errorMessage\n" +
-                                        context.getString(R.string.fail_reason_unknown_error)
-                                resultReadyListener(Result.Fail(null, msg))
-                            }
-                        }
-                        is com.github.kittinunf.result.Result.Failure -> {
-                            val msg = "$errorMessage\n" +
-                                    "${response.statusCode}: ${response.responseMessage}"
+        val request = Request.Builder()
+            .url(url)
+            .header("User-Agent", userAgent)
+            .post(formBuilder.build())
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                val msg = "$errorMessage\n${e.localizedMessage ?: e.toString()}"
+                mainHandler.post {
+                    resultReadyListener(Result.Fail(null, msg))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val bodyString = response.body?.string() ?: ""
+                    if (!response.isSuccessful) {
+                        val msg = "$errorMessage\n${response.code}: ${response.message}"
+                        mainHandler.post {
                             resultReadyListener(Result.Fail(null, msg))
                         }
+                        return
+                    }
+                    val data = JSONObject(bodyString)
+                    val success = data.optString("result") == "ok" || data.getString("result") == "ok"
+                    val parkedCars = getParkedCarsFromResponse(data)
+                    mainHandler.post {
+                        if (success) {
+                            resultReadyListener(Result.Success(parkedCars))
+                        } else {
+                            resultReadyListener(Result.Fail(parkedCars, errorMessage))
+                        }
+                    }
+                } catch (e: org.json.JSONException) {
+                    val msg = "$errorMessage\n" +
+                            context.getString(R.string.fail_reason_unknown_data)
+                    mainHandler.post {
+                        resultReadyListener(Result.Fail(null, msg))
+                    }
+                } catch (e: Exception) {
+                    val msg = "$errorMessage\n" +
+                            context.getString(R.string.fail_reason_unknown_error)
+                    mainHandler.post {
+                        resultReadyListener(Result.Fail(null, msg))
                     }
                 }
+            }
+        })
     }
 
     /**

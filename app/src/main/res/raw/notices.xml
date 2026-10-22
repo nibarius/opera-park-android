@@ -16,16 +16,10 @@
   -->
 <notices>
     <notice>
-        <name>Fuel</name>
-        <url>https://github.com/kittinunf/Fuel</url>
-        <copyright>Copyright (c) 2017 Kittinun Vantasin</copyright>
-        <license>MIT License</license>
-    </notice>
-    <notice>
-        <name>Result</name>
-        <url>https://github.com/kittinunf/Result</url>
-        <copyright>Copyright (c) 2017 Kittinun Vantasin</copyright>
-        <license>MIT License</license>
+        <name>OkHttp</name>
+        <url>https://square.github.io/okhttp/</url>
+        <copyright>Copyright 2019 Square, Inc.</copyright>
+        <license>Apache Software License 2.0</license>
     </notice>
     <notice>
         <name>Material icons</name>
