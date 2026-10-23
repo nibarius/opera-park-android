@@ -120,6 +120,7 @@ dependencies {
     implementation libs.navigation.compose
     implementation libs.ui.tooling.preview
     implementation libs.animation
+    implementation libs.datastore.preferences
 
     //Room:
     implementation libs.room.runtime

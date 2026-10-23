@@ -1,37 +1,59 @@
 package se.barsk.park.storage
 
 import android.content.Context
-import se.barsk.park.ParkApp
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import se.barsk.park.datatypes.OwnCar
-
 
 open class StorageManager(context: Context) {
 
-    private val sharedPrefs: SharedPrefs = SharedPrefs(context, ParkApp.getSharedPreferences(context))
+    private val dataStoreManager: DataStoreManager = DataStoreManager(context)
     private val database = ParkDatabase.createDatabase(context)
 
     var settingsChangeListener: SettingsChangeListener?
-        get() = sharedPrefs.settingsChangeListener
+        get() = dataStoreManager.settingsChangeListener
         set(value) {
-            sharedPrefs.settingsChangeListener = value
+            dataStoreManager.settingsChangeListener = value
         }
 
-    // Shared preferences interaction functions
-    open fun hasServer() = sharedPrefs.hasServer()
+    open val serverFlow: Flow<String> get() = dataStoreManager.serverFlow
+    open val crashReportingFlow: Flow<Boolean> get() = dataStoreManager.crashReportingFlow
+    open val automaticUpdateIntervalFlow: Flow<Long> get() = dataStoreManager.automaticUpdateIntervalFlow
+    open val themeFlow: Flow<String> get() = dataStoreManager.themeFlow
+    open val privacyOnBoardingFlow: Flow<Boolean> get() = dataStoreManager.privacyOnBoardingFlow
 
-    open fun getServer() = sharedPrefs.getServer()
-    open fun setServer(server: String) = sharedPrefs.setServer(server)
+    // Preference interaction functions
+    open fun hasServer(): Boolean = dataStoreManager.hasServer()
 
-    fun crashReportingEnabled(): Boolean = sharedPrefs.crashReportingEnabled()
-    fun getAutomaticUpdateInterval(): Long = sharedPrefs.getAutomaticUpdateInterval()
-    fun setAutomaticUpdateInterval(interval: Long) =
-        sharedPrefs.setAutomaticUpdateInterval(interval)
+    open fun getServer(): String = dataStoreManager.getServer()
 
-    fun getTheme() = sharedPrefs.getTheme()
-    fun setTheme(theme: String) = sharedPrefs.setTheme(theme)
-    fun hasSeenPrivacyOnBoarding(): Boolean = sharedPrefs.hasSeenPrivacyOnBoarding()
-    fun setPrivacyOnBoardingSeen() = sharedPrefs.setPrivacyOnBoardingSeen()
-    fun setCrashReportingEnabled(isEnabled: Boolean) = sharedPrefs.setCrashReporting(isEnabled)
+    open fun setServer(server: String) {
+        runBlocking { dataStoreManager.setServer(server) }
+    }
+
+    open fun crashReportingEnabled(): Boolean = dataStoreManager.crashReportingEnabled()
+
+    open fun getAutomaticUpdateInterval(): Long = dataStoreManager.getAutomaticUpdateInterval()
+
+    open fun setAutomaticUpdateInterval(interval: Long) {
+        runBlocking { dataStoreManager.setAutomaticUpdateInterval(interval) }
+    }
+
+    open fun getTheme(): String = dataStoreManager.getTheme()
+
+    open fun setTheme(theme: String) {
+        runBlocking { dataStoreManager.setTheme(theme) }
+    }
+
+    open fun hasSeenPrivacyOnBoarding(): Boolean = dataStoreManager.hasSeenPrivacyOnBoarding()
+
+    open fun setPrivacyOnBoardingSeen() {
+        runBlocking { dataStoreManager.setPrivacyOnBoardingSeen() }
+    }
+
+    open fun setCrashReportingEnabled(isEnabled: Boolean) {
+        runBlocking { dataStoreManager.setCrashReportingEnabled(isEnabled) }
+    }
 
     // Database interaction functions
     fun fetchAllCars() = database.fetchAllCars()

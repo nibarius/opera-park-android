@@ -44,7 +44,7 @@ This document outlines planned technical debt cleanups, architecture modernizati
 ---
 
 ## 4. Migrate `SharedPreferences` to Preferences `DataStore`
-- **Status:** Planned
+- **Status:** Completed
 - **Context:** `SharedPrefs.kt` uses synchronous Android `SharedPreferences`.
 - **Action:**
   - Add `androidx.datastore:datastore-preferences` to `libs.versions.toml` and `app/build.gradle`.

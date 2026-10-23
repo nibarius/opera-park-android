@@ -10,6 +10,5 @@ object Injection {
     fun provideNetworkManager() = NetworkManager()
     fun provideCarCollection() = CarCollection()
     fun provideStorageManager(context: Context) = StorageManager(context)
-    fun provideSharedPreferencesFileName(context: Context): String = context.getString(R.string.shared_prefs_file_name)
     fun provideCrashReporting() = CrashReporting()
 }

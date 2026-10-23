@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.core.content.edit
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.After
 import org.junit.Rule
@@ -35,9 +34,8 @@ class ParkActivityTest : RobolectricTest() {
         .outerRule(object : ExternalResource() {
             override fun before() {
                 val context = context()
-                ParkApp.getSharedPreferences(context).edit {
-                    putBoolean(context.getString(R.string.key_privacy_on_boarding), true)
-                }
+                ParkApp.init(context)
+                ParkApp.storageManager.setPrivacyOnBoardingSeen()
             }
         })
         .around(composeTestRule)

@@ -3,6 +3,7 @@ appcompat = "1.8.0"
 composeBom = "2026.09.00"
 composeNavigation = "2.10.2"
 core = "1.7.0"
+datastore = "1.1.3"
 firebaseBom = "35.0.2"
 firebaseCrashlyticsGradle = "3.0.8"
 googlePlayServices = "4.5.0"
@@ -31,6 +32,7 @@ activity-compose = { module = "androidx.activity:activity-compose", version.ref 
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 core = { module = "androidx.test:core", version.ref = "core" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 json = { module = "org.json:json", version.ref = "json" }

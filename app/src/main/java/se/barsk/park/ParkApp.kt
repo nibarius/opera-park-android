@@ -1,7 +1,6 @@
 package se.barsk.park
 
 import android.content.Context
-import android.content.SharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,7 +9,6 @@ import se.barsk.park.datatypes.CarCollection
 import se.barsk.park.network.NetworkManager
 import se.barsk.park.storage.StorageManager
 import se.barsk.park.utils.Utils
-
 
 /**
  * Singleton that can be used to get various global resources from anywhere.
@@ -40,13 +38,4 @@ object ParkApp {
         Utils.setTheme(storageManager.getTheme())
         isInitiated = true
     }
-
-    fun getSharedPreferences(context: Context): SharedPreferences {
-        val prefsFile: String = getSharedPreferencesFileName(context)
-        return context.getSharedPreferences(prefsFile, Context.MODE_PRIVATE)
-    }
-
-    fun getSharedPreferencesFileName(context: Context): String =
-            Injection.provideSharedPreferencesFileName(context)
 }
-
