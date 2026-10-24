@@ -19,9 +19,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -134,6 +137,21 @@ fun ListPreference(
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
 
+    // The selected value is applied only after the menu's popup window has been removed.
+    // Changing some settings (e.g. the theme) recreates the activity, and doing that while the
+    // popup is still closing leaves the stale popup window holding input focus. Key events
+    // such as the system back button are then dropped, which results in an ANR.
+    var pendingValue by remember { mutableStateOf<String?>(null) }
+    var isMenuInComposition by remember { mutableStateOf(false) }
+    val currentOnValueChange by rememberUpdatedState(onValueChange)
+    LaunchedEffect(pendingValue, isMenuInComposition) {
+        val value = pendingValue
+        if (value != null && !isMenuInComposition) {
+            pendingValue = null
+            currentOnValueChange(value)
+        }
+    }
+
     // Box is used to anchor the DropdownMenu to our Preference
     Box {
         // Use the standard Preference composable for the UI
@@ -148,11 +166,17 @@ fun ListPreference(
             onDismissRequest = { isMenuExpanded = false },
             offset = DpOffset(x = 32.dp, y = 0.dp)
         ) {
+            // The menu content stays composed during the exit animation and leaves the
+            // composition together with the popup window.
+            DisposableEffect(Unit) {
+                isMenuInComposition = true
+                onDispose { isMenuInComposition = false }
+            }
             entries.forEach { (value, entryTitle) ->
                 DropdownMenuItem(
                     text = { Text(entryTitle) },
                     onClick = {
-                        onValueChange(value)
+                        pendingValue = value
                         isMenuExpanded = false
                     }
                 )
