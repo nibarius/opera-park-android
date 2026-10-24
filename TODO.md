@@ -57,8 +57,8 @@ This document outlines planned technical debt cleanups, architecture modernizati
 
 ---
 
-## 5. Single-Activity Architecture with Compose Navigation (Optional)
-- **Status:** Backlog / Optional
+## 5. Single-Activity Architecture with Compose Navigation
+- **Status:** Completed
 - **Context:** The app currently uses 3 separate activities (`ParkActivity`, `ManageCarsActivity`, `SettingsActivity`).
 - **Action:**
   - Consolidate screens into a single `MainActivity` using Compose `NavHost` (`navigation-compose` is already present in `libs.versions.toml`).

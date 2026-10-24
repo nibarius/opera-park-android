@@ -43,6 +43,7 @@ kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", versi
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesAndroid"}
 licensesdialog = { module = "de.psdev.licensesdialog:licensesdialog", version.ref = "licensesdialog" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "runtimeLifecycle" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -63,6 +64,7 @@ animation = { group = "androidx.compose.animation", name = "animation", version.
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 firebase-crashlitycs = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle"}
 google-services = { id = "com.google.gms.google-services", version.ref="googlePlayServices"}

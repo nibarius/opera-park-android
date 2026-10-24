@@ -1,9 +1,11 @@
 package se.barsk.park
 
+import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithText
@@ -19,19 +21,34 @@ import org.junit.Rule
 import org.junit.Test
 import org.robolectric.annotation.LooperMode
 import se.barsk.park.datatypes.MockCarCollection
-import se.barsk.park.managecars.ManageCarsActivity
+import se.barsk.park.managecars.ManageCarsDestination
+import se.barsk.park.managecars.ManageCarsViewModel
+import se.barsk.park.theme.ParkTheme
 
 @LooperMode(LooperMode.Mode.PAUSED)
-class ManageCarsActivityTest : RobolectricTest() {
+class ManageCarsScreenTest : RobolectricTest() {
 
-    // A single, standard rule for the entire test class. This is the correct pattern.
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<ManageCarsActivity>()
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Before
     fun setUp() {
         // Reset the car collection at the test of each test to have a clean state.
+        ParkApp.init(context())
         (ParkApp.carCollection as MockCarCollection).reset()
+    }
+
+    private fun showScreen(initialAddCar: Boolean = false) {
+        val viewModel = ManageCarsViewModel()
+        composeTestRule.setContent {
+            ParkTheme {
+                ManageCarsDestination(
+                    initialAddCar = initialAddCar,
+                    onNavigateUp = {},
+                    viewModel = viewModel
+                )
+            }
+        }
     }
 
     @After
@@ -41,6 +58,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun carListShownWithCarsTest() {
+        showScreen()
         // 1. Verify both unique registration numbers are on the screen.
         composeTestRule.onNodeWithText("ALP 110").assertIsDisplayed()
         composeTestRule.onNodeWithText("MLB 803").assertIsDisplayed()
@@ -55,6 +73,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun placeholderShownWithNoCarsTest() {
+        showScreen()
         val carCollection = ParkApp.carCollection as MockCarCollection
         carCollection.replaceContent(mutableListOf())
 
@@ -67,6 +86,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun openAddDialogWhenClickingFabTest() {
+        showScreen()
         val activity = composeTestRule.activity
         val fabDescription = activity.getString(R.string.add_car_button)
         val dialogTitle = activity.getString(R.string.add_car_dialog_title)
@@ -76,6 +96,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun cancelAddDialogFabShouldBeVisibleTest() {
+        showScreen()
         val activity = composeTestRule.activity
         val fabDescription = activity.getString(R.string.add_car_button)
         val cancelButtonText = activity.getString(R.string.dialog_button_cancel)
@@ -86,6 +107,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun disabledAddButtonInCreateDialogTest() {
+        showScreen()
         val activity = composeTestRule.activity
         val fabDescription = activity.getString(R.string.add_car_button)
         val saveButtonText = activity.getString(R.string.dialog_button_save)
@@ -109,6 +131,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun chooseMenuEntryTest() {
+        showScreen()
         val activity = composeTestRule.activity
         val menuDescription = activity.getString(R.string.manage_cars_more_options)
         val selectOption = activity.getString(R.string.manage_cars_select_option)
@@ -122,6 +145,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun selectAllMenuEntryTest() {
+        showScreen()
         val activity = composeTestRule.activity
         val menuDescription = activity.getString(R.string.manage_cars_more_options)
         val selectAllOption = activity.getString(R.string.manage_cars_select_all_option)
@@ -134,6 +158,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun menuSelectionThenTogglingExitsActionMode() {
+        showScreen()
         val activity = composeTestRule.activity
         val menuDescription = activity.getString(R.string.manage_cars_more_options)
         val selectOption = activity.getString(R.string.manage_cars_select_option)
@@ -162,6 +187,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun clickingCarEntersEditModeTest() {
+        showScreen()
         val carToClick = "ALP 110"
         val editDialogTitle = composeTestRule.activity.getString(R.string.edit_car_dialog_title)
         composeTestRule.onNodeWithText(carToClick).performClick()
@@ -174,6 +200,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun longClickEntersActionModeAndSelectsItem() {
+        showScreen()
         val activity = composeTestRule.activity
         val carToLongClick = "MLB 803"
         val contextualTitleOneSelected =
@@ -188,6 +215,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun clickInActionModeTogglesSelection() {
+        showScreen()
         val activity = composeTestRule.activity
         val car1 = "ALP 110"
         val car2 = "MLB 803"
@@ -216,6 +244,7 @@ class ManageCarsActivityTest : RobolectricTest() {
 
     @Test
     fun closeButtonExitsActionMode() {
+        showScreen()
         val activity = composeTestRule.activity
         val carToLongClick = "ALP 110"
         val closeButtonDescription = activity.getString(R.string.manage_cars_close)
@@ -226,5 +255,37 @@ class ManageCarsActivityTest : RobolectricTest() {
         composeTestRule.onNodeWithText(normalTitle).assertIsDisplayed()
         val fabDescription = activity.getString(R.string.add_car_button)
         composeTestRule.onNodeWithContentDescription(fabDescription).assertIsDisplayed()
+    }
+
+    @Test
+    fun initialAddCarShowsDialogTest() {
+        showScreen(initialAddCar = true)
+        val activity = composeTestRule.activity
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        val fabDescription = activity.getString(R.string.add_car_button)
+
+        composeTestRule.onNodeWithText(dialogTitle).assertIsDisplayed()
+        // The FAB still exists in the composition, even though it's obscured by the dialog's scrim.
+        composeTestRule.onNodeWithContentDescription(fabDescription).assertExists()
+    }
+
+    @Test
+    fun dismissedAddDialogStaysClosedAfterRecreationTest() {
+        val restorationTester = StateRestorationTester(composeTestRule)
+        val viewModel = ManageCarsViewModel()
+        restorationTester.setContent {
+            ParkTheme {
+                ManageCarsDestination(initialAddCar = true, onNavigateUp = {}, viewModel = viewModel)
+            }
+        }
+        val activity = composeTestRule.activity
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        val cancelButtonText = activity.getString(R.string.dialog_button_cancel)
+
+        composeTestRule.onNodeWithText(cancelButtonText).performClick()
+        composeTestRule.onNodeWithText(dialogTitle).assertDoesNotExist()
+
+        restorationTester.emulateSavedInstanceStateRestore()
+        composeTestRule.onNodeWithText(dialogTitle).assertDoesNotExist()
     }
 }

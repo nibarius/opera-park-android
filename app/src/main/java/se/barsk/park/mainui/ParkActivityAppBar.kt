@@ -25,7 +25,7 @@ import se.barsk.park.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParkActivityAppBar(
-    parkingState: ParkActivity.ParkingState,
+    parkingState: ParkingState,
     freeSpotsCount: Int,
     onManageCarsClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -35,9 +35,9 @@ fun ParkActivityAppBar(
 
     // Determine title based on parking state
     val title = when (parkingState) {
-        ParkActivity.ParkingState.FULL -> stringResource(R.string.park_status_full)
-        ParkActivity.ParkingState.ALMOST_FULL -> stringResource(R.string.park_status_one_free)
-        ParkActivity.ParkingState.FREE_SPACE -> stringResource(R.string.park_status_many_free, freeSpotsCount)
+        ParkingState.FULL -> stringResource(R.string.park_status_full)
+        ParkingState.ALMOST_FULL -> stringResource(R.string.park_status_one_free)
+        ParkingState.FREE_SPACE -> stringResource(R.string.park_status_many_free, freeSpotsCount)
         else -> stringResource(R.string.app_name) // NO_SERVER, WAITING_ON_RESPONSE, REQUEST_FAILED, EMPTY
     }
 
@@ -46,8 +46,8 @@ fun ParkActivityAppBar(
         isDarkTheme -> {
             // Dark mode: Dark background with colored title text
             val titleColor = when (parkingState) {
-                ParkActivity.ParkingState.FULL -> Red200
-                ParkActivity.ParkingState.ALMOST_FULL -> Orange200
+                ParkingState.FULL -> Red200
+                ParkingState.ALMOST_FULL -> Orange200
                 else -> Green200 // FREE_SPACE and placeholder states
             }
             TopAppBarDefaults.topAppBarColors(
@@ -61,8 +61,8 @@ fun ParkActivityAppBar(
         else -> {
             // Light mode: Colored background with white text
             val containerColor = when (parkingState) {
-                ParkActivity.ParkingState.FULL -> Red600
-                ParkActivity.ParkingState.ALMOST_FULL -> Orange600
+                ParkingState.FULL -> Red600
+                ParkingState.ALMOST_FULL -> Orange600
                 else -> Green600 // FREE_SPACE and placeholder states
             }
             TopAppBarDefaults.topAppBarColors(

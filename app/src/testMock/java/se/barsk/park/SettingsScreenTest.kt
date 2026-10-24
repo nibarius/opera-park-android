@@ -1,8 +1,6 @@
 package se.barsk.park.settings
 
-import android.annotation.SuppressLint
-import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
+import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -20,23 +18,37 @@ import se.barsk.park.ParkApp
 import se.barsk.park.R
 import se.barsk.park.RobolectricTest
 import se.barsk.park.storage.MockStorageManager
+import se.barsk.park.theme.ParkTheme
 
 @LooperMode(LooperMode.Mode.PAUSED)
-class SettingsActivityTest : RobolectricTest() {
+class SettingsScreenTest : RobolectricTest() {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<SettingsActivity>()
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Before
     fun setUp() {
         // Set the initial state for all settings before each test runs.
         // Most settings are picked up from shared preferences which have
         // an unknown state when the first test is run.
+        ParkApp.init(context())
         with(ParkApp.storageManager as MockStorageManager) {
             reset()
             setTheme("system")
             setAutomaticUpdateInterval(10L) // Use the real value
             setCrashReportingEnabled(true)
+        }
+        // Create the view model after the storage has been set up so that it picks up the
+        // initial values.
+        val viewModel = SettingsViewModel()
+        composeTestRule.setContent {
+            ParkTheme {
+                SettingsScreen(
+                    viewModel = viewModel,
+                    onShowThirdPartyLicenses = { },
+                    onNavigateUp = { }
+                )
+            }
         }
     }
 
@@ -110,22 +122,6 @@ class SettingsActivityTest : RobolectricTest() {
         val activity = composeTestRule.activity
         val crashLabel = activity.getString(R.string.settings_crash_reporting)
 
-        // Re-compose the screen with the new ViewModel state.
-        // This is necessary because the initial composition in @get:Rule happens before
-        // setUp() and it's during composition that the viewmodel is created. The checkbox
-        // state relies on the viewmodel, so that's why this is needed only for this test.
-        composeTestRule.activity.runOnUiThread {
-            composeTestRule.activity.setContent {
-                MaterialTheme {
-                    @SuppressLint("ViewModelConstructorInComposable")
-                    SettingsScreen(
-                        viewModel = SettingsViewModel(), // Recreate ViewModel to pick up new storage value
-                        onShowThirdPartyLicenses = { },
-                        onNavigateUp = { }
-                    )
-                }
-            }
-        }
         assert(ParkApp.storageManager.crashReportingEnabled())
         composeTestRule.onNodeWithText(crashLabel).performClick()
         assert(!ParkApp.storageManager.crashReportingEnabled())

@@ -52,7 +52,7 @@ import se.barsk.park.managecars.CarIcon
 fun ParkedCarsScreen(
     isRefreshing: Boolean,
     parkedCars: List<ParkedCar>,
-    parkingState: ParkActivity.ParkingState,
+    parkingState: ParkingState,
     unableToConnectText: String,
     setServer: () -> Unit,
     retry: () -> Unit,
@@ -77,7 +77,7 @@ fun ParkedCarsScreen(
             MyCarsSection(
                 ownCars,
                 parkedCars,
-                parkingState == ParkActivity.ParkingState.FULL,
+                parkingState == ParkingState.FULL,
                 onCarClick,
                 onAddCarClick,
                 modifier = Modifier
@@ -100,7 +100,7 @@ fun ParkedCarsScreen(
             MyCarsSection(
                 ownCars,
                 parkedCars,
-                parkingState == ParkActivity.ParkingState.FULL,
+                parkingState == ParkingState.FULL,
                 onCarClick,
                 onAddCarClick,
                 modifier = Modifier.fillMaxWidth()
@@ -113,7 +113,7 @@ fun ParkedCarsScreen(
 fun ParkedCarsSection(
     isRefreshing: Boolean,
     cars: List<ParkedCar>,
-    parkingState: ParkActivity.ParkingState,
+    parkingState: ParkingState,
     unableToConnectText: String,
     setServer: () -> Unit,
     retry: () -> Unit,
@@ -136,14 +136,14 @@ fun ParkedCarsSection(
 @Composable
 fun ParkedCarsContent(
     cars: List<ParkedCar>,
-    parkingState: ParkActivity.ParkingState,
+    parkingState: ParkingState,
     unableToConnectText: String,
     setServer: () -> Unit,
     retry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when {
-        parkingState == ParkActivity.ParkingState.NO_SERVER -> {
+        parkingState == ParkingState.NO_SERVER -> {
             ServerIssuePlaceholder(
                 text = stringResource(R.string.no_server_placeholder_text),
                 buttonText = stringResource(R.string.no_server_placeholder_button),
@@ -152,11 +152,11 @@ fun ParkedCarsContent(
             )
         }
 
-        parkingState == ParkActivity.ParkingState.WAITING_ON_RESPONSE && cars.isEmpty() -> {
+        parkingState == ParkingState.WAITING_ON_RESPONSE && cars.isEmpty() -> {
             LoadingPlaceholder(modifier = modifier)
         }
 
-        parkingState == ParkActivity.ParkingState.REQUEST_FAILED -> {
+        parkingState == ParkingState.REQUEST_FAILED -> {
             ServerIssuePlaceholder(
                 text = unableToConnectText,
                 buttonText = stringResource(R.string.unable_to_connect_placeholder_button),
@@ -165,7 +165,7 @@ fun ParkedCarsContent(
             )
         }
 
-        parkingState == ParkActivity.ParkingState.EMPTY -> {
+        parkingState == ParkingState.EMPTY -> {
             NoParkedCarsPlaceholder(modifier = modifier)
         }
 

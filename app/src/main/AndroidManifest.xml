@@ -25,17 +25,6 @@
             android:name=".mainui.ParkActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".managecars.ManageCarsActivity"
-            android:label="@string/manage_cars_activity_title"
-            android:launchMode="singleTask"
-            android:parentActivityName=".mainui.ParkActivity" />
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:label="@string/settings_activity_title"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".mainui.ParkActivity" />
 
         <!-- Disable crashlytics by default, and only enable it if the user wants to -->
         <meta-data

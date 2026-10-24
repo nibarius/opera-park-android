@@ -5,7 +5,6 @@ import android.widget.ViewSwitcher
 
 // Utility function on the global scope.
 
-const val INTENT_EXTRA_ADD_CAR = "addCar"
 const val MILLIS_IN_SECONDS = 1000
 
 /**
