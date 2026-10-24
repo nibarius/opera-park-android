@@ -56,6 +56,7 @@ fun ParkedCarsScreen(
     unableToConnectText: String,
     setServer: () -> Unit,
     retry: () -> Unit,
+    onRefresh: () -> Unit,
     ownCars: List<OwnCar>,
     onCarClick: (OwnCar) -> Unit,
     onAddCarClick: () -> Unit,
@@ -71,6 +72,7 @@ fun ParkedCarsScreen(
                 unableToConnectText,
                 setServer,
                 retry,
+                onRefresh,
                 modifier = Modifier.weight(1f) // take all remaining space
             )
             VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -94,6 +96,7 @@ fun ParkedCarsScreen(
                 unableToConnectText,
                 setServer,
                 retry,
+                onRefresh,
                 modifier = Modifier.weight(1f) // Take the remaining space
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -117,9 +120,10 @@ fun ParkedCarsSection(
     unableToConnectText: String,
     setServer: () -> Unit,
     retry: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = retry, modifier = modifier) {
+    PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = onRefresh, modifier = modifier) {
         ParkedCarsContent(
             cars = cars,
             parkingState = parkingState,

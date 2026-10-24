@@ -33,14 +33,16 @@ fun ParkedCarsDestination(
     val parkedCars by viewModel.garage.parkedCarsFlow.collectAsStateWithLifecycle()
     val ownCars by ParkApp.carCollection.ownCarsFlow.collectAsStateWithLifecycle()
     val currentParkingState by viewModel.parkingStateFlow.collectAsStateWithLifecycle()
-    val updateInProgress by viewModel.updateInProgressFlow.collectAsStateWithLifecycle()
+    val isManualRefreshInProgress by viewModel.isRefreshingFlow.collectAsStateWithLifecycle()
     val unableToConnectText = stringResource(
         R.string.unable_to_connect_placeholder_text,
         ParkApp.storageManager.getServer()
     )
 
-    val isRefreshing by remember(parkedCars, updateInProgress) {
-        derivedStateOf { updateInProgress && parkedCars.isNotEmpty() }
+    // When there are no parked cars a loading placeholder is shown instead of the refresh
+    // indicator.
+    val isRefreshing by remember(parkedCars, isManualRefreshInProgress) {
+        derivedStateOf { isManualRefreshInProgress && parkedCars.isNotEmpty() }
     }
 
     val freeSpotsCount = Garage.CAPACITY - parkedCars.size
@@ -74,6 +76,7 @@ fun ParkedCarsDestination(
             unableToConnectText = unableToConnectText,
             setServer = { showServerDialog = true },
             retry = { viewModel.retry() },
+            onRefresh = { viewModel.refresh() },
             ownCars = ownCars,
             onCarClick = { car -> viewModel.onOwnCarClicked(car) },
             onAddCarClick = onAddCarClick

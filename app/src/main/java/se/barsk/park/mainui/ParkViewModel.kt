@@ -29,7 +29,11 @@ class ParkViewModel(application: Application) : AndroidViewModel(application),
     private val _parkingState = MutableStateFlow(ParkingState.NO_SERVER)
     val parkingStateFlow = _parkingState.asStateFlow()
 
-    val updateInProgressFlow = networkState.updateInProgressFlow
+    // True while an update started by the user with pull to refresh is in progress. Automatic
+    // updates are not included since the refresh indicator should only be shown when the user
+    // asked for the update.
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshingFlow = _isRefreshing.asStateFlow()
 
     private val _showPrivacyDialog = MutableStateFlow(false)
     val showPrivacyDialogFlow = _showPrivacyDialog.asStateFlow()
@@ -74,6 +78,7 @@ class ParkViewModel(application: Application) : AndroidViewModel(application),
     // called when the network request is done
     override fun onGarageUpdateReady(success: Boolean, errorMessage: String?) {
         networkState.requestFinished(success)
+        _isRefreshing.value = false
 
         lastGarageUpdateTime = TimeUtils.now()
         updateParkingState()
@@ -113,6 +118,11 @@ class ParkViewModel(application: Application) : AndroidViewModel(application),
     fun onScreenPaused() {
         serverBeforePause = ParkApp.storageManager.getServer()
         automaticUpdateTask?.stop()
+    }
+
+    fun refresh() {
+        _isRefreshing.value = true
+        retry()
     }
 
     fun retry() {

@@ -21,12 +21,27 @@ import java.time.Duration
 @LooperMode(LooperMode.Mode.PAUSED)
 class ParkViewModelTest : RobolectricTest() {
 
-    /** Network manager that responds immediately and counts the number of status checks. */
+    /**
+     * Network manager that counts the number of status checks. It responds immediately unless
+     * [holdResponses] is set, then the response is sent when [respond] is called.
+     */
     private class CountingNetworkManager : NetworkManager() {
         var statusChecks = 0
+        var holdResponses = false
+        private var pendingListener: ((Result) -> Unit)? = null
+
         override fun checkStatus(context: Context, resultReadyListener: (Result) -> Unit) {
             statusChecks++
-            resultReadyListener(Result.Success(listOf()))
+            if (holdResponses) {
+                pendingListener = resultReadyListener
+            } else {
+                resultReadyListener(Result.Success(listOf()))
+            }
+        }
+
+        fun respond() {
+            pendingListener?.invoke(Result.Success(listOf()))
+            pendingListener = null
         }
     }
 
@@ -74,5 +89,27 @@ class ParkViewModelTest : RobolectricTest() {
         viewModel.onScreenPaused()
         advanceTimeBy(updateInterval * 3)
         networkManager.statusChecks shouldBeEqualTo 1
+    }
+
+    @Test
+    fun automaticUpdateDoesNotShowRefreshIndicator() {
+        viewModel.onScreenResumed()
+        networkManager.holdResponses = true
+
+        advanceTimeBy(updateInterval)
+        networkManager.statusChecks shouldBeEqualTo 2
+        viewModel.isRefreshingFlow.value shouldBeEqualTo false
+    }
+
+    @Test
+    fun manualRefreshShowsRefreshIndicatorUntilUpdateIsDone() {
+        viewModel.onScreenResumed()
+        networkManager.holdResponses = true
+
+        viewModel.refresh()
+        viewModel.isRefreshingFlow.value shouldBeEqualTo true
+
+        networkManager.respond()
+        viewModel.isRefreshingFlow.value shouldBeEqualTo false
     }
 }
