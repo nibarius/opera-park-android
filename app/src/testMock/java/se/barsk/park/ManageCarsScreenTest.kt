@@ -12,6 +12,11 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
@@ -19,6 +24,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.amshove.kluent.shouldBeEqualTo
 import org.robolectric.annotation.LooperMode
 import se.barsk.park.datatypes.MockCarCollection
 import se.barsk.park.managecars.ManageCarsDestination
@@ -103,6 +109,84 @@ class ManageCarsScreenTest : RobolectricTest() {
         composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
         composeTestRule.onNodeWithText(cancelButtonText).performClick()
         composeTestRule.onNodeWithContentDescription(fabDescription).assertIsDisplayed()
+    }
+
+    @Test
+    fun imeActionOnOwnerFieldSavesCarTest() {
+        showScreen()
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        val regNoLabel = activity.getString(R.string.manage_car_dialog_license_plate_label)
+        val ownerLabel = activity.getString(R.string.manage_car_dialog_owner_label)
+        val carCount = ParkApp.carCollection.getCars().size
+
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        composeTestRule.onNodeWithText(regNoLabel).performTextInput("ABC 123")
+        val ownerField = composeTestRule.onNodeWithText(ownerLabel)
+        ownerField.performTextInput("Owner")
+        ownerField.performImeAction()
+
+        composeTestRule.onNodeWithText(dialogTitle).assertDoesNotExist()
+        composeTestRule.waitForIdle()
+        ParkApp.carCollection.getCars().size shouldBeEqualTo carCount + 1
+    }
+
+    @Test
+    fun imeActionOnOwnerFieldDoesNothingWhenFormIsInvalidTest() {
+        showScreen()
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        val ownerLabel = activity.getString(R.string.manage_car_dialog_owner_label)
+
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        val ownerField = composeTestRule.onNodeWithText(ownerLabel)
+        ownerField.performTextInput("Owner")
+        ownerField.performImeAction()
+
+        composeTestRule.onNodeWithText(dialogTitle).assertIsDisplayed()
+    }
+
+    @Test
+    fun hardwareEnterOnFirstFieldSavesValidFormTest() {
+        showScreen()
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        val regNoLabel = activity.getString(R.string.manage_car_dialog_license_plate_label)
+        val ownerLabel = activity.getString(R.string.manage_car_dialog_owner_label)
+        val carCount = ParkApp.carCollection.getCars().size
+
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        composeTestRule.onNodeWithText(ownerLabel).performTextInput("Owner")
+        val regNoField = composeTestRule.onNodeWithText(regNoLabel)
+        regNoField.performTextInput("ABC 123")
+        @OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
+        regNoField.performKeyInput { pressKey(Key.Enter) }
+
+        composeTestRule.onNodeWithText(dialogTitle).assertDoesNotExist()
+        composeTestRule.waitForIdle()
+        ParkApp.carCollection.getCars().size shouldBeEqualTo carCount + 1
+    }
+
+    @Test
+    fun hardwareEnterWithInvalidFormMovesToNextFieldTest() {
+        showScreen()
+        val activity = composeTestRule.activity
+        val fabDescription = activity.getString(R.string.add_car_button)
+        val dialogTitle = activity.getString(R.string.add_car_dialog_title)
+        val regNoLabel = activity.getString(R.string.manage_car_dialog_license_plate_label)
+        val ownerLabel = activity.getString(R.string.manage_car_dialog_owner_label)
+
+        composeTestRule.onNodeWithContentDescription(fabDescription).performClick()
+        val regNoField = composeTestRule.onNodeWithText(regNoLabel)
+        regNoField.performTextInput("ABC 123")
+        @OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
+        regNoField.performKeyInput { pressKey(Key.Enter) }
+
+        composeTestRule.onNodeWithText(dialogTitle).assertIsDisplayed()
+        composeTestRule.onNodeWithText(ownerLabel).assertIsFocused()
     }
 
     @Test
